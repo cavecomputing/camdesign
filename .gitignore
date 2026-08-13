@@ -57,6 +57,9 @@ data/*
 *.tmp
 *~
 
+# Browser-automation scratch output
+.playwright-mcp/
+
 # Notebooks, editors, and operating systems
 .ipynb_checkpoints/
 .fleet/
