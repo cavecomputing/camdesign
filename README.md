@@ -18,7 +18,7 @@ are not tested; use a laptop or a tablet in landscape onsite.
 | Change field of view | 30–180°. With Camera armed it sets the next one; with Select active it retargets the selected camera |
 | Delete | `Delete` or `Backspace`, or the sidebar button |
 | Undo | `Ctrl+Z`, or the arrow in the header |
-| Deselect | `Escape` |
+| Back out | `Escape` leaves the field you are typing in, then drops the selection, then puts the armed tool away |
 | Zoom and pan | Scroll to zoom at the cursor, double-click to fit. Drag empty canvas or middle-drag anywhere to pan |
 
 Changes autosave a moment after you stop. If a save fails the header says so and
