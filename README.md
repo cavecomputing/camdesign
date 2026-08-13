@@ -9,10 +9,16 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run 
 ```powershell
 uv sync --frozen
 uv run flask --app app db-upgrade
-uv run flask --app app run
+uv run app.py
 ```
 
-Open <http://127.0.0.1:5000>. Stop the server with `Ctrl+C`. On later starts, only the final command is normally needed; rerun `db-upgrade` after pulling schema changes.
+`uv run app.py` runs the entry-point script in the project's managed environment and is equivalent to `uv run python app.py`. Open <http://127.0.0.1:5000> and stop the server with `Ctrl+C`. On later starts, only the final command is normally needed; rerun `db-upgrade` after pulling schema changes.
+
+For Flask debug mode and automatic reloading during development, use:
+
+```powershell
+uv run flask --app app run --debug
+```
 
 ## Connect from another device
 
