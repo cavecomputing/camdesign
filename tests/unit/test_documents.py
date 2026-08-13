@@ -1,0 +1,68 @@
+from __future__ import annotations
+
+import pytest
+
+from camdesign.domain.documents import InvalidDocument, empty_document, validate_document
+
+
+def test_empty_document_is_valid():
+    assert validate_document(empty_document()) == {"schema_version": 1, "items": []}
+
+
+def test_camera_document_is_normalized():
+    document = validate_document(
+        {
+            "schema_version": 1,
+            "items": [
+                {
+                    "id": " camera-1 ",
+                    "type": "camera",
+                    "x": 0.25,
+                    "y": 0.5,
+                    "direction_degrees": -90,
+                    "fov_degrees": 60,
+                    "range": 0.2,
+                    "label": " C01 ",
+                }
+            ],
+        }
+    )
+
+    assert document["items"][0]["id"] == "camera-1"
+    assert document["items"][0]["label"] == "C01"
+    assert document["items"][0]["note"] == ""
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [("x", -0.1), ("y", 1.1), ("fov_degrees", 200), ("range", 0)],
+)
+def test_camera_boundaries_are_enforced(field, value):
+    camera = {
+        "id": "camera-1",
+        "type": "camera",
+        "x": 0.25,
+        "y": 0.5,
+        "direction_degrees": 0,
+        "fov_degrees": 60,
+        "range": 0.2,
+    }
+    camera[field] = value
+
+    with pytest.raises(InvalidDocument):
+        validate_document({"schema_version": 1, "items": [camera]})
+
+
+def test_duplicate_item_ids_are_rejected():
+    camera = {
+        "id": "duplicate",
+        "type": "camera",
+        "x": 0.25,
+        "y": 0.5,
+        "direction_degrees": 0,
+        "fov_degrees": 60,
+        "range": 0.2,
+    }
+
+    with pytest.raises(InvalidDocument, match="unique"):
+        validate_document({"schema_version": 1, "items": [camera, camera]})

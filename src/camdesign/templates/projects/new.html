@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}New project · CamDesign{% endblock %}
+
+{% block content %}
+  <div class="form-layout">
+    <section class="form-intro">
+      <p class="eyebrow">New field quote</p>
+      <h1>Set up the site plan</h1>
+      <p>Add what you know now. Everything except the project name and site image can be refined later.</p>
+      <div class="form-intro__tip">
+        <strong>Best results</strong>
+        <span>Use a clear, high-resolution overhead image with the full property visible.</span>
+      </div>
+    </section>
+
+    <form class="project-form" method="post" action="{{ url_for('projects.create') }}" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label class="field">
+        <span>Project name <b aria-hidden="true">*</b></span>
+        <input name="name" value="{{ form.name if form else '' }}" maxlength="120" required placeholder="Oak & Main Market">
+      </label>
+      <div class="field-row">
+        <label class="field">
+          <span>Client</span>
+          <input name="client_name" value="{{ form.client_name if form else '' }}" maxlength="120" placeholder="Client or company">
+        </label>
+        <label class="field">
+          <span>Site address</span>
+          <input name="site_address" value="{{ form.site_address if form else '' }}" maxlength="240" placeholder="123 Main Street">
+        </label>
+      </div>
+      <label class="upload-field">
+        <span class="upload-field__icon" aria-hidden="true">＋</span>
+        <strong>Choose a map or site-plan image</strong>
+        <span>PNG, JPEG, or WebP up to 20 MB</span>
+        <input type="file" name="site_image" accept="image/png,image/jpeg,image/webp" required>
+      </label>
+      <label class="field">
+        <span>Initial field notes</span>
+        <textarea name="notes" maxlength="5000" rows="5" placeholder="Access details, mounting concerns, customer requests…">{{ form.notes if form else '' }}</textarea>
+      </label>
+      <div class="form-actions">
+        <a class="button button--quiet" href="{{ url_for('projects.index') }}">Cancel</a>
+        <button class="button button--primary" type="submit">Create project</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

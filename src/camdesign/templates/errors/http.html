@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{ error.name }} · CamDesign{% endblock %}
+
+{% block content %}
+  <section class="empty-state">
+    <p class="eyebrow">{{ error.code }}</p>
+    <h1>{{ error.name }}</h1>
+    <p>{{ error.description }}</p>
+    <a class="button button--primary" href="{{ url_for('projects.index') }}">Back to projects</a>
+  </section>
+{% endblock %}

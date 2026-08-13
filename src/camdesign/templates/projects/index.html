@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Projects · CamDesign{% endblock %}
+
+{% block content %}
+  <section class="page-heading">
+    <div>
+      <p class="eyebrow">Field quote workspace</p>
+      <h1>Your camera plans</h1>
+      <p>Pick up an onsite plan where you left off or start a new quote.</p>
+    </div>
+  </section>
+
+  {% if projects %}
+    <div class="project-grid">
+      {% for project in projects %}
+        <a class="project-card" href="{{ url_for('editor.workspace', project_id=project.id) }}">
+          <div class="project-card__preview">
+            <img src="{{ url_for('projects.asset', project_id=project.id) }}" alt="">
+            <span class="project-card__status">Saved</span>
+          </div>
+          <div class="project-card__body">
+            <h2>{{ project.name }}</h2>
+            <p>{{ project.client_name or project.site_address or "Site plan" }}</p>
+            <span>Updated {{ project.updated_at }}</span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <section class="empty-state">
+      <div class="empty-state__icon" aria-hidden="true">⌁</div>
+      <h2>Start with a site image</h2>
+      <p>Upload a map screenshot or site plan, then place cameras and capture field notes.</p>
+      <a class="button button--primary" href="{{ url_for('projects.new') }}">Create your first project</a>
+    </section>
+  {% endif %}
+{% endblock %}

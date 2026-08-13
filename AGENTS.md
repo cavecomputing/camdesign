@@ -13,11 +13,21 @@ Build a reliable, maintainable Flask web app for creating and editing blueprint 
 
 ## Scope and product boundaries
 
+- The primary workflow is: create a project, upload a Google Maps/site-plan image supplied by the user, mark up the plan, save and resume it, then export a polished PDF for a camera quote.
+- Optimize the initial product for a field estimator assembling a rough, trustworthy quote package onsite. Favor fast capture, large touch-friendly controls, obvious save state, and useful notes over CAD-level precision or equipment-catalog complexity.
+- Use `assets/ui-direction-light-estimator.png` as the visual direction: warm off-white workspace, ink-navy typography, restrained blue/coral accents, generous spacing, and a map-first layout. Treat it as inspiration rather than a pixel-perfect specification.
+- The initial markup vocabulary is deliberately small: cameras with a source point and field-of-view cone, Ethernet cable runs, MDF/IDF locations, and notes. Keep these symbols minimal, legible, and visually consistent in both the editor and PDF.
+- A camera placement stores a normalized anchor point, direction, range, and field-of-view angle. Click placement may use sensible defaults; dragging from the source point sets direction/range. Field-of-view angle remains explicitly adjustable.
+- Cable runs are ordered normalized points with style/label metadata, not pixels painted onto the source image. MDF/IDF markers and every other item use the same document-coordinate system.
+- General project notes belong to the project. Item-linked notes may be represented in the document model, but do not lock in a callout/numbering UI until that workflow is designed and tested with real quotes.
+- The uploaded map image is an immutable project asset by default. Markup remains separate so editing, undo/redo, restyling, and high-quality export do not degrade the source image.
+- Export must be deterministic from saved project data and include the plan, legend, project metadata, and selected notes. Do not make browser screenshots the canonical PDF implementation.
 - Treat the blueprint document as the core domain: document metadata, units, levels/pages, geometry, symbols, annotations, and revision/version metadata.
 - Keep the canonical document format serializable and versioned. Validate it at every persistence and API boundary. Never make canvas or DOM objects the stored domain model.
 - Separate domain operations from presentation. Geometry calculations, snapping, transforms, selection, undo/redo commands, and serialization must not depend on Flask request globals or DOM APIs.
 - Preserve backward compatibility for stored documents. Any schema change needs an explicit migration path and fixtures covering old and new versions.
 - Do not add collaboration, real-time sync, CAD interoperability, billing, accounts, cloud storage, background jobs, or a frontend framework unless the task explicitly requires it.
+- Google Maps acquisition is out of scope initially: accept an image the user is authorized to use. Do not scrape map tiles or add a Maps API without explicit approval and a licensing/attribution review.
 - Avoid speculative abstractions. Extract a reusable interface after a second real use case, or sooner when needed to isolate an external service or make behavior testable.
 
 ## Target architecture
