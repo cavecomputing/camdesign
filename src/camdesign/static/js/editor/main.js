@@ -268,8 +268,19 @@ if (root) {
     return Math.min(2, Math.max(0.03, distance / Math.min(dimensions.width, dimensions.height)));
   }
 
+  // Counting items reuses a number after a delete, producing two C03s. Carry on from
+  // the highest auto name instead, and ignore cameras the user has renamed.
+  function nextCameraLabel() {
+    const used = state
+      .document()
+      .items.map((item) => /^C(\d+)$/.exec(item.label ?? ""))
+      .filter(Boolean)
+      .map((match) => Number(match[1]));
+    const next = used.length ? Math.max(...used) + 1 : 1;
+    return `C${String(next).padStart(2, "0")}`;
+  }
+
   function cameraFromPoint(point) {
-    const cameraNumber = state.document().items.length + 1;
     return {
       id: crypto.randomUUID(),
       type: "camera",
@@ -278,7 +289,7 @@ if (root) {
       direction_degrees: -90,
       fov_degrees: currentFov(),
       range: 0.16,
-      label: `C${String(cameraNumber).padStart(2, "0")}`,
+      label: nextCameraLabel(),
       note: "",
     };
   }
@@ -324,6 +335,13 @@ if (root) {
       state.select(itemId);
       syncSelectionPanel();
       const camera = itemId ? state.itemById(itemId) : null;
+      if (camera && event.target.closest?.("[data-camera-name]")) {
+        // A name can sit well away from its camera once labels have been nudged
+        // apart, so clicking it selects and nothing more. Dragging the name must
+        // not re-aim the camera at the name.
+        render();
+        return;
+      }
       if (camera && event.target.closest?.("[data-camera-handle]")) {
         // The circle at the cone's point is the body: drag it to reposition the camera.
         move = {
@@ -354,7 +372,9 @@ if (root) {
       render();
       return;
     }
-    if (activeTool !== "camera" || item) return;
+    // The armed tool wins: a camera can be dropped on top of an existing one.
+    if (activeTool !== "camera") return;
+    event.preventDefault();
     const point = pointFromEvent(event);
     draft = cameraFromPoint(point);
     draft.startX = point.x;
@@ -534,6 +554,15 @@ if (root) {
   elements.cameraLabel.addEventListener("input", () => {
     applyCameraField({ label: elements.cameraLabel.value });
     elements.cameraTitle.textContent = elements.cameraLabel.value || "Unnamed camera";
+  });
+  elements.cameraLabel.addEventListener("blur", () => {
+    // Every camera needs an identifier on the quote, so a cleared name falls back
+    // to the next unused auto name rather than leaving a blank chip on the plan.
+    if (!state?.selectedId() || elements.cameraLabel.value.trim() !== "") return;
+    const label = nextCameraLabel();
+    elements.cameraLabel.value = label;
+    elements.cameraTitle.textContent = label;
+    applyCameraField({ label });
   });
   elements.cameraNote.addEventListener("focus", () => {
     cameraFieldDirty = false;
