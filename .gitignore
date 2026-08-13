@@ -1,17 +1,41 @@
-# Python environments and caches
-.venv/
+# Python bytecode and tool caches
+*$py.class
 __pycache__/
-*.py[cod]
-.pytest_cache/
-.ruff_cache/
+*.py[codz]
+.cache/
+.hypothesis/
 .mypy_cache/
+.nox/
+.pyre/
+.pytest_cache/
+.pytype/
+.ruff_cache/
+.tox/
+.uv-cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+__pypackages__/
+
+# Coverage output
 .coverage
+.coverage.*
+*.cover
+*.py,cover
+coverage.xml
 htmlcov/
 
-# Build artifacts
+# Packaging and build artifacts
+.eggs/
+*.egg
+*.egg-info/
 build/
 dist/
-*.egg-info/
+wheels/
+MANIFEST
 
 # Local configuration and secrets
 .env
@@ -22,11 +46,23 @@ dist/
 node_modules/
 
 # Runtime application data
+instance/
 data/*
 !data/.gitkeep
 
-# Editors and operating systems
+# Logs and temporary files
+*.bak
+*.log
+*.swp
+*.tmp
+*~
+
+# Notebooks, editors, and operating systems
+.ipynb_checkpoints/
+.fleet/
 .idea/
 .vscode/
 .DS_Store
+._*
+Desktop.ini
 Thumbs.db
