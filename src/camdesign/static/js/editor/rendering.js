@@ -36,8 +36,17 @@ function cameraGroup(camera, dimensions, index, selected) {
       class: "camera-cone",
       d: `M ${x} ${y} L ${startX} ${startY} A ${radius} ${radius} 0 ${largeArc} 1 ${endX} ${endY} Z`,
     }),
+    // Invisible grab target so the move handle stays usable on a touch screen.
+    svgElement("circle", {
+      class: "camera-handle",
+      "data-camera-handle": "",
+      cx: x,
+      cy: y,
+      r: 20 * scale,
+    }),
     svgElement("circle", {
       class: "camera-source",
+      "data-camera-handle": "",
       cx: x,
       cy: y,
       r: 9 * scale,

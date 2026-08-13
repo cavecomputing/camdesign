@@ -427,6 +427,21 @@
   cursor: pointer;
 }
 
+/* Transparent rather than none, so the enlarged grab target still hit-tests. */
+.camera-handle {
+  fill: transparent;
+}
+
+.camera-item [data-camera-handle] {
+  cursor: move;
+}
+
+.camera-fields {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
 .camera-item.is-selected .camera-cone {
   fill: rgb(239 107 87 / 28%);
   stroke: var(--coral-600);

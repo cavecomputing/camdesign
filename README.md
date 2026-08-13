@@ -1,6 +1,28 @@
 # CamDesign
 
-CamDesign is a field-friendly Flask workspace for turning site images into rough security-camera quote plans. It currently supports resumable projects, camera field-of-view placement, onsite notes, and debounced SQLite autosave.
+CamDesign is a field-friendly Flask workspace for turning site images into rough security-camera quote plans. It currently supports resumable projects, camera field-of-view placement, per-camera and project notes, and debounced SQLite autosave.
+
+**Supported on desktop and tablet only.** The editor is built for a mouse or a
+large touch screen at 768px wide and up. Phone-width layouts are not supported and
+are not tested; use a laptop or a tablet in landscape onsite.
+
+## Editing a plan
+
+| Action | How |
+| --- | --- |
+| Pick a tool | Click it, or press `1` for Select and `2` for Camera |
+| Place a camera | With Camera armed, click for a default cone or drag to aim it. The tool stays armed for the next one |
+| Move a camera | Drag the circle at the cone's point |
+| Aim and set reach | Drag anywhere inside the cone: around to aim, in and out for reach |
+| Name it and add a note | Select it, then use the **Selected camera** panel |
+| Change field of view | 30–180°. With Camera armed it sets the next one; with Select active it retargets the selected camera |
+| Delete | `Delete` or `Backspace`, or the sidebar button |
+| Undo | `Ctrl+Z`, or the arrow in the header |
+| Deselect | `Escape` |
+| Zoom and pan | Scroll to zoom at the cursor, double-click to fit. Drag empty canvas or middle-drag anywhere to pan |
+
+Changes autosave a moment after you stop. If a save fails the header says so and
+keeps retrying on its own, so a brief dead spot on the network does not lose work.
 
 ## Start locally
 
@@ -11,7 +33,7 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then doub
 On first run it writes `data/secret.key`, a stable signing key so that restarting the
 server does not invalidate sessions in tabs that are already open. Keep that file.
 
-To reach the app from a phone or tablet on the same trusted network, run
+To reach the app from a tablet on the same trusted network, run
 `start-camdesign.bat lan`, which binds all interfaces and prints the URLs to use.
 
 To run the same steps by hand:
@@ -30,7 +52,7 @@ For Flask debug mode and automatic reloading during development, use:
 uv run flask --app app run --debug
 ```
 
-## Connect from another device
+## Connect from a tablet
 
 On a trusted local network, bind the development server to the computer's network interfaces:
 
@@ -38,7 +60,10 @@ On a trusted local network, bind the development server to the computer's networ
 uv run flask --app app run --host 0.0.0.0
 ```
 
-Run `ipconfig`, find the computer's IPv4 address, then open `http://<IPv4-address>:5000` on the other device. If Windows prompts, allow access only on Private networks. This development server is not hardened for public internet exposure.
+Run `ipconfig`, find the computer's IPv4 address, then open `http://<IPv4-address>:5000` on the tablet. If Windows prompts, allow access only on Private networks. This development server is not hardened for public internet exposure.
+
+Use a tablet in landscape. Below 768px the inspector controls are cramped and the
+plan image is too small to place cameras accurately, so phones are out of scope.
 
 ## Data and checks
 

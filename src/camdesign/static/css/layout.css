@@ -195,15 +195,20 @@
 
   .workspace {
     grid-template-columns: 5.5rem minmax(0, 1fr);
-    grid-template-rows: 4.75rem minmax(0, 1fr) 15rem;
+    grid-template-rows: 4.75rem minmax(0, 1fr) 17rem;
   }
 
   .inspector {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 1fr 1.5fr auto;
+    /* One column per section: defaults, selected camera, project notes, count. */
+    grid-template-columns: 1fr 1.5fr 1.5fr auto;
     border-top: 1px solid var(--line);
     border-left: 0;
+  }
+
+  .inspector__section {
+    overflow-y: auto;
   }
 
   .inspector__section {
@@ -240,6 +245,12 @@
 
   .inspector__section--summary {
     display: none;
+  }
+
+  /* Stacked here, so the inspector scrolls as one column instead of each section
+     becoming its own cramped scroll box. */
+  .inspector__section {
+    overflow-y: visible;
   }
 
   /* Field of view and delete have to stay reachable on a phone, so compact the

@@ -15,6 +15,7 @@ Build a reliable, maintainable Flask web app for creating and editing blueprint 
 
 - The primary workflow is: create a client quote project, add one or more building/floor plans from user-supplied images or PDFs, mark up each plan, save and resume the work, then export a polished PDF quote package.
 - Optimize the initial product for a field estimator assembling a rough, trustworthy quote package onsite. Favor fast capture, large touch-friendly controls, obvious save state, and useful notes over CAD-level precision or equipment-catalog complexity.
+- Target desktop and tablet only, at 768px wide and up. Phone-width layouts are out of scope: do not add phone breakpoints, and do not compromise the desktop editor to accommodate one. Below 768px the plan image is too small to place cameras accurately.
 - Use `assets/ui-direction-light-estimator.png` as the visual direction: warm off-white workspace, ink-navy typography, restrained blue/coral accents, generous spacing, and a map-first layout. Treat it as inspiration rather than a pixel-perfect specification.
 - Keep the hierarchy explicit: a project represents the client/quote; a plan represents one building, floor, or area and owns its source asset, address/location label, markup document, notes, and revision. Do not overload one project row with a single plan.
 - List plans in the editor's left sidebar with a readable plan name and address/location subtext. Adding a plan starts a focused upload flow that captures or confirms both values; a plan may inherit the project's site address but remains independently editable.
@@ -104,7 +105,7 @@ tests/
 - Put design tokens (color, spacing, type, elevation, z-index, breakpoints) in custom properties. Components consume tokens rather than inventing one-off values.
 - Scope component styles with low-specificity class selectors. Avoid IDs for styling, deep descendant selectors, inline styles, and `!important` except for a documented accessibility or utility exception.
 - Split styles by concern/component once a file becomes difficult to navigate; keep the layer order centralized and stable.
-- Support responsive layouts, zoom, high contrast, reduced motion, and both pointer and keyboard input. Do not encode meaning with color alone.
+- Support responsive layouts from 768px up, zoom, high contrast, reduced motion, and both pointer and keyboard input. Do not encode meaning with color alone.
 
 ## Data integrity and security
 
@@ -149,7 +150,7 @@ tests/
 - Test malformed and boundary inputs, authorization failures, CSRF behavior, empty documents, large-but-allowed documents, concurrency/version conflicts, and rollback behavior where relevant.
 - Keep tests deterministic: no live network, wall-clock dependence, random values without fixed seeds, or shared mutable databases.
 - Use temporary directories/databases and app-factory test configuration. Tests must not read developer secrets or mutate production-like data.
-- For UI changes, verify keyboard behavior and responsive layout. Use browser automation or visual regression only when the repository has adopted the necessary tooling.
+- For UI changes, verify keyboard behavior and responsive layout at desktop and tablet widths. Use browser automation or visual regression only when the repository has adopted the necessary tooling.
 - Before declaring work complete, run the narrowest relevant checks and then the repository's full documented gate. Once configured, the expected Python gate is:
 
 ```powershell

@@ -97,6 +97,26 @@
         <p class="helper-text">30–180°. Sets the next camera you place; in Select mode it retargets the selected one.</p>
         <button class="button button--danger button--full" type="button" data-delete-selection disabled>Delete selected camera</button>
       </section>
+      <section class="inspector__section inspector__section--camera">
+        <div class="inspector__heading">
+          <div>
+            <p class="eyebrow">Selected camera</p>
+            <h2 data-camera-title>None selected</h2>
+          </div>
+          <span class="note-count" data-camera-note-count hidden>0 / 1000</span>
+        </div>
+        <p class="helper-text" data-camera-empty>Tap a camera on the plan to name it and record what you saw.</p>
+        <div class="camera-fields" data-camera-fields hidden>
+          <label class="field">
+            <span>Name</span>
+            <input type="text" data-camera-label maxlength="80" placeholder="Front door" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Note</span>
+            <textarea data-camera-note maxlength="1000" rows="4" placeholder="Mounting height, power, cable path, customer request…"></textarea>
+          </label>
+        </div>
+      </section>
       <section class="inspector__section inspector__section--notes">
         <div class="inspector__heading">
           <div>

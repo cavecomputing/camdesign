@@ -20,6 +20,12 @@ if (root) {
     deleteSelection: root.querySelector("[data-delete-selection]"),
     tools: [...root.querySelectorAll("[data-tool]")],
     shortcuts: [...root.querySelectorAll("[data-shortcut]")],
+    cameraTitle: root.querySelector("[data-camera-title]"),
+    cameraEmpty: root.querySelector("[data-camera-empty]"),
+    cameraFields: root.querySelector("[data-camera-fields]"),
+    cameraLabel: root.querySelector("[data-camera-label]"),
+    cameraNote: root.querySelector("[data-camera-note]"),
+    cameraNoteCount: root.querySelector("[data-camera-note-count]"),
   };
 
   const FIRST_RETRY_MS = 1_000;
@@ -38,7 +44,9 @@ if (root) {
   let activeTool = "select";
   let draft = null;
   let adjust = null;
+  let move = null;
   let pan = null;
+  let cameraFieldDirty = false;
   let zoom = 1;
   let baseWidth = 0;
   let saveTimer = null;
@@ -206,11 +214,54 @@ if (root) {
     return Math.min(MAX_FOV, Math.max(MIN_FOV, Math.round(value)));
   }
 
-  // Show the selected camera's own angle, so the field edits what is on screen.
-  function syncFovToSelection() {
+  function updateCameraNoteCount() {
+    elements.cameraNoteCount.textContent = `${elements.cameraNote.value.length} / 1000`;
+  }
+
+  // Point the inspector at whatever is selected, so the fields always edit what is
+  // highlighted on the plan. Kept out of render() so a redraw cannot clobber typing.
+  function syncSelectionPanel() {
     const selected = state?.selectedId();
     const camera = selected ? state.itemById(selected) : null;
+    elements.cameraFields.hidden = !camera;
+    elements.cameraEmpty.hidden = Boolean(camera);
+    elements.cameraNoteCount.hidden = !camera;
+    elements.cameraTitle.textContent = camera
+      ? camera.label || "Unnamed camera"
+      : "None selected";
     if (camera) elements.fov.value = String(Math.round(camera.fov_degrees));
+    elements.cameraLabel.value = camera ? camera.label : "";
+    elements.cameraNote.value = camera ? camera.note : "";
+    updateCameraNoteCount();
+    cameraFieldDirty = false;
+  }
+
+  function applyCameraField(changes) {
+    const selected = state?.selectedId();
+    if (!selected) return;
+    // One checkpoint per editing session rather than per keystroke, so undo steps
+    // back the whole edit the way the drag gestures do.
+    if (!cameraFieldDirty) {
+      state.beginChange();
+      cameraFieldDirty = true;
+    }
+    state.updateItem(selected, changes);
+    render();
+    markChanged();
+  }
+
+  function deleteSelectedCamera() {
+    if (!state?.deleteSelected()) return;
+    syncSelectionPanel();
+    render();
+    markChanged();
+  }
+
+  function undoLastChange() {
+    if (!state?.undo()) return;
+    syncSelectionPanel();
+    render();
+    markChanged();
   }
 
   function rangeFromDistance(distance) {
@@ -271,9 +322,21 @@ if (root) {
     if (activeTool === "select") {
       const itemId = item?.dataset.itemId ?? null;
       state.select(itemId);
-      syncFovToSelection();
+      syncSelectionPanel();
       const camera = itemId ? state.itemById(itemId) : null;
-      if (camera) {
+      if (camera && event.target.closest?.("[data-camera-handle]")) {
+        // The circle at the cone's point is the body: drag it to reposition the camera.
+        move = {
+          id: itemId,
+          originX: camera.x,
+          originY: camera.y,
+          start: pointFromEvent(event),
+          clientX: event.clientX,
+          clientY: event.clientY,
+          started: false,
+        };
+        capturePointer(event.pointerId);
+      } else if (camera) {
         // Hold anywhere in the cone and drag: around to aim, in and out for reach.
         adjust = {
           id: itemId,
@@ -304,6 +367,24 @@ if (root) {
     if (pan) {
       elements.panel.scrollLeft = pan.scrollLeft - (event.clientX - pan.clientX);
       elements.panel.scrollTop = pan.scrollTop - (event.clientY - pan.clientY);
+      return;
+    }
+    if (move) {
+      const travelled = Math.hypot(event.clientX - move.clientX, event.clientY - move.clientY);
+      if (!move.started && travelled < ADJUST_THRESHOLD_PX) return;
+      if (!move.started) {
+        state.beginChange();
+        move.started = true;
+      }
+      const point = pointFromEvent(event);
+      const x = move.originX + (point.x - move.start.x) / dimensions.width;
+      const y = move.originY + (point.y - move.start.y) / dimensions.height;
+      // Cameras are stored as a fraction of the image, so keep them on the plan.
+      state.updateItem(move.id, {
+        x: Math.min(1, Math.max(0, x)),
+        y: Math.min(1, Math.max(0, y)),
+      });
+      render();
       return;
     }
     if (adjust) {
@@ -346,8 +427,9 @@ if (root) {
       elements.overlay.style.cursor = activeTool === "camera" ? "crosshair" : "grab";
       return;
     }
-    if (adjust) {
-      const changed = adjust.started;
+    if (move || adjust) {
+      const changed = Boolean(move?.started || adjust?.started);
+      move = null;
       adjust = null;
       releasePointer(event.pointerId);
       if (changed) {
@@ -364,6 +446,7 @@ if (root) {
     draft = null;
     releasePointer(event.pointerId);
     // The tool stays armed so a run of cameras can be placed without reselecting it.
+    syncSelectionPanel();
     render();
     markChanged();
   }
@@ -384,6 +467,7 @@ if (root) {
       revision = payload.revision;
       elements.notes.value = payload.project.notes;
       setSaveState("All changes saved", "saved");
+      syncSelectionPanel();
       render();
     } catch (error) {
       if (error.name !== "AbortError") setSaveState(error.message, "error");
@@ -397,22 +481,66 @@ if (root) {
   elements.overlay.addEventListener("pointermove", onPointerMove);
   elements.overlay.addEventListener("pointerup", onPointerUp);
   elements.overlay.addEventListener("pointercancel", () => {
-    const adjusted = adjust?.started;
+    const edited = Boolean(adjust?.started || move?.started);
     draft = null;
     adjust = null;
+    move = null;
     pan = null;
     render();
-    // The cone was already moved before the gesture was cancelled, so persist it.
-    if (adjusted) markChanged();
+    // The camera was already changed before the gesture was cancelled, so persist it.
+    if (edited) markChanged();
   });
   document.addEventListener("keydown", (event) => {
+    const typing = Boolean(
+      event.target.closest?.("input, textarea, select, [contenteditable]"),
+    );
+
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === "z") {
+      // Inside a text field this belongs to the browser's own text undo.
+      if (typing) return;
+      event.preventDefault();
+      undoLastChange();
+      return;
+    }
     if (event.ctrlKey || event.metaKey || event.altKey) return;
-    // Never steal a digit from the notes field or the angle box.
-    if (event.target.closest?.("input, textarea, select, [contenteditable]")) return;
+
+    if (event.key === "Escape") {
+      event.target.blur?.();
+      state?.select(null);
+      syncSelectionPanel();
+      render();
+      return;
+    }
+
+    // Everything below would fight with typing a name, a note, or an angle.
+    if (typing) return;
+
+    if (event.key === "Delete" || event.key === "Backspace") {
+      if (!state?.selectedId()) return;
+      event.preventDefault();
+      deleteSelectedCamera();
+      return;
+    }
+
     const button = elements.shortcuts.find((entry) => entry.dataset.shortcut === event.key);
     if (!button || button.disabled || !button.dataset.tool) return;
     event.preventDefault();
     setTool(button.dataset.tool);
+  });
+
+  elements.cameraLabel.addEventListener("focus", () => {
+    cameraFieldDirty = false;
+  });
+  elements.cameraLabel.addEventListener("input", () => {
+    applyCameraField({ label: elements.cameraLabel.value });
+    elements.cameraTitle.textContent = elements.cameraLabel.value || "Unnamed camera";
+  });
+  elements.cameraNote.addEventListener("focus", () => {
+    cameraFieldDirty = false;
+  });
+  elements.cameraNote.addEventListener("input", () => {
+    updateCameraNoteCount();
+    applyCameraField({ note: elements.cameraNote.value });
   });
 
   elements.fov.addEventListener("change", () => {
@@ -446,18 +574,8 @@ if (root) {
     updateControls();
     markChanged();
   });
-  elements.undo.addEventListener("click", () => {
-    if (state.undo()) {
-      render();
-      markChanged();
-    }
-  });
-  elements.deleteSelection.addEventListener("click", () => {
-    if (state.deleteSelected()) {
-      render();
-      markChanged();
-    }
-  });
+  elements.undo.addEventListener("click", undoLastChange);
+  elements.deleteSelection.addEventListener("click", deleteSelectedCamera);
   document.addEventListener("visibilitychange", () => {
     if (document.hidden && savedVersion !== changeVersion) saveNow();
   });
