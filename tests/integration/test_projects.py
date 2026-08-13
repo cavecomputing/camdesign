@@ -38,8 +38,13 @@ def test_empty_dashboard_and_security_headers(client):
 
     assert response.status_code == 200
     assert b"Create your first project" in response.data
+    assert b"/static/images/camdesign-logo.png" in response.data
     assert response.headers["X-Content-Type-Options"] == "nosniff"
     assert "default-src 'self'" in response.headers["Content-Security-Policy"]
+
+    logo = client.get("/static/images/camdesign-logo.png")
+    assert logo.status_code == 200
+    assert logo.mimetype == "image/png"
 
 
 def test_create_resume_and_serve_project_asset(client):

@@ -12,7 +12,13 @@
     {% block body %}
       <header class="site-header">
         <a class="brand" href="{{ url_for('projects.index') }}" aria-label="CamDesign projects">
-          <span class="brand__mark" aria-hidden="true">C</span>
+          <img
+            class="brand__logo"
+            src="{{ url_for('static', filename='images/camdesign-logo.png') }}"
+            width="640"
+            height="353"
+            alt=""
+          >
           <span>CamDesign</span>
         </a>
         <a class="button button--primary" href="{{ url_for('projects.new') }}">New project</a>
