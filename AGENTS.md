@@ -13,9 +13,12 @@ Build a reliable, maintainable Flask web app for creating and editing blueprint 
 
 ## Scope and product boundaries
 
-- The primary workflow is: create a project, upload a Google Maps/site-plan image supplied by the user, mark up the plan, save and resume it, then export a polished PDF for a camera quote.
+- The primary workflow is: create a client quote project, add one or more building/floor plans from user-supplied images or PDFs, mark up each plan, save and resume the work, then export a polished PDF quote package.
 - Optimize the initial product for a field estimator assembling a rough, trustworthy quote package onsite. Favor fast capture, large touch-friendly controls, obvious save state, and useful notes over CAD-level precision or equipment-catalog complexity.
 - Use `assets/ui-direction-light-estimator.png` as the visual direction: warm off-white workspace, ink-navy typography, restrained blue/coral accents, generous spacing, and a map-first layout. Treat it as inspiration rather than a pixel-perfect specification.
+- Keep the hierarchy explicit: a project represents the client/quote; a plan represents one building, floor, or area and owns its source asset, address/location label, markup document, notes, and revision. Do not overload one project row with a single plan.
+- List plans in the editor's left sidebar with a readable plan name and address/location subtext. Adding a plan starts a focused upload flow that captures or confirms both values; a plan may inherit the project's site address but remains independently editable.
+- Preserve an uploaded PDF as an immutable source. Markup operates on deterministic rasterized page assets; never draw directly into an embedded browser PDF. A selected PDF page becomes a plan, and a multi-page PDF may create multiple plans only through an explicit user choice.
 - The initial markup vocabulary is deliberately small: cameras with a source point and field-of-view cone, Ethernet cable runs, MDF/IDF locations, and notes. Keep these symbols minimal, legible, and visually consistent in both the editor and PDF.
 - A camera placement stores a normalized anchor point, direction, range, and field-of-view angle. Click placement may use sensible defaults; dragging from the source point sets direction/range. Field-of-view angle remains explicitly adjustable.
 - Cable runs are ordered normalized points with style/label metadata, not pixels painted onto the source image. MDF/IDF markers and every other item use the same document-coordinate system.
@@ -35,6 +38,7 @@ Build a reliable, maintainable Flask web app for creating and editing blueprint 
 Use a `src` layout and an application factory. The expected shape is:
 
 ```text
+app.py                 # single, thin application entry point
 src/camdesign/
   __init__.py          # create_app(config=None)
   config.py            # configuration classes/loading only
@@ -55,6 +59,7 @@ tests/
   integration/
 ```
 
+- `app.py` is the only application entry point at the repository root. It may import `create_app`, expose `app`, and launch local development, but it must not contain routes, configuration logic, database access, or business behavior.
 - `create_app` owns configuration, extension initialization, blueprint registration, error handlers, logging, and CLI registration.
 - Define extension objects without binding them globally; call `init_app` inside the factory.
 - Organize blueprints by user-facing capability, not by HTTP verb. Keep route handlers thin: parse and validate input, call a service, and translate the result to HTTP.
@@ -117,6 +122,9 @@ tests/
 
 - Define transaction boundaries in services. A failed operation must not leave a partially saved document.
 - Make retries and repeated requests safe where practical. Use idempotency or optimistic concurrency/version checks for document saves rather than silent last-write-wins overwrites.
+- Autosave every meaningful edit after a short debounce and show `Unsaved`, `Saving`, `Saved`, or actionable failure state truthfully. Track changes made during an in-flight save so an older response can never falsely mark newer edits as saved.
+- Closing an editor dialog, drawer, popover, or plan switch must flush and await its pending save before discarding local state. If saving fails, keep the UI open with the user's input intact and offer retry; never treat closing UI as cancel unless the user explicitly chooses to discard.
+- Warn before page navigation while unsaved changes remain, and trigger an immediate save when the page becomes hidden. Debounce is a performance detail, not permission to lose edits.
 - Time out external I/O and handle expected failure modes explicitly. Do not catch broad exceptions unless re-raising or translating them at a boundary.
 - Provide lightweight health/readiness endpoints when deployment work begins; readiness should verify only dependencies required to serve requests.
 - Preserve error causes in logs while presenting stable, non-sensitive messages to clients.
@@ -134,7 +142,9 @@ tests/
 
 ## Testing and quality gates
 
-- Every behavior change needs a test at the lowest useful level. Every bug fix needs a regression test that fails before the fix.
+- Add the smallest high-signal test that protects behavior with meaningful regression, security, data-integrity, or domain risk. Every bug fix needs a focused regression test that fails before the fix.
+- Do not test Flask, SQLite, browser primitives, static copy, or trivial pass-through code. Do not repeat the same assertion across layers unless each layer has a distinct failure mode.
+- CSS-only polish and straightforward template composition do not require automated tests by default; verify them visually at the relevant breakpoints. Prefer a few durable workflow tests over broad low-value coverage.
 - Prioritize unit tests for domain geometry, document migrations, validation, commands, and state transitions; use Flask's test client for routes, auth, errors, and persistence integration.
 - Test malformed and boundary inputs, authorization failures, CSRF behavior, empty documents, large-but-allowed documents, concurrency/version conflicts, and rollback behavior where relevant.
 - Keep tests deterministic: no live network, wall-clock dependence, random values without fixed seeds, or shared mutable databases.
@@ -151,6 +161,13 @@ uv run ruff format --check .
 
 - Run frontend lint/type/test/build commands when they exist. Never claim a check passed unless it was actually run; report skipped or unavailable checks explicitly.
 - Do not weaken, delete, skip, or mark tests as expected failures merely to make a gate pass.
+
+## Lean implementation
+
+- Use the fewest clear lines and concepts that deliver the required behavior safely. This is a focus constraint, not permission to omit required UX, validation, security, migrations, or failure handling.
+- Do not add an abstraction, configuration option, dependency, compatibility layer, helper, test, or defensive branch without a current requirement or concrete failure mode.
+- Prefer direct framework capabilities and a complete vertical slice. Delete superseded code instead of keeping parallel paths, and avoid placeholder implementations that pretend an unfinished feature works.
+- Keep reviews small: a change should have one outcome, the necessary implementation, and only the verification that materially increases confidence.
 
 ## Dependencies and migrations
 

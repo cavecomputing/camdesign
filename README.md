@@ -8,8 +8,8 @@ The first vertical slice supports creating and resuming projects, uploading a ba
 
 ```powershell
 uv sync
-uv run flask --app camdesign db-upgrade
-uv run flask --app camdesign run
+uv run flask --app app db-upgrade
+uv run flask --app app run
 ```
 
 Open <http://127.0.0.1:5000>. The development server is for local development only.

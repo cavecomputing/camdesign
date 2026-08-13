@@ -21,7 +21,6 @@ if (root) {
   };
 
   const documentUrl = root.dataset.documentUrl;
-  const controller = new AbortController();
   let state;
   let revision;
   let dimensions;
@@ -29,6 +28,8 @@ if (root) {
   let draft = null;
   let saveTimer = null;
   let saveQueue = Promise.resolve();
+  let changeVersion = 0;
+  let savedVersion = 0;
 
   function setSaveState(message, variant = "") {
     elements.saveState.textContent = message;
@@ -52,8 +53,11 @@ if (root) {
 
   function saveNow() {
     clearTimeout(saveTimer);
+    if (!state || savedVersion === changeVersion) return saveQueue;
     saveQueue = saveQueue
       .then(async () => {
+        if (savedVersion === changeVersion) return;
+        const savingVersion = changeVersion;
         setSaveState("Saving…");
         const result = await saveProject(
           documentUrl,
@@ -62,17 +66,22 @@ if (root) {
             document: state.document(),
             notes: elements.notes.value,
           },
-          controller.signal,
         );
         revision = result.revision;
-        setSaveState("All changes saved", "saved");
+        savedVersion = Math.max(savedVersion, savingVersion);
+        setSaveState(
+          savedVersion === changeVersion ? "All changes saved" : "Unsaved changes",
+          savedVersion === changeVersion ? "saved" : "",
+        );
       })
       .catch((error) => {
         if (error.name !== "AbortError") setSaveState(error.message, "error");
       });
+    return saveQueue;
   }
 
-  function scheduleSave() {
+  function markChanged() {
+    changeVersion += 1;
     setSaveState("Unsaved changes");
     clearTimeout(saveTimer);
     saveTimer = window.setTimeout(saveNow, 650);
@@ -155,13 +164,13 @@ if (root) {
     elements.overlay.releasePointerCapture(event.pointerId);
     setTool("select");
     render();
-    scheduleSave();
+    markChanged();
   }
 
   async function initialize() {
     try {
       const [payload] = await Promise.all([
-        loadProject(documentUrl, controller.signal),
+        loadProject(documentUrl),
         elements.image.decode(),
       ]);
       dimensions = {
@@ -191,21 +200,29 @@ if (root) {
   });
   elements.notes.addEventListener("input", () => {
     updateControls();
-    scheduleSave();
+    markChanged();
   });
   elements.undo.addEventListener("click", () => {
     if (state.undo()) {
       render();
-      scheduleSave();
+      markChanged();
     }
   });
   elements.deleteSelection.addEventListener("click", () => {
     if (state.deleteSelected()) {
       render();
-      scheduleSave();
+      markChanged();
     }
   });
-  window.addEventListener("pagehide", () => controller.abort(), { once: true });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && savedVersion !== changeVersion) saveNow();
+  });
+  window.addEventListener("beforeunload", (event) => {
+    if (savedVersion === changeVersion) return;
+    event.preventDefault();
+    event.returnValue = "";
+  });
+  window.addEventListener("pagehide", saveNow);
 
   initialize();
 }
