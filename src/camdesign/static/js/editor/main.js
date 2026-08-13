@@ -101,7 +101,7 @@ if (root) {
     // again instead of stranding every edit made from here on.
     if (error.status === 409 && typeof error.payload?.revision === "number") {
       revision = error.payload.revision;
-      setSaveState("Catching up…");
+      setSaveState("Catching up…", "saving");
       scheduleRetry(200);
       return;
     }
@@ -109,7 +109,7 @@ if (root) {
     // session holding the CSRF token. Fetch a fresh one rather than lose the work.
     if (error.status === 400 && !csrfRefreshed && (await refreshCsrfToken())) {
       csrfRefreshed = true;
-      setSaveState("Reconnecting…");
+      setSaveState("Reconnecting…", "saving");
       scheduleRetry(200);
       return;
     }
@@ -129,7 +129,7 @@ if (root) {
       .then(async () => {
         if (savedVersion === changeVersion) return;
         const savingVersion = changeVersion;
-        setSaveState("Saving…");
+        setSaveState("Saving…", "saving");
         const result = await saveProject(
           documentUrl,
           {
@@ -144,7 +144,7 @@ if (root) {
         csrfRefreshed = false;
         setSaveState(
           savedVersion === changeVersion ? "All changes saved" : "Unsaved changes",
-          savedVersion === changeVersion ? "saved" : "",
+          savedVersion === changeVersion ? "saved" : "dirty",
         );
       })
       .catch((error) => {
@@ -155,7 +155,7 @@ if (root) {
 
   function markChanged() {
     changeVersion += 1;
-    setSaveState("Unsaved changes");
+    setSaveState("Unsaved changes", "dirty");
     clearTimeout(saveTimer);
     saveTimer = window.setTimeout(saveNow, 650);
   }
@@ -171,6 +171,10 @@ if (root) {
       tool === "camera"
         ? "Click for a standard camera cone, or drag to set direction and reach."
         : "Tap a camera to select it. Drag inside its cone to aim it and set how far it reaches.";
+    // Retoggle the class so the swap animation replays on every tool change.
+    elements.hint.classList.remove("is-swap");
+    void elements.hint.offsetWidth;
+    elements.hint.classList.add("is-swap");
     elements.overlay.style.cursor = tool === "camera" ? "crosshair" : "grab";
   }
 

@@ -20,6 +20,18 @@
   margin-bottom: var(--space-6);
 }
 
+/* Gentle first-paint settle for server-rendered pages; content follows the heading. */
+.page-heading,
+.empty-state,
+.form-intro {
+  animation: rise-in var(--duration-med) var(--ease-out) both;
+}
+
+.project-grid,
+.project-form {
+  animation: rise-in var(--duration-med) var(--ease-out) 70ms both;
+}
+
 .page-heading p {
   max-width: 38rem;
 }
@@ -132,6 +144,7 @@
   background: var(--surface);
   box-shadow: var(--shadow-md);
   touch-action: none;
+  animation: stage-in var(--duration-med) var(--ease-out) both;
 }
 
 .plan-stage img {
