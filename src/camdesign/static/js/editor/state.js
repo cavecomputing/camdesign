@@ -19,10 +19,26 @@ export function createEditorState(initialDocument) {
     itemsWith(draft) {
       return draft ? [...current.items, draft] : current.items;
     },
+    cameraCount() {
+      return current.items.filter((item) => item.type === "camera").length;
+    },
+    itemById(itemId) {
+      const item = current.items.find((entry) => entry.id === itemId);
+      return item ? clone(item) : null;
+    },
     addCamera(camera) {
       checkpoint();
       current.items.push(clone(camera));
       selectedId = camera.id;
+    },
+    beginChange() {
+      checkpoint();
+    },
+    updateItem(itemId, changes) {
+      const item = current.items.find((entry) => entry.id === itemId);
+      if (!item) return false;
+      Object.assign(item, changes);
+      return true;
     },
     deleteSelected() {
       if (!selectedId) return false;

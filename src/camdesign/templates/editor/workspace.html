@@ -44,7 +44,7 @@
       </button>
     </nav>
 
-    <section class="plan-panel" aria-label="Site plan editor">
+    <section class="plan-panel" data-plan-panel aria-label="Site plan editor">
       <div class="plan-panel__hint" data-plan-hint>Select the Camera tool, then click or drag on the plan.</div>
       <div class="plan-stage" data-plan-stage>
         <img src="{{ url_for('projects.asset', project_id=project.id) }}" alt="Site plan for {{ project.name }}" data-plan-image>

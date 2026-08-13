@@ -2,14 +2,21 @@ function csrfToken() {
   return document.querySelector('meta[name="csrf-token"]')?.content ?? "";
 }
 
+function requestError(message, response, payload) {
+  const error = new Error(message);
+  error.status = response.status;
+  error.payload = payload;
+  return error;
+}
+
 async function parseJson(response) {
   const contentType = response.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) {
-    throw new Error("The server returned an unexpected response.");
+    throw requestError("The server returned an unexpected response.", response, null);
   }
   const payload = await response.json();
   if (!response.ok) {
-    throw new Error(payload.error?.message ?? "The request failed.");
+    throw requestError(payload.error?.message ?? "The request failed.", response, payload);
   }
   return payload;
 }

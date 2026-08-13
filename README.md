@@ -4,7 +4,17 @@ CamDesign is a field-friendly Flask workspace for turning site images into rough
 
 ## Start locally
 
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run from the project root:
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then double-click
+`start-camdesign.bat`. It migrates the database, starts the server, and opens
+<http://127.0.0.1:5000> in the default browser. Closing the console window stops it.
+
+On first run it writes `data/secret.key`, a stable signing key so that restarting the
+server does not invalidate sessions in tabs that are already open. Keep that file.
+
+To reach the app from a phone or tablet on the same trusted network, run
+`start-camdesign.bat lan`, which binds all interfaces and prints the URLs to use.
+
+To run the same steps by hand:
 
 ```powershell
 uv sync --frozen

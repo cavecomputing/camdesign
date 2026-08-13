@@ -141,6 +141,19 @@
   user-select: none;
 }
 
+/* Zoomed past fit the stage is driven by an explicit width, and the panel scrolls. */
+.plan-stage.is-zoomed {
+  max-width: none;
+  /* auto margins go negative once the stage outgrows the panel, so pin them. */
+  margin-inline: 0;
+}
+
+.plan-stage.is-zoomed img {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+}
+
 .plan-overlay {
   position: absolute;
   inset: 0;
@@ -225,9 +238,28 @@
     grid-template-columns: 1fr;
   }
 
-  .inspector__section:first-child,
   .inspector__section--summary {
     display: none;
+  }
+
+  /* Field of view and delete have to stay reachable on a phone, so compact the
+     section into a single row rather than hiding it. */
+  .inspector__section:first-child {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .inspector__section:first-child .eyebrow,
+  .inspector__section:first-child h2,
+  .inspector__section:first-child .helper-text {
+    display: none;
+  }
+
+  .inspector__section--notes {
+    min-height: 0;
   }
 
   .field-row {
