@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import secrets
 from collections.abc import Mapping
+from pathlib import Path
 from typing import Any
 
 from flask import Flask, jsonify, render_template, request
@@ -28,6 +29,7 @@ def create_app(test_config: Mapping[str, Any] | None = None) -> Flask:
     app.config["UPLOAD_DIR"].mkdir(parents=True, exist_ok=True)
 
     db.init_app(app)
+    db.migrate_database(Path(app.config["DATABASE"]))
     app.before_request(protect_csrf)
     app.context_processor(lambda: {"csrf_token": csrf_token})
 

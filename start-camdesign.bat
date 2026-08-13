@@ -22,9 +22,7 @@ echo Checking dependencies...
 uv sync --frozen
 if errorlevel 1 echo   ...skipped, continuing with the installed environment.
 
-echo Applying database migrations...
-uv run flask --app app db-upgrade
-if errorlevel 1 goto :failed
+REM The server applies pending database migrations itself as it starts.
 
 if /i "%HOST%"=="0.0.0.0" (
     echo.

@@ -40,11 +40,18 @@ To run the same steps by hand:
 
 ```powershell
 uv sync --frozen
-uv run flask --app app db-upgrade
 uv run app.py
 ```
 
-`uv run app.py` runs the entry-point script in the project's managed environment and is equivalent to `uv run python app.py`. Open <http://127.0.0.1:5000> and stop the server with `Ctrl+C`. On later starts, only the final command is normally needed; rerun `db-upgrade` after pulling schema changes.
+`uv run app.py` runs the entry-point script in the project's managed environment and is equivalent to `uv run python app.py`. Open <http://127.0.0.1:5000> and stop the server with `Ctrl+C`. On later starts, only the final command is normally needed.
+
+The app applies any pending database migrations as it starts, so pulling schema
+changes needs no extra step. To run them on their own — to check a migration
+before starting the server, or to upgrade the database without serving it — use:
+
+```powershell
+uv run flask --app app db-upgrade
+```
 
 For Flask debug mode and automatic reloading during development, use:
 
