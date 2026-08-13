@@ -16,8 +16,8 @@
         <span>CamDesign</span>
       </a>
       <div class="workspace-bar__project">
-        <span class="workspace-bar__label">Field quote</span>
         <strong>{{ project.name }}</strong>
+        <span class="workspace-bar__address">{{ project.site_address or project.client_name or "Field quote" }}</span>
       </div>
       <div class="workspace-bar__actions">
         <span class="save-state" data-save-state role="status">Loading…</span>

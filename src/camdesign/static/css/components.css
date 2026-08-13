@@ -150,6 +150,13 @@
   font-size: 0.78rem;
 }
 
+.project-card__body .project-card__address {
+  display: block;
+  margin-bottom: var(--space-3);
+  color: var(--ink-650);
+  font-size: 0.84rem;
+}
+
 .empty-state {
   display: grid;
   min-height: 27rem;
@@ -429,5 +436,11 @@
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .workspace-bar__actions .button {
+    display: none;
   }
 }

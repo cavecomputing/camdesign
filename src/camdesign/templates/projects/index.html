@@ -21,7 +21,10 @@
           </div>
           <div class="project-card__body">
             <h2>{{ project.name }}</h2>
-            <p>{{ project.client_name or project.site_address or "Site plan" }}</p>
+            <p>{{ project.client_name or "Camera quote" }}</p>
+            {% if project.site_address %}
+              <span class="project-card__address">{{ project.site_address }}</span>
+            {% endif %}
             <span>Updated {{ project.updated_at }}</span>
           </div>
         </a>
