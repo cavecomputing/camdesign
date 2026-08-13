@@ -321,6 +321,23 @@
   background: var(--blue-100);
 }
 
+.tool-button__key {
+  position: absolute;
+  top: 0.28rem;
+  right: 0.34rem;
+  color: var(--ink-650);
+  font-family: inherit;
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.75;
+}
+
+.tool-button.is-active .tool-button__key {
+  color: var(--blue-700);
+  opacity: 1;
+}
+
 .plan-panel__hint {
   position: sticky;
   z-index: 4;

@@ -19,6 +19,7 @@ if (root) {
     undo: root.querySelector("[data-undo]"),
     deleteSelection: root.querySelector("[data-delete-selection]"),
     tools: [...root.querySelectorAll("[data-tool]")],
+    shortcuts: [...root.querySelectorAll("[data-shortcut]")],
   };
 
   const FIRST_RETRY_MS = 1_000;
@@ -26,6 +27,9 @@ if (root) {
   const ADJUST_THRESHOLD_PX = 4;
   const MIN_ZOOM = 1;
   const MAX_ZOOM = 8;
+  const MIN_FOV = 30;
+  const MAX_FOV = 180;
+  const DEFAULT_FOV = 90;
 
   const documentUrl = root.dataset.documentUrl;
   let state;
@@ -196,6 +200,19 @@ if (root) {
     applyZoom(zoom * factor, { x: event.clientX, y: event.clientY });
   }
 
+  function currentFov() {
+    const value = Number(elements.fov.value);
+    if (!Number.isFinite(value) || elements.fov.value.trim() === "") return DEFAULT_FOV;
+    return Math.min(MAX_FOV, Math.max(MIN_FOV, Math.round(value)));
+  }
+
+  // Show the selected camera's own angle, so the field edits what is on screen.
+  function syncFovToSelection() {
+    const selected = state?.selectedId();
+    const camera = selected ? state.itemById(selected) : null;
+    if (camera) elements.fov.value = String(Math.round(camera.fov_degrees));
+  }
+
   function rangeFromDistance(distance) {
     return Math.min(2, Math.max(0.03, distance / Math.min(dimensions.width, dimensions.height)));
   }
@@ -208,7 +225,7 @@ if (root) {
       x: point.x / dimensions.width,
       y: point.y / dimensions.height,
       direction_degrees: -90,
-      fov_degrees: Number(elements.fov.value),
+      fov_degrees: currentFov(),
       range: 0.16,
       label: `C${String(cameraNumber).padStart(2, "0")}`,
       note: "",
@@ -254,6 +271,7 @@ if (root) {
     if (activeTool === "select") {
       const itemId = item?.dataset.itemId ?? null;
       state.select(itemId);
+      syncFovToSelection();
       const camera = itemId ? state.itemById(itemId) : null;
       if (camera) {
         // Hold anywhere in the cone and drag: around to aim, in and out for reach.
@@ -345,7 +363,7 @@ if (root) {
     state.addCamera(completed);
     draft = null;
     releasePointer(event.pointerId);
-    setTool("select");
+    // The tool stays armed so a run of cameras can be placed without reselecting it.
     render();
     markChanged();
   }
@@ -387,6 +405,30 @@ if (root) {
     // The cone was already moved before the gesture was cancelled, so persist it.
     if (adjusted) markChanged();
   });
+  document.addEventListener("keydown", (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    // Never steal a digit from the notes field or the angle box.
+    if (event.target.closest?.("input, textarea, select, [contenteditable]")) return;
+    const button = elements.shortcuts.find((entry) => entry.dataset.shortcut === event.key);
+    if (!button || button.disabled || !button.dataset.tool) return;
+    event.preventDefault();
+    setTool(button.dataset.tool);
+  });
+
+  elements.fov.addEventListener("change", () => {
+    const fov = currentFov();
+    // Reflect the clamped value so the number shown is the number that gets used.
+    elements.fov.value = String(fov);
+    // While the camera tool is armed this is the angle for the next camera, so leave
+    // the one just placed alone. Retargeting a camera is a Select-tool action.
+    const selected = activeTool === "select" ? state?.selectedId() : null;
+    if (!selected) return;
+    state.beginChange();
+    state.updateItem(selected, { fov_degrees: fov });
+    render();
+    markChanged();
+  });
+
   elements.panel.addEventListener("wheel", onWheel, { passive: false });
   // Suppress the Windows middle-click autoscroll ring so the pan gesture owns the button.
   elements.overlay.addEventListener("auxclick", (event) => {
