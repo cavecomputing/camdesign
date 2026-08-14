@@ -83,6 +83,32 @@ def test_project_creation_rejects_non_image_upload(client):
     assert b"Upload a PNG, JPEG, or WebP image" in response.data
 
 
+def test_delete_project_removes_record_and_uploaded_asset(client, app):
+    created = create_project(client)
+    project_id = project_id_from_redirect(created)
+    asset_path = app.config["UPLOAD_DIR"] / project_id / "base-map.png"
+    assert asset_path.is_file()
+
+    dashboard = client.get("/")
+    assert f"/projects/{project_id}/delete".encode() in dashboard.data
+
+    confirmation = client.get(f"/projects/{project_id}/delete")
+    assert confirmation.status_code == 200
+    assert b"This action cannot be undone" in confirmation.data
+
+    deleted = client.post(
+        f"/projects/{project_id}/delete",
+        data={"csrf_token": csrf_token(client)},
+        follow_redirects=True,
+    )
+
+    assert deleted.status_code == 200
+    assert b"Oak &amp; Main Market&#34; was deleted." in deleted.data
+    assert not asset_path.exists()
+    assert client.get(f"/projects/{project_id}/editor").status_code == 404
+    assert client.get(f"/projects/{project_id}/asset").status_code == 404
+
+
 def test_document_save_uses_revision_check(client):
     created = create_project(client)
     project_id = project_id_from_redirect(created)

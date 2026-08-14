@@ -86,3 +86,23 @@ def create_project(
     except (OSError, sqlite3.Error):
         shutil.rmtree(project_upload_dir, ignore_errors=True)
         raise
+
+
+def delete_project(
+    repository: SQLiteProjectRepository,
+    upload_root: Path,
+    project_id: str,
+) -> Project | None:
+    project = repository.get(project_id)
+    if project is None:
+        return None
+
+    project_upload_dir = (upload_root.parent / project.image_path).resolve().parent
+    expected_upload_dir = (upload_root / project.id).resolve()
+    if project_upload_dir != expected_upload_dir:
+        raise RuntimeError("project asset path is outside its upload directory")
+
+    if not repository.delete(project_id):
+        return None
+    shutil.rmtree(project_upload_dir, ignore_errors=True)
+    return project

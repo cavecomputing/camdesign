@@ -11,7 +11,7 @@ from camdesign.domain.bom import build_bom
 from camdesign.domain.catalog import load_catalog
 from camdesign.exports import bom_filename, render_bom_pdf
 from camdesign.repositories.projects import SQLiteProjectRepository
-from camdesign.services.projects import InvalidProject, create_project
+from camdesign.services.projects import InvalidProject, create_project, delete_project
 
 
 @projects.get("/")
@@ -42,6 +42,27 @@ def create():
         flash(str(error), "error")
         return render_template("projects/new.html", form=request.form), 422
     return redirect(url_for("editor.workspace", project_id=project.id))
+
+
+@projects.post("/projects/<uuid:project_id>/delete")
+def delete(project_id):
+    deleted = delete_project(
+        SQLiteProjectRepository(get_db()),
+        current_app.config["UPLOAD_DIR"],
+        str(project_id),
+    )
+    if deleted is None:
+        abort(404)
+    flash(f'Project "{deleted.name}" was deleted.', "success")
+    return redirect(url_for("projects.index"))
+
+
+@projects.get("/projects/<uuid:project_id>/delete")
+def confirm_delete(project_id):
+    project = SQLiteProjectRepository(get_db()).get(str(project_id))
+    if project is None:
+        abort(404)
+    return render_template("projects/confirm_delete.html", project=project)
 
 
 @projects.get("/projects/<uuid:project_id>/asset")

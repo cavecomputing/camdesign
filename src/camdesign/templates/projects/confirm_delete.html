@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Delete {{ project.name }} · CamDesign{% endblock %}
+
+{% block content %}
+  <section class="confirmation-card" aria-labelledby="delete-project-title">
+    <p class="eyebrow">Delete project</p>
+    <h1 id="delete-project-title">Delete {{ project.name }}?</h1>
+    <p>This permanently removes the plan image, markup, and project notes. This action cannot be undone.</p>
+    <div class="confirmation-card__actions">
+      <a class="button button--quiet" href="{{ url_for('projects.index') }}">Keep project</a>
+      <form method="post" action="{{ url_for('projects.delete', project_id=project.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="button button--danger" type="submit">Delete project</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

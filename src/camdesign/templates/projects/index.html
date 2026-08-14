@@ -14,20 +14,28 @@
   {% if projects %}
     <div class="project-grid">
       {% for project in projects %}
-        <a class="project-card" href="{{ url_for('editor.workspace', project_id=project.id) }}">
-          <div class="project-card__preview">
-            <img src="{{ url_for('projects.asset', project_id=project.id) }}" alt="">
-            <span class="project-card__status">Saved</span>
-          </div>
-          <div class="project-card__body">
-            <h2>{{ project.name }}</h2>
-            <p>{{ project.client_name or "Camera quote" }}</p>
-            {% if project.site_address %}
-              <span class="project-card__address">{{ project.site_address }}</span>
-            {% endif %}
+        <article class="project-card">
+          <a class="project-card__open" href="{{ url_for('editor.workspace', project_id=project.id) }}">
+            <div class="project-card__preview">
+              <img src="{{ url_for('projects.asset', project_id=project.id) }}" alt="">
+              <span class="project-card__status">Saved</span>
+            </div>
+            <div class="project-card__body">
+              <h2>{{ project.name }}</h2>
+              <p>{{ project.client_name or "Camera quote" }}</p>
+              {% if project.site_address %}
+                <span class="project-card__address">{{ project.site_address }}</span>
+              {% endif %}
+            </div>
+          </a>
+          <footer class="project-card__footer">
             <span>Updated {{ project.updated_at | friendly_timestamp }}</span>
-          </div>
-        </a>
+            <a
+              class="button button--danger button--sm"
+              href="{{ url_for('projects.confirm_delete', project_id=project.id) }}"
+            >Delete</a>
+          </footer>
+        </article>
       {% endfor %}
     </div>
   {% else %}

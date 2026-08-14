@@ -55,6 +55,11 @@ class SQLiteProjectRepository:
         ).fetchone()
         return _project_from_row(row) if row else None
 
+    def delete(self, project_id: str) -> bool:
+        cursor = self.connection.execute("DELETE FROM projects WHERE id = ?", (project_id,))
+        self.connection.commit()
+        return cursor.rowcount == 1
+
     def create(
         self,
         *,
