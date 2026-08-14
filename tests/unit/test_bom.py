@@ -85,6 +85,24 @@ def test_an_empty_plan_reports_nothing_to_bill():
     assert build_bom(document(), CATALOG).is_empty
 
 
+def test_camera_notes_are_included_in_natural_label_order_and_empty_notes_are_omitted():
+    bom = build_bom(
+        document(
+            camera("C10", note="Watch the loading bay."),
+            camera("C02", note=""),
+            camera("C01", note="Mount below the soffit."),
+            camera("", note="Confirm the final position."),
+        ),
+        CATALOG,
+    )
+
+    assert [(note.label, note.text) for note in bom.camera_notes] == [
+        ("C01", "Mount below the soffit."),
+        ("C10", "Watch the loading bay."),
+        ("Camera 4", "Confirm the final position."),
+    ]
+
+
 def test_reference_collapses_runs_but_keeps_the_gaps():
     labels = ["C01", "C02", "C04", "C05", "C06", "C07", "C09"]
     bom = build_bom(document(*(camera(label) for label in labels)), CATALOG)

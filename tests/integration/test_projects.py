@@ -170,14 +170,14 @@ def test_bom_export_returns_a_named_pdf_of_the_saved_plan(client):
                         "fov_degrees": 60,
                         "range": 0.2,
                         "label": "C01",
-                        "note": "",
+                        "note": "Mount below the front soffit.",
                         "make": "Hanwha",
                         "model": "XND-A9084RV",
                         "license": "WAVE-PRO-01",
                     }
                 ],
             },
-            "notes": "",
+            "notes": "Confirm lift access before installation.",
         },
         headers={"X-CSRF-Token": csrf_token(client)},
     )

@@ -47,7 +47,7 @@ keeps retrying on its own, so a brief dead spot on the network does not lose wor
 
 | Format | What comes out |
 | --- | --- |
-| BOM only | A bill of materials — cameras and, where a brand licenses its software separately, licenses, each under its own heading |
+| BOM only | A bill of materials — cameras and, where a brand licenses its software separately, licenses, each under its own heading, followed by project and camera notes |
 
 Identical cameras collapse onto one line with a quantity and the names they were given
 on the plan, so `C01–C06` on the quote is six cones you can point at on the drawing. A

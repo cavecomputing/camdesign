@@ -50,6 +50,13 @@ _STRONG = ParagraphStyle("strong", parent=_CELL, fontName="Helvetica-Bold")
 _MUTED = ParagraphStyle("muted", parent=_CELL, textColor=INK_MUTED)
 _NUMBER = ParagraphStyle("number", parent=_STRONG, alignment=TA_RIGHT)
 _FOOT = ParagraphStyle("foot", fontName="Helvetica", fontSize=8, textColor=INK_MUTED, leading=12)
+_SECTION = ParagraphStyle(
+    "section", fontName="Helvetica-Bold", fontSize=11, textColor=INK, leading=14
+)
+_NOTE_LABEL = ParagraphStyle(
+    "note-label", fontName="Helvetica-Bold", fontSize=8.5, textColor=INK, leading=11
+)
+_NOTE = ParagraphStyle("note", fontName="Helvetica", fontSize=8.5, textColor=INK, leading=12)
 
 
 def bom_filename(project_name: str) -> str:
@@ -61,6 +68,7 @@ def _cell(text: str, style: ParagraphStyle) -> Paragraph:
     # Every value here is user- or catalog-supplied, and a stray & or < is a hard parse
     # error inside a Paragraph's mini-markup rather than a stray character on the page.
     escaped = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    escaped = "<br/>".join(escaped.splitlines())
     return Paragraph(escaped, style)
 
 
@@ -165,6 +173,35 @@ def _totals(bom: Bom) -> list:
     ]
 
 
+def _notes(project: Project, bom: Bom) -> list:
+    if not project.notes and not bom.camera_notes:
+        return []
+
+    story = [Spacer(1, 18), Paragraph("Notes", _SECTION), Spacer(1, 7)]
+    if project.notes:
+        story += [
+            Paragraph("Project notes", _NOTE_LABEL),
+            Spacer(1, 2),
+            _cell(project.notes, _NOTE),
+        ]
+    if bom.camera_notes:
+        if project.notes:
+            story.append(Spacer(1, 10))
+        story += [Paragraph("Camera notes", _NOTE_LABEL), Spacer(1, 3)]
+        for note in bom.camera_notes:
+            story.append(
+                KeepTogether(
+                    [
+                        _cell(note.label, _NOTE_LABEL),
+                        Spacer(1, 1),
+                        _cell(note.text, _NOTE),
+                        Spacer(1, 6),
+                    ]
+                )
+            )
+    return story
+
+
 def render_bom_pdf(project: Project, bom: Bom, generated_on: date) -> bytes:
     buffer = BytesIO()
     document = SimpleDocTemplate(
@@ -188,5 +225,6 @@ def render_bom_pdf(project: Project, bom: Bom, generated_on: date) -> bytes:
         story.append(_table(bom))
         # The totals belong on the same page as the last line they add up.
         story.append(KeepTogether(_totals(bom)))
+    story.extend(_notes(project, bom))
     document.build(story, onFirstPage=_page_furniture, onLaterPages=_page_furniture)
     return buffer.getvalue()

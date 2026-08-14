@@ -39,8 +39,15 @@ class BomSection:
 
 
 @dataclass(frozen=True, slots=True)
+class BomCameraNote:
+    label: str
+    text: str
+
+
+@dataclass(frozen=True, slots=True)
 class Bom:
     sections: tuple[BomSection, ...]
+    camera_notes: tuple[BomCameraNote, ...] = ()
 
     @property
     def is_empty(self) -> bool:
@@ -132,15 +139,25 @@ def build_bom(document: dict[str, Any], makes: list[dict[str, Any]]) -> Bom:
     models, licenses = _catalog_index(makes)
     cameras: dict[tuple[str, str], list[str]] = {}
     licensing: dict[tuple[str, str], list[str]] = {}
+    camera_notes: list[BomCameraNote] = []
+    camera_number = 0
 
     for item in document.get("items", []):
         if item.get("type") != "camera":
             continue
+        camera_number += 1
         make = item.get("make", "")
         label = item.get("label", "")
         cameras.setdefault((make, item.get("model", "")), []).append(label)
         if item.get("license"):
             licensing.setdefault((make, item["license"]), []).append(label)
+        if item.get("note"):
+            camera_notes.append(
+                BomCameraNote(
+                    label=label or f"Camera {camera_number}",
+                    text=item["note"],
+                )
+            )
 
     sections = [
         BomSection(title=title, lines=_lines(groups, descriptions))
@@ -150,4 +167,7 @@ def build_bom(document: dict[str, Any], makes: list[dict[str, Any]]) -> Bom:
         )
         if groups
     ]
-    return Bom(sections=tuple(sections))
+    return Bom(
+        sections=tuple(sections),
+        camera_notes=tuple(sorted(camera_notes, key=lambda note: _sort_key(note.label))),
+    )
