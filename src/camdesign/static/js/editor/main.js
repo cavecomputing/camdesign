@@ -638,6 +638,13 @@ if (root) {
     if (event.key === "Escape") {
       event.target.blur?.();
       state?.select(null);
+      // Escape backs all the way out: it drops the selection and disarms the tool. A
+      // tool still stays armed across a run of placements; this is the way to put it
+      // down, without which Escape does nothing at all once Camera is picked up.
+      if (activeTool !== "select") {
+        setTool("select");
+        return;
+      }
       syncSettingsPanel();
       render();
       return;

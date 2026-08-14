@@ -19,7 +19,7 @@ are not tested; use a laptop or a tablet in landscape onsite.
 | Set make and model | Type into the dropdowns to search them. Hanwha adds a WAVE License dropdown. Like field of view, the pick carries to the next camera placed |
 | Delete | `Delete` or `Backspace`, or the sidebar button |
 | Undo | `Ctrl+Z`, or the arrow in the header |
-| Deselect | `Escape` |
+| Deselect and put the tool down | `Escape` — clears the selection and returns to Select. With a dropdown open, the first press just closes it |
 | Zoom and pan | Scroll to zoom at the cursor, double-click to fit. Drag empty canvas or middle-drag anywhere to pan |
 
 Changes autosave a moment after you stop. If a save fails the header says so and
