@@ -1,7 +1,8 @@
 from camdesign import create_app
-
-app = create_app()
-
+from camdesign.devserver import run_development_server
 
 if __name__ == "__main__":
-    app.run()
+    raise SystemExit(run_development_server(create_app))
+
+
+app = create_app()

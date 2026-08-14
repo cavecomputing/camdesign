@@ -7,6 +7,7 @@ cd /d "%~dp0"
 
 set HOST=127.0.0.1
 if /i "%~1"=="lan" set HOST=0.0.0.0
+set CAMDESIGN_HOST=%HOST%
 
 REM A stable secret key keeps open tabs saving across restarts. Generated once,
 REM stored in data\ which Git ignores.
@@ -33,13 +34,11 @@ if /i "%HOST%"=="0.0.0.0" (
     echo   Allow access on Private networks only if Windows asks.
 )
 
-REM Give the server a moment to bind, then open the browser alongside it.
-start "CamDesign browser" /min cmd /c "timeout /t 4 /nobreak >nul & explorer http://127.0.0.1:5000"
-
 echo.
-echo CamDesign is running. Close this window or press Ctrl+C to stop it.
+echo Starting CamDesign. Close this window or press Ctrl+C to stop it.
 echo.
-uv run flask --app app run --host %HOST% --port 5000
+uv run python app.py
+if errorlevel 1 goto :failed
 goto :eof
 
 :failed

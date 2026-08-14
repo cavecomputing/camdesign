@@ -82,6 +82,10 @@ uv run app.py
 
 `uv run app.py` runs the entry-point script in the project's managed environment and is equivalent to `uv run python app.py`. Open <http://127.0.0.1:5000> and stop the server with `Ctrl+C`. On later starts, only the final command is normally needed.
 
+The supported launchers hold a single-instance lock for the lifetime of the server,
+disable Flask's child-process reloader, and refuse to start if port 5000 belongs to
+another process. The browser opens only after CamDesign returns a healthy response.
+
 The app applies any pending database migrations as it starts, so pulling schema
 changes needs no extra step. To run them on their own — to check a migration
 before starting the server, or to upgrade the database without serving it — use:
@@ -90,11 +94,9 @@ before starting the server, or to upgrade the database without serving it — us
 uv run flask --app app db-upgrade
 ```
 
-For Flask debug mode and automatic reloading during development, use:
-
-```powershell
-uv run flask --app app run --debug
-```
+Do not use `flask run --debug` for this project: its automatic reloader creates a
+child server process that can outlive the terminal that started it. Restart the
+guarded `uv run app.py` process after code changes instead.
 
 ## Connect from a tablet
 

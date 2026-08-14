@@ -190,6 +190,14 @@ uv run ruff format --check .
 
 ## Agent workflow
 
+### Development server process hygiene
+
+- NEVER leave a development server, watcher, browser-test server, port forward, or child process running after an agent task. This applies on success, failure, interruption, timeout, and tool cancellation.
+- Before starting a local server, check the intended port. Do not reuse, replace, or terminate an unexplained listener; identify its owner first and stop only processes the current task started.
+- Start temporary servers without an automatic reloader and record the root PID plus any child PIDs. Put cleanup in a `finally`-equivalent path instead of relying on a shell, terminal, or tool session closing.
+- Use an isolated temporary data root for UI verification. Remove it only after its entire server process tree has stopped.
+- Before the final response, verify every server process started by the task has exited and every port it claimed is no longer listening. If cleanup cannot be verified, do not declare the task complete; report the exact remaining PID and port.
+
 1. Restate the concrete outcome and identify acceptance criteria from the request.
 2. Inspect repository instructions, status, relevant code, tests, and configuration.
 3. For multi-file or risky work, outline a short plan and keep it updated. Ask only when a choice materially changes product behavior, data safety, architecture, cost, or external state.
@@ -211,4 +219,4 @@ Stop and ask before proceeding if work would:
 
 ## Definition of done
 
-A change is done only when it satisfies the request, respects the architecture and security boundaries above, includes appropriate tests, passes all available relevant checks, contains no unrelated changes or secrets, and is documented well enough for the next contributor to understand. A prototype shortcut must be labeled, scoped, and tracked rather than silently becoming production design.
+A change is done only when it satisfies the request, respects the architecture and security boundaries above, includes appropriate tests, passes all available relevant checks, contains no unrelated changes or secrets, leaves no agent-started processes or listeners running, and is documented well enough for the next contributor to understand. A prototype shortcut must be labeled, scoped, and tracked rather than silently becoming production design.
