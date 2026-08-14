@@ -124,6 +124,50 @@ def test_document_save_uses_revision_check(client):
     assert reloaded["project"]["notes"] == "Confirm lift access."
 
 
+def test_bom_export_returns_a_named_pdf_of_the_saved_plan(client):
+    created = create_project(client)
+    project_id = project_id_from_redirect(created)
+    document_url = f"/api/v1/projects/{project_id}/document"
+    client.patch(
+        document_url,
+        json={
+            "revision": client.get(document_url).get_json()["revision"],
+            "document": {
+                "schema_version": 1,
+                "items": [
+                    {
+                        "id": "camera-1",
+                        "type": "camera",
+                        "x": 0.25,
+                        "y": 0.5,
+                        "direction_degrees": -90,
+                        "fov_degrees": 60,
+                        "range": 0.2,
+                        "label": "C01",
+                        "note": "",
+                        "make": "Hanwha",
+                        "model": "XND-A9084RV",
+                        "license": "WAVE-PRO-01",
+                    }
+                ],
+            },
+            "notes": "",
+        },
+        headers={"X-CSRF-Token": csrf_token(client)},
+    )
+
+    response = client.get(f"/projects/{project_id}/export/bom.pdf")
+
+    assert response.status_code == 200
+    assert response.mimetype == "application/pdf"
+    assert response.data.startswith(b"%PDF-")
+    # The name reaches the browser from here, so the download is not "bom.pdf" every time.
+    assert "oak-main-market-bom.pdf" in response.headers["Content-Disposition"]
+
+    missing = client.get("/projects/00000000-0000-4000-8000-000000000000/export/bom.pdf")
+    assert missing.status_code == 404
+
+
 def test_state_changing_requests_require_csrf(client):
     response = client.post(
         "/projects",

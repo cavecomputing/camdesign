@@ -1,5 +1,6 @@
-import { loadCatalog, loadProject, saveProject } from "./api.js";
+import { fetchExport, loadCatalog, loadProject, saveProject } from "./api.js";
 import { createCombobox } from "./combobox.js";
+import { createExportMenu, downloadBlob } from "./export-menu.js";
 import { renderPlan } from "./rendering.js";
 import { createEditorState } from "./state.js";
 
@@ -77,6 +78,11 @@ if (root) {
   function setSaveState(message, variant = "") {
     elements.saveState.textContent = message;
     elements.saveState.className = `save-state${variant ? ` is-${variant}` : ""}`;
+  }
+
+  function reportSaveState() {
+    const settled = savedVersion === changeVersion;
+    setSaveState(settled ? "All changes saved" : "Unsaved changes", settled ? "saved" : "dirty");
   }
 
   function updateControls() {
@@ -159,10 +165,7 @@ if (root) {
         savedVersion = Math.max(savedVersion, savingVersion);
         retryDelay = 0;
         csrfRefreshed = false;
-        setSaveState(
-          savedVersion === changeVersion ? "All changes saved" : "Unsaved changes",
-          savedVersion === changeVersion ? "saved" : "dirty",
-        );
+        reportSaveState();
       })
       .catch((error) => {
         if (error.name !== "AbortError") return handleSaveFailure(error);
@@ -442,6 +445,25 @@ if (root) {
     syncSettingsPanel();
     render();
     markChanged();
+  }
+
+  // The PDF is built from the saved document, so whatever is still sitting in the
+  // debounce has to land first — otherwise the quote goes out a camera short of the
+  // plan on screen. If it will not save, say so instead of exporting the stale count.
+  async function exportPdf(url) {
+    await saveNow();
+    if (savedVersion !== changeVersion) {
+      setSaveState("Not exported — changes are unsaved", "error");
+      return;
+    }
+    setSaveState("Preparing PDF…", "saving");
+    try {
+      const { blob, filename } = await fetchExport(url);
+      downloadBlob(blob, filename);
+      reportSaveState();
+    } catch (error) {
+      if (error.name !== "AbortError") setSaveState(error.message, "error");
+    }
   }
 
   function rangeFromDistance(distance) {
@@ -819,6 +841,7 @@ if (root) {
   });
   elements.undo.addEventListener("click", undoLastChange);
   elements.deleteSelection.addEventListener("click", deleteSelectedCamera);
+  createExportMenu(root.querySelector("[data-export-menu]"), { onSelect: exportPdf });
   document.addEventListener("visibilitychange", () => {
     if (document.hidden && savedVersion !== changeVersion) saveNow();
   });

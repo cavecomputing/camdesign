@@ -37,6 +37,32 @@ export async function loadCatalog(url, signal) {
   return parseJson(response);
 }
 
+// The server names the file, since it is the side that knows the project. Werkzeug
+// quotes the name only when it has to, and appends a UTF-8 copy we can ignore.
+function filenameFrom(disposition) {
+  return /filename="?([^";]+)"?/.exec(disposition)?.[1]?.trim() ?? "bom.pdf";
+}
+
+// Fetched rather than followed as a link: a failed export must land in the status line
+// beside the save state, not replace the plan the estimator is standing in front of
+// with an error page, or save that page to disk under a .pdf name.
+export async function fetchExport(url, signal) {
+  const response = await fetch(url, { headers: { Accept: "application/pdf" }, signal });
+  if (!response.ok || !(response.headers.get("content-type") ?? "").includes("application/pdf")) {
+    throw requestError(
+      response.status === 404
+        ? "This plan is no longer on the server."
+        : "The PDF could not be generated. Try again.",
+      response,
+      null,
+    );
+  }
+  return {
+    blob: await response.blob(),
+    filename: filenameFrom(response.headers.get("content-disposition") ?? ""),
+  };
+}
+
 export async function saveProject(url, payload, signal) {
   const response = await fetch(url, {
     method: "PATCH",

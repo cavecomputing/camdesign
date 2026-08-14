@@ -41,6 +41,25 @@ page for the next visit.
 Changes autosave a moment after you stop. If a save fails the header says so and
 keeps retrying on its own, so a brief dead spot on the network does not lose work.
 
+## Exporting
+
+**Export PDF** in the header opens the list of formats. There is one so far:
+
+| Format | What comes out |
+| --- | --- |
+| BOM only | A bill of materials — cameras and, where a brand licenses its software separately, licenses, each under its own heading |
+
+Identical cameras collapse onto one line with a quantity and the names they were given
+on the plan, so `C01–C06` on the quote is six cones you can point at on the drawing. A
+camera whose make and model has not been chosen yet still bills, as **Not specified** at
+the bottom of its section — an outstanding decision rather than a missing line. Model
+descriptions come from `catalog/`, so a model retired from a CSV since the plan was
+drawn still bills, just without its spec line.
+
+The PDF is built on the server from the saved plan, not from the screen. Anything still
+waiting in the autosave debounce is written first; if it will not save, the header says
+so and no file is produced rather than quoting a stale camera count.
+
 ## Start locally
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then double-click

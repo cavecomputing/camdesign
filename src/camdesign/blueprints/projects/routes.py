@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+from datetime import date
+from io import BytesIO
+
 from flask import abort, current_app, flash, redirect, render_template, request, send_file, url_for
 
 from camdesign.blueprints.projects import projects
 from camdesign.db import get_db
+from camdesign.domain.bom import build_bom
+from camdesign.domain.catalog import load_catalog
+from camdesign.exports import bom_filename, render_bom_pdf
 from camdesign.repositories.projects import SQLiteProjectRepository
 from camdesign.services.projects import InvalidProject, create_project
 
@@ -49,3 +55,18 @@ def asset(project_id):
     if data_root not in asset_path.parents or not asset_path.is_file():
         abort(404)
     return send_file(asset_path, mimetype=project.image_mime, conditional=True)
+
+
+@projects.get("/projects/<uuid:project_id>/export/bom.pdf")
+def export_bom(project_id):
+    project = SQLiteProjectRepository(get_db()).get(str(project_id))
+    if project is None:
+        abort(404)
+    bom = build_bom(project.document, load_catalog(current_app.config["CATALOG_DIR"]))
+    pdf = render_bom_pdf(project, bom, generated_on=date.today())
+    return send_file(
+        BytesIO(pdf),
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=bom_filename(project.name),
+    )

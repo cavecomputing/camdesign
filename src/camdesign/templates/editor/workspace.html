@@ -29,7 +29,30 @@
       <div class="workspace-bar__actions">
         <span class="save-state" data-save-state role="status">Loading…</span>
         <button class="icon-button" type="button" data-undo aria-label="Undo last change" disabled>↶</button>
-        <button class="button button--primary" type="button" disabled title="PDF export is planned next">Export PDF</button>
+        <div class="export-menu" data-export-menu>
+          <button
+            class="button button--primary"
+            type="button"
+            data-export-toggle
+            aria-expanded="false"
+            aria-controls="export-formats"
+          >
+            Export PDF
+            <span class="export-menu__caret" aria-hidden="true">▾</span>
+          </button>
+          <ul class="export-menu__list" id="export-formats" data-export-list hidden>
+            <li>
+              <button
+                class="export-menu__item"
+                type="button"
+                data-export-url="{{ url_for('projects.export_bom', project_id=project.id) }}"
+              >
+                <span class="export-menu__item-name">BOM only</span>
+                <span class="export-menu__item-meta">Cameras and licenses, grouped and counted</span>
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
     </header>
 
