@@ -20,6 +20,18 @@
   margin-bottom: var(--space-6);
 }
 
+/* Gentle first-paint settle for server-rendered pages; content follows the heading. */
+.page-heading,
+.empty-state,
+.form-intro {
+  animation: rise-in var(--duration-med) var(--ease-out) both;
+}
+
+.project-grid,
+.project-form {
+  animation: rise-in var(--duration-med) var(--ease-out) 70ms both;
+}
+
 .page-heading p {
   max-width: 38rem;
 }
@@ -144,25 +156,36 @@
   position: relative;
   min-width: 0;
   min-height: 0;
+  /* The gutters keep the fitted plan clear of the floating docks. */
   padding: var(--plan-pad) var(--gutter-right)
     calc(var(--plan-pad) + var(--plan-reserve-bottom)) var(--gutter-left);
-  overflow: auto;
+  /* The stage is moved with a transform rather than scrolled, so the panel is a
+     fixed window onto it: scrolling here would fight the pan and zoom gestures. */
+  overflow: hidden;
   background-color: var(--canvas);
   background-image: radial-gradient(circle, rgb(12 33 72 / 9%) 1px, transparent 1px);
   background-size: 1.25rem 1.25rem;
 }
 
+/* Pinned to one corner and placed by the transform, including the centring at fit.
+   Left to the normal flow, the stage snaps to the padding edge the moment it grows
+   past the panel, and that shunt lands in the middle of a zoom. */
 .plan-stage {
-  position: relative;
+  position: absolute;
+  /* Absolute children are placed against the panel's padding box, so the gutters that
+     keep the docks off the plan have to be repeated here rather than inherited from
+     the panel's padding. Both come from the same custom properties. */
+  top: var(--plan-pad);
+  left: var(--gutter-left);
   width: max-content;
-  max-width: 100%;
-  margin: auto;
+  max-width: calc(100% - var(--gutter-left) - var(--gutter-right));
   overflow: hidden;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
   background: var(--surface);
   box-shadow: var(--shadow-md);
   touch-action: none;
+  animation: stage-in var(--duration-med) var(--ease-out) both;
 }
 
 .plan-stage img {
@@ -174,11 +197,9 @@
   user-select: none;
 }
 
-/* Zoomed past fit the stage is driven by an explicit width, and the panel scrolls. */
+/* Zoomed past fit the stage is driven by an explicit width and pans past the panel. */
 .plan-stage.is-zoomed {
   max-width: none;
-  /* auto margins go negative once the stage outgrows the panel, so pin them. */
-  margin-inline: 0;
 }
 
 .plan-stage.is-zoomed img {

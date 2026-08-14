@@ -7,6 +7,11 @@
   font-weight: 800;
   letter-spacing: -0.025em;
   text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.brand:hover {
+  opacity: 0.72;
 }
 
 .brand__logo {
@@ -32,6 +37,17 @@
   font-weight: 750;
   text-decoration: none;
   cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.button:not(:disabled):active,
+.icon-button:not(:disabled):active {
+  transform: translateY(1px);
 }
 
 .button:disabled,
@@ -56,6 +72,17 @@
   color: var(--ink-800);
   border-color: var(--line);
   background: var(--surface);
+}
+
+.button--quiet:not(:disabled):hover,
+.icon-button:not(:disabled):hover {
+  border-color: var(--line-strong);
+  background: var(--canvas);
+}
+
+.button--danger:not(:disabled):hover {
+  border-color: #e3a295;
+  background: #ffe4dc;
 }
 
 .button--danger {
@@ -95,6 +122,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: var(--space-4);
+  animation: drop-in var(--duration-med) var(--ease-out) both;
 }
 
 .notice--error {
@@ -111,11 +139,13 @@
   background: var(--surface);
   box-shadow: var(--shadow-sm);
   text-decoration: none;
-  transition: transform 140ms ease, box-shadow 140ms ease;
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .project-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
 }
 
@@ -130,6 +160,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform var(--duration-med) var(--ease-out);
+}
+
+.project-card:hover .project-card__preview img {
+  transform: scale(1.04);
 }
 
 .project-card__status {
@@ -190,6 +225,7 @@
   color: var(--blue-700);
   background: var(--blue-100);
   font-size: 2rem;
+  animation: float-soft 3.4s ease-in-out infinite;
 }
 
 .form-intro {
@@ -240,6 +276,9 @@
   color: var(--ink-950);
   background: var(--surface);
   font-weight: 500;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .field input:focus,
@@ -394,10 +433,53 @@
   text-align: center;
   background: #f7faff;
   cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.upload-field:hover {
+  border-color: var(--blue-700);
+  background: #eff5ff;
 }
 
 .upload-field:focus-within {
   box-shadow: var(--focus-ring);
+}
+
+.upload-field strong {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upload-field.is-dragover {
+  border: 1px solid var(--blue-700);
+  background: var(--blue-100);
+  transform: scale(1.01);
+}
+
+.upload-field.has-file {
+  border: 1px solid var(--blue-600);
+  background: var(--blue-100);
+}
+
+.upload-field.has-file .upload-field__icon {
+  color: white;
+  background: var(--blue-700);
+}
+
+.upload-field.has-error {
+  border: 1px solid #e3a295;
+  background: var(--coral-100);
+}
+
+.upload-field.has-error .upload-field__icon {
+  color: #a33a2c;
+  background: #ffded6;
 }
 
 .upload-field__icon {
@@ -410,11 +492,9 @@
   color: var(--blue-700);
   background: var(--blue-100);
   font-size: 1.5rem;
-}
-
-.upload-field input {
-  max-width: 100%;
-  margin-top: var(--space-2);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 }
 
 /* Floating panels: the tool dock, the settings island, and the project card all
@@ -444,6 +524,19 @@
   color: var(--ink-950);
   background: transparent;
   cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.tool-button:not(:disabled):not(.is-active):hover {
+  background: var(--canvas);
+}
+
+.tool-button:not(:disabled):active {
+  transform: scale(0.96);
 }
 
 .tool-button:not(:disabled):hover {
@@ -477,6 +570,8 @@
 
 .plan-hint {
   margin: 0;
+  /* It sits over the top of the plan, so clicks and drags go straight through. */
+  pointer-events: none;
   border-radius: 999px;
   padding: 0.4rem 0.85rem;
   color: var(--ink-650);
@@ -563,10 +658,40 @@
   text-align: right;
 }
 
+.plan-hint.is-swap {
+  animation: hint-swap var(--duration-med) var(--ease-out);
+}
+
 .save-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   color: var(--ink-500);
   font-size: 0.78rem;
   font-weight: 700;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.save-state::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border-radius: 50%;
+  background: currentcolor;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.save-state.is-dirty {
+  color: var(--blue-700);
+}
+
+.save-state.is-saving {
+  color: var(--blue-700);
+}
+
+.save-state.is-saving::before {
+  animation: pulse-dot 1s var(--ease-out) infinite;
 }
 
 .save-state.is-saved {
@@ -582,6 +707,7 @@
   stroke: var(--blue-600);
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
+  transition: fill var(--duration-fast) var(--ease-out);
 }
 
 .camera-source {
@@ -589,6 +715,22 @@
   stroke: white;
   stroke-width: 3;
   vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+/* Hovering does not re-render, so these transitions survive the redraw cycle. */
+.camera-item:hover .camera-source {
+  transform: scale(1.2);
+}
+
+.camera-item:hover .camera-cone {
+  fill: rgb(40 117 232 / 38%);
+}
+
+.camera-item.is-selected:hover .camera-cone {
+  fill: rgb(239 107 87 / 40%);
 }
 
 .camera-label {
@@ -646,11 +788,83 @@
   border: 0;
 }
 
+/* Thin, quiet scrollbars for the workspace's scrollable panes. The sidebars this was
+   written for are floating docks now, and the plan panel is a fixed window that pans by
+   transform, so the long model list is what is left to scroll. */
+.combo__list {
+  scrollbar-color: var(--line-strong) transparent;
+  scrollbar-width: thin;
+}
+
+.combo__list::-webkit-scrollbar {
+  width: 0.6rem;
+  height: 0.6rem;
+}
+
+.combo__list::-webkit-scrollbar-thumb {
+  border: 0.15rem solid transparent;
+  border-radius: 999px;
+  background: var(--line-strong);
+  background-clip: padding-box;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6rem);
+  }
+}
+
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+@keyframes hint-swap {
+  from {
+    opacity: 0.25;
+    transform: translateY(-0.3rem);
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.72);
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.25rem);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }

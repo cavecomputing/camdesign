@@ -30,11 +30,11 @@
           <input name="site_address" value="{{ form.site_address if form else '' }}" maxlength="240" placeholder="123 Main Street">
         </label>
       </div>
-      <label class="upload-field">
-        <span class="upload-field__icon" aria-hidden="true">＋</span>
-        <strong>Choose a map or site-plan image</strong>
-        <span>PNG, JPEG, or WebP up to 20 MB</span>
-        <input type="file" name="site_image" accept="image/png,image/jpeg,image/webp" required>
+      <label class="upload-field" data-upload-field>
+        <span class="upload-field__icon" aria-hidden="true" data-upload-icon>＋</span>
+        <strong data-upload-title>Choose a map or site-plan image</strong>
+        <span data-upload-detail>PNG, JPEG, or WebP up to 20 MB — or drag one here</span>
+        <input class="visually-hidden" type="file" name="site_image" accept="image/png,image/jpeg,image/webp" required>
       </label>
       <label class="field">
         <span>Initial field notes</span>
@@ -46,4 +46,8 @@
       </div>
     </form>
   </div>
+{% endblock %}
+
+{% block scripts %}
+  <script type="module" src="{{ url_for('static', filename='js/projects/new.js') }}"></script>
 {% endblock %}

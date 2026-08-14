@@ -63,6 +63,10 @@ if (root) {
   let defaultLicense = "";
   let zoom = 1;
   let baseWidth = 0;
+  let offsetX = 0;
+  let offsetY = 0;
+  let originX = 0;
+  let originY = 0;
   let saveTimer = null;
   let saveQueue = Promise.resolve();
   let changeVersion = 0;
@@ -114,7 +118,7 @@ if (root) {
     // again instead of stranding every edit made from here on.
     if (error.status === 409 && typeof error.payload?.revision === "number") {
       revision = error.payload.revision;
-      setSaveState("Catching up…");
+      setSaveState("Catching up…", "saving");
       scheduleRetry(200);
       return;
     }
@@ -122,7 +126,7 @@ if (root) {
     // session holding the CSRF token. Fetch a fresh one rather than lose the work.
     if (error.status === 400 && !csrfRefreshed && (await refreshCsrfToken())) {
       csrfRefreshed = true;
-      setSaveState("Reconnecting…");
+      setSaveState("Reconnecting…", "saving");
       scheduleRetry(200);
       return;
     }
@@ -142,7 +146,7 @@ if (root) {
       .then(async () => {
         if (savedVersion === changeVersion) return;
         const savingVersion = changeVersion;
-        setSaveState("Saving…");
+        setSaveState("Saving…", "saving");
         const result = await saveProject(
           documentUrl,
           {
@@ -157,7 +161,7 @@ if (root) {
         csrfRefreshed = false;
         setSaveState(
           savedVersion === changeVersion ? "All changes saved" : "Unsaved changes",
-          savedVersion === changeVersion ? "saved" : "",
+          savedVersion === changeVersion ? "saved" : "dirty",
         );
       })
       .catch((error) => {
@@ -168,7 +172,7 @@ if (root) {
 
   function markChanged() {
     changeVersion += 1;
-    setSaveState("Unsaved changes");
+    setSaveState("Unsaved changes", "dirty");
     clearTimeout(saveTimer);
     saveTimer = window.setTimeout(saveNow, 650);
   }
@@ -187,6 +191,10 @@ if (root) {
       tool === "camera"
         ? "Click for a standard camera cone, or drag to set direction and reach."
         : "Tap a camera to select it. Drag inside its cone to aim it and set how far it reaches.";
+    // Retoggle the class so the swap animation replays on every tool change.
+    elements.hint.classList.remove("is-swap");
+    void elements.hint.offsetWidth;
+    elements.hint.classList.add("is-swap");
     elements.overlay.style.cursor = tool === "camera" ? "crosshair" : "grab";
     syncSettingsPanel();
     render();
@@ -200,21 +208,89 @@ if (root) {
     };
   }
 
+  // The fit width and the corner the stage is pinned to both come from the stylesheet, so
+  // read them back with the zoom sizing and the offset stripped off. Re-measured whenever
+  // the panel changes shape: stale figures size and place the plan against a layout that
+  // no longer exists, and it jumps on the next zoom step.
+  function measureFit() {
+    const zoomed = elements.stage.classList.contains("is-zoomed");
+    const sized = elements.stage.style.width;
+    const placed = elements.stage.style.transform;
+    elements.stage.classList.remove("is-zoomed");
+    elements.stage.style.width = "";
+    elements.stage.style.transform = "";
+    const resting = elements.stage.getBoundingClientRect();
+    baseWidth = elements.image.getBoundingClientRect().width;
+    originX = resting.left;
+    originY = resting.top;
+    elements.stage.style.width = sized;
+    elements.stage.style.transform = placed;
+    elements.stage.classList.toggle("is-zoomed", zoomed);
+  }
+
+  // Sizing the stage rather than scaling it keeps the browser resampling the plan at the
+  // size it is shown, which is the difference between reading a door number at 8x and not.
+  function sizeStage() {
+    elements.stage.classList.toggle("is-zoomed", zoom !== MIN_ZOOM);
+    elements.stage.style.width = zoom === MIN_ZOOM ? "" : `${baseWidth * zoom}px`;
+  }
+
+  // The only thing worth enforcing while zoomed is that the plan cannot be lost: half of
+  // it, or half the panel once it is the bigger of the two, has to stay in view. Demanding
+  // that it cover the panel outright would be tidier, but it fights the cursor — a plan
+  // sitting in the middle with a gap above it has to lurch upwards the moment a zoom step
+  // makes it taller than the panel, which is exactly the jump this is meant to avoid.
+  function clampOffset(offset, start, size, min, max) {
+    const keep = Math.min(size, max - min) / 2;
+    return Math.min(max - keep - start, Math.max(min + keep - size - start, offset));
+  }
+
+  function applyView() {
+    // All the way out is the one view with a right answer: the whole plan, centred.
+    if (zoom === MIN_ZOOM) centreView();
+    const panel = elements.panel.getBoundingClientRect();
+    const stage = elements.stage.getBoundingClientRect();
+    offsetX = Math.round(clampOffset(offsetX, originX, stage.width, panel.left, panel.right));
+    offsetY = Math.round(clampOffset(offsetY, originY, stage.height, panel.top, panel.bottom));
+    elements.stage.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+  }
+
+  // Centred inside the panel's padding rather than on the panel itself: the floating
+  // docks sit in that margin, and a plan centred on the window slides under them.
+  function centreView() {
+    const panel = elements.panel.getBoundingClientRect();
+    const stage = elements.stage.getBoundingClientRect();
+    const gutter = getComputedStyle(elements.panel);
+    const left = panel.left + parseFloat(gutter.paddingLeft);
+    const right = panel.right - parseFloat(gutter.paddingRight);
+    const top = panel.top + parseFloat(gutter.paddingTop);
+    const bottom = panel.bottom - parseFloat(gutter.paddingBottom);
+    offsetX = left + (right - left - stage.width) / 2 - originX;
+    offsetY = top + (bottom - top - stage.height) / 2 - originY;
+  }
+
   function applyZoom(nextZoom, anchor) {
     const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, nextZoom));
     if (!baseWidth || clamped === zoom) return;
-    // Keep whatever sits under the cursor pinned there as the stage grows or shrinks.
+    // Note where on the plan the cursor is before resizing, as a fraction of the stage.
     const before = elements.stage.getBoundingClientRect();
     const ratioX = before.width ? (anchor.x - before.left) / before.width : 0.5;
     const ratioY = before.height ? (anchor.y - before.top) / before.height : 0.5;
 
     zoom = clamped;
-    elements.stage.classList.toggle("is-zoomed", zoom !== 1);
-    elements.stage.style.width = zoom === 1 ? "" : `${baseWidth * zoom}px`;
+    sizeStage();
 
+    // Then slide the stage so that same spot is back under the cursor.
     const after = elements.stage.getBoundingClientRect();
-    elements.panel.scrollLeft += after.left + ratioX * after.width - anchor.x;
-    elements.panel.scrollTop += after.top + ratioY * after.height - anchor.y;
+    offsetX += anchor.x - (after.left + ratioX * after.width);
+    offsetY += anchor.y - (after.top + ratioY * after.height);
+    applyView();
+  }
+
+  function fitPlan() {
+    zoom = MIN_ZOOM;
+    sizeStage();
+    applyView();
   }
 
   function onWheel(event) {
@@ -421,8 +497,8 @@ if (root) {
     pan = {
       clientX: event.clientX,
       clientY: event.clientY,
-      scrollLeft: elements.panel.scrollLeft,
-      scrollTop: elements.panel.scrollTop,
+      offsetX,
+      offsetY,
     };
     capturePointer(event.pointerId);
     elements.overlay.style.cursor = "grabbing";
@@ -492,8 +568,9 @@ if (root) {
 
   function onPointerMove(event) {
     if (pan) {
-      elements.panel.scrollLeft = pan.scrollLeft - (event.clientX - pan.clientX);
-      elements.panel.scrollTop = pan.scrollTop - (event.clientY - pan.clientY);
+      offsetX = pan.offsetX + (event.clientX - pan.clientX);
+      offsetY = pan.offsetY + (event.clientY - pan.clientY);
+      applyView();
       return;
     }
     if (move) {
@@ -593,7 +670,9 @@ if (root) {
         height: elements.image.naturalHeight,
       };
       elements.overlay.setAttribute("viewBox", `0 0 ${dimensions.width} ${dimensions.height}`);
-      baseWidth = elements.image.getBoundingClientRect().width;
+      measureFit();
+      // Nothing else places the stage: it is pinned to a corner until the view centres it.
+      fitPlan();
       state = createEditorState(payload.document);
       revision = payload.revision;
       elements.notes.value = payload.project.notes;
@@ -635,18 +714,21 @@ if (root) {
     }
     if (event.ctrlKey || event.metaKey || event.altKey) return;
 
+    // Escape backs out one step at a time, so holding it down walks all the way to a
+    // plain Select tool with nothing highlighted: leave the field, drop the selection,
+    // then put the armed tool away.
     if (event.key === "Escape") {
-      event.target.blur?.();
-      state?.select(null);
-      // Escape backs all the way out: it drops the selection and disarms the tool. A
-      // tool still stays armed across a run of placements; this is the way to put it
-      // down, without which Escape does nothing at all once Camera is picked up.
-      if (activeTool !== "select") {
-        setTool("select");
+      if (typing) {
+        event.target.blur?.();
         return;
       }
-      syncSettingsPanel();
-      render();
+      if (state?.selectedId()) {
+        state.select(null);
+        syncSettingsPanel();
+        render();
+        return;
+      }
+      if (activeTool !== "select") setTool("select");
       return;
     }
 
@@ -712,12 +794,25 @@ if (root) {
   });
   elements.overlay.addEventListener("dblclick", (event) => {
     if (activeTool !== "select" || event.target.closest?.("[data-item-id]")) return;
-    applyZoom(1, { x: event.clientX, y: event.clientY });
+    fitPlan();
   });
-  window.addEventListener("resize", () => {
-    // The fit width follows the panel, so re-measure it whenever we are back at fit.
-    if (zoom === 1) baseWidth = elements.image.getBoundingClientRect().width;
-  });
+  // The fit width follows the panel, which moves for reasons a window resize misses:
+  // a wrapping toolbar, a scrollbar in the inspector, the tablet turning on its side.
+  let refitting = false;
+  new ResizeObserver(() => {
+    if (!dimensions || refitting) return;
+    refitting = true;
+    // Wait for the frame to settle before measuring. Read straight from the callback and
+    // the plan is still being sized against the window the browser is halfway out of.
+    requestAnimationFrame(() => {
+      refitting = false;
+      measureFit();
+      sizeStage();
+      // Zoomed in this holds the spot being worked on; at fit it re-centres the plan in
+      // whatever shape the panel has just become.
+      applyView();
+    });
+  }).observe(elements.panel);
   elements.notes.addEventListener("input", () => {
     updateControls();
     markChanged();

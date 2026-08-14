@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import secrets
 from collections.abc import Mapping
+from datetime import UTC, datetime, timezone
+from pathlib import Path
 from typing import Any
 
 from flask import Flask, jsonify, render_template, request
@@ -13,6 +15,16 @@ from camdesign.blueprints.editor import editor
 from camdesign.blueprints.projects import projects
 from camdesign.config import Config
 from camdesign.security import csrf_token, protect_csrf
+
+
+def friendly_timestamp(value: str, tz: timezone | None = None) -> str:
+    """Format a SQLite UTC timestamp for humans; defaults to the server's local timezone."""
+    try:
+        parsed = datetime.strptime(value, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC)
+    except (TypeError, ValueError):
+        return value if isinstance(value, str) else ""
+    local = parsed.astimezone(tz)
+    return f"{local.day} {local.strftime('%b %Y')}, {local.strftime('%I:%M %p').lstrip('0')}"
 
 
 def create_app(test_config: Mapping[str, Any] | None = None) -> Flask:
@@ -28,8 +40,10 @@ def create_app(test_config: Mapping[str, Any] | None = None) -> Flask:
     app.config["UPLOAD_DIR"].mkdir(parents=True, exist_ok=True)
 
     db.init_app(app)
+    db.migrate_database(Path(app.config["DATABASE"]))
     app.before_request(protect_csrf)
     app.context_processor(lambda: {"csrf_token": csrf_token})
+    app.add_template_filter(friendly_timestamp)
 
     app.register_blueprint(projects)
     app.register_blueprint(editor)

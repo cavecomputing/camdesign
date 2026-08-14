@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 
 from camdesign import create_app
-from camdesign.db import migrate_database
 
 
 @pytest.fixture()
@@ -22,7 +21,6 @@ def app(tmp_path: Path):
             "UPLOAD_DIR": upload_dir,
         }
     )
-    migrate_database(database)
     yield application
 
 

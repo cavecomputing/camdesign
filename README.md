@@ -1,10 +1,26 @@
+<p align="center">
+  <img src="assets/camdesign-logo-transparent.png" alt="" width="300">
+</p>
+
 # CamDesign
 
 CamDesign is a field-friendly Flask workspace for turning site images into rough security-camera quote plans. It currently supports resumable projects, camera field-of-view placement, per-camera and project notes, and debounced SQLite autosave.
 
+![The editor with six cameras placed on a market floor plan, each cone showing its field of view, and the inspector open beside it](assets/screenshot-editor.png)
+
 **Supported on desktop and tablet only.** The editor is built for a mouse or a
 large touch screen at 768px wide and up. Phone-width layouts are not supported and
 are not tested; use a laptop or a tablet in landscape onsite.
+
+## Starting a plan
+
+Every quote begins with a photo or a drawing of the site. Name the job, drop the
+image in, and the plan opens ready to mark up. Finished plans wait on the front
+page for the next visit.
+
+| Your plans | A new plan |
+| --- | --- |
+| ![The plans page listing three saved jobs, each with a thumbnail of its site image](assets/screenshot-plans.png) | ![The new-plan form, with fields for the job and a drop area for the site image](assets/screenshot-new-project.png) |
 
 ## Editing a plan
 
@@ -19,7 +35,7 @@ are not tested; use a laptop or a tablet in landscape onsite.
 | Set make and model | Type into the dropdowns to search them. Hanwha adds a WAVE License dropdown. Like field of view, the pick carries to the next camera placed |
 | Delete | `Delete` or `Backspace`, or the sidebar button |
 | Undo | `Ctrl+Z`, or the arrow in the header |
-| Deselect and put the tool down | `Escape` — clears the selection and returns to Select. With a dropdown open, the first press just closes it |
+| Back out | `Escape` closes an open dropdown, then leaves the field you are typing in, then drops the selection, then puts the armed tool away |
 | Zoom and pan | Scroll to zoom at the cursor, double-click to fit. Drag empty canvas or middle-drag anywhere to pan |
 
 Changes autosave a moment after you stop. If a save fails the header says so and
@@ -28,8 +44,9 @@ keeps retrying on its own, so a brief dead spot on the network does not lose wor
 ## Start locally
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then double-click
-`start-camdesign.bat`. It migrates the database, starts the server, and opens
-<http://127.0.0.1:5000> in the default browser. Closing the console window stops it.
+`start-camdesign.bat`. It starts the server, which brings the database up to date as
+it comes up, and opens <http://127.0.0.1:5000> in the default browser. Closing the
+console window stops it.
 
 On first run it writes `data/secret.key`, a stable signing key so that restarting the
 server does not invalidate sessions in tabs that are already open. Keep that file.
@@ -41,11 +58,18 @@ To run the same steps by hand:
 
 ```powershell
 uv sync --frozen
-uv run flask --app app db-upgrade
 uv run app.py
 ```
 
-`uv run app.py` runs the entry-point script in the project's managed environment and is equivalent to `uv run python app.py`. Open <http://127.0.0.1:5000> and stop the server with `Ctrl+C`. On later starts, only the final command is normally needed; rerun `db-upgrade` after pulling schema changes.
+`uv run app.py` runs the entry-point script in the project's managed environment and is equivalent to `uv run python app.py`. Open <http://127.0.0.1:5000> and stop the server with `Ctrl+C`. On later starts, only the final command is normally needed.
+
+The app applies any pending database migrations as it starts, so pulling schema
+changes needs no extra step. To run them on their own — to check a migration
+before starting the server, or to upgrade the database without serving it — use:
+
+```powershell
+uv run flask --app app db-upgrade
+```
 
 For Flask debug mode and automatic reloading during development, use:
 
