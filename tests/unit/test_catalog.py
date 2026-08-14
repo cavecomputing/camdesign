@@ -72,8 +72,9 @@ def test_shipped_catalog_parses():
     # model without its spec line should fail here rather than on a job.
     brands = {brand["make"]: brand for brand in load_catalog(Config.CATALOG_DIR)}
 
-    assert set(brands) == {"Hanwha", "UniFi"}
-    for brand in brands.values():
+    assert set(brands) == {"Generic", "Hanwha", "UniFi"}
+    for make in ("Hanwha", "UniFi"):
+        brand = brands[make]
         assert len(brand["models"]) > 20
         assert all(
             model["fov"] and model["resolution"] and model["type"] and model["series"]
@@ -84,3 +85,16 @@ def test_shipped_catalog_parses():
     # console, so it has no license file and gets no License dropdown.
     assert any(license["sku"].startswith("WAVE-PRO-") for license in brands["Hanwha"]["licenses"])
     assert brands["UniFi"]["licenses"] == []
+    assert brands["Generic"] == {
+        "make": "Generic",
+        "models": [
+            {
+                "model": "Generic camera",
+                "series": "Placeholder",
+                "type": "Camera",
+                "resolution": "Not specified",
+                "fov": "Not specified",
+            }
+        ],
+        "licenses": [],
+    }

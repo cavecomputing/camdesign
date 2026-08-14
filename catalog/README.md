@@ -6,6 +6,7 @@ editor, and the new rows are in the Make / Model / License dropdowns — no rest
 ```text
 catalog/
   cameras/Hanwha.csv     # the models offered under the make "Hanwha"
+  cameras/Generic.csv    # a warning-free placeholder for an unspecified camera
   licenses/Hanwha.csv    # the licenses offered alongside that make (optional)
 ```
 
@@ -41,3 +42,5 @@ separated by central dots. Any of them may be left blank.
 - A duplicate `model` (or `sku`) in one file is ignored after its first appearance.
 - Saved plans keep whatever make/model text they were given. Removing a row here does
   not rewrite existing plans — those cameras keep showing their old model.
+- Keep `Generic camera` available for placements that intentionally do not need a quoted
+  model. Unlike a blank model, choosing it marks the equipment decision as complete.

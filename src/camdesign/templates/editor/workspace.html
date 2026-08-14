@@ -218,7 +218,21 @@
           <span class="stat-pill"><strong data-camera-count>0</strong> cameras</span>
         </div>
         <label class="visually-hidden" for="project-notes">Project notes</label>
-        <textarea id="project-notes" data-project-notes maxlength="5000" rows="3" placeholder="Access, mounting height, cable path concerns…"></textarea>
+        <div class="project-notes">
+          <textarea id="project-notes" data-project-notes maxlength="5000" rows="12" placeholder="Access, mounting height, cable path concerns…"></textarea>
+          <button
+            class="project-notes__resize"
+            type="button"
+            data-project-notes-resize
+            role="separator"
+            aria-label="Resize project notes. Drag up to make taller or down to make shorter."
+            aria-orientation="horizontal"
+            aria-valuemin="96"
+            aria-valuemax="608"
+            aria-valuenow="224"
+            title="Drag to resize project notes"
+          ></button>
+        </div>
         <small class="count" data-note-count>0 / 5000</small>
       </section>
     </div>

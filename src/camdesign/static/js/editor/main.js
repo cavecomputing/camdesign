@@ -31,6 +31,7 @@ if (root) {
     cameraNote: root.querySelector("[data-camera-note]"),
     cameraNoteCount: root.querySelector("[data-camera-note-count]"),
     licenseRow: root.querySelector("[data-license-row]"),
+    notesResize: root.querySelector("[data-project-notes-resize]"),
   };
 
   const FIRST_RETRY_MS = 1_000;
@@ -93,7 +94,13 @@ if (root) {
 
   function render() {
     if (!state || !dimensions) return;
-    renderPlan(elements.overlay, state.itemsWith(draft), dimensions, state.selectedId());
+    renderPlan(
+      elements.overlay,
+      state.itemsWith(draft),
+      dimensions,
+      state.selectedId(),
+      catalog,
+    );
     updateControls();
   }
 
@@ -366,6 +373,7 @@ if (root) {
     if (!selected) return;
     state.beginChange();
     state.updateItem(selected, changes);
+    render();
     markChanged();
   }
 
@@ -839,6 +847,36 @@ if (root) {
     updateControls();
     markChanged();
   });
+  const MIN_NOTES_HEIGHT = 96;
+  function setNotesHeight(height) {
+    const maximum = Math.max(MIN_NOTES_HEIGHT, window.innerHeight - 160);
+    const next = Math.round(Math.min(maximum, Math.max(MIN_NOTES_HEIGHT, height)));
+    elements.notes.style.height = `${next}px`;
+    elements.notesResize.setAttribute("aria-valuemax", String(maximum));
+    elements.notesResize.setAttribute("aria-valuenow", String(next));
+  }
+  elements.notesResize.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    const startY = event.clientY;
+    const startHeight = elements.notes.getBoundingClientRect().height;
+    elements.notesResize.setPointerCapture(event.pointerId);
+    const resize = (moveEvent) => setNotesHeight(startHeight + startY - moveEvent.clientY);
+    const stop = () => {
+      elements.notesResize.removeEventListener("pointermove", resize);
+      elements.notesResize.removeEventListener("pointerup", stop);
+      elements.notesResize.removeEventListener("pointercancel", stop);
+    };
+    elements.notesResize.addEventListener("pointermove", resize);
+    elements.notesResize.addEventListener("pointerup", stop);
+    elements.notesResize.addEventListener("pointercancel", stop);
+  });
+  elements.notesResize.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+    event.preventDefault();
+    const direction = event.key === "ArrowUp" ? 1 : -1;
+    setNotesHeight(elements.notes.getBoundingClientRect().height + direction * 16);
+  });
+  setNotesHeight(elements.notes.getBoundingClientRect().height);
   elements.undo.addEventListener("click", undoLastChange);
   elements.deleteSelection.addEventListener("click", deleteSelectedCamera);
   createExportMenu(root.querySelector("[data-export-menu]"), { onSelect: exportPdf });

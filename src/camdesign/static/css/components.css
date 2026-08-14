@@ -357,6 +357,42 @@
   line-height: 1.45;
 }
 
+.project-notes {
+  position: relative;
+}
+
+.dock-card .project-notes textarea {
+  height: 14rem;
+  min-height: 6rem;
+  padding-top: 1.7rem;
+  resize: none;
+}
+
+.project-notes__resize {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--radius-sm) 0 var(--radius-sm) 0;
+  padding: 0;
+  cursor: ns-resize;
+  touch-action: none;
+  background:
+    linear-gradient(135deg, transparent 44%, var(--ink-500) 45% 51%, transparent 52%)
+    center / 0.85rem 0.85rem no-repeat;
+}
+
+.project-notes__resize:hover {
+  background-color: var(--blue-100);
+}
+
+.project-notes__resize:focus-visible {
+  outline: 2px solid var(--blue-600);
+  outline-offset: -3px;
+}
+
 /* Searchable dropdown. Native controls cannot carry the grey spec line under each
    option, so this is a text box with a listbox hung off it. */
 .combo {
@@ -391,10 +427,11 @@
   translate: 0 -50%;
 }
 
-/* Opens upward: the panel lives in the bottom corner, so there is no room below. */
+/* Equipment choices follow the reading direction and open below their controls. */
 .combo__list {
   position: absolute;
-  bottom: calc(100% + 0.3rem);
+  top: calc(100% + 0.3rem);
+  bottom: auto;
   left: 0;
   width: 100%;
   max-height: 15rem;
@@ -828,6 +865,22 @@
   transform-box: fill-box;
   transform-origin: center;
   transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.camera-warning {
+  pointer-events: none;
+}
+
+.camera-warning__shape {
+  fill: var(--amber-500);
+  stroke: white;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.camera-warning__mark {
+  fill: var(--ink-950);
+  font-weight: 900;
 }
 
 /* Hovering does not re-render, so these transitions survive the redraw cycle. */

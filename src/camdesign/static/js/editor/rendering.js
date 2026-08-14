@@ -8,7 +8,46 @@ function svgElement(name, attributes = {}) {
   return element;
 }
 
-function cameraGroup(camera, dimensions, index, selected) {
+export function cameraWarnings(camera, catalog) {
+  const warnings = [];
+  if (!camera.model?.trim()) warnings.push("model not specified");
+
+  const brand = catalog.find((entry) => entry.make === camera.make);
+  if (brand?.licenses?.length && !camera.license?.trim()) {
+    warnings.push("license not specified");
+  }
+  return warnings;
+}
+
+function warningBadge(x, y, scale, warnings) {
+  const badge = svgElement("g", {
+    class: "camera-warning",
+    "aria-hidden": "true",
+    transform: `translate(${x} ${y})`,
+  });
+  const title = svgElement("title");
+  title.textContent = `Camera warning: ${warnings.join("; ")}`;
+  const radius = 12 * scale;
+  badge.append(
+    title,
+    svgElement("path", {
+      class: "camera-warning__shape",
+      d: `M 0 ${-radius} L ${radius} ${radius * 0.78} L ${-radius} ${radius * 0.78} Z`,
+    }),
+  );
+  const mark = svgElement("text", {
+    class: "camera-warning__mark",
+    x: 0,
+    y: 5 * scale,
+    "font-size": 14 * scale,
+    "text-anchor": "middle",
+  });
+  mark.textContent = "!";
+  badge.append(mark);
+  return badge;
+}
+
+function cameraGroup(camera, dimensions, index, selected, catalog) {
   const { width, height } = dimensions;
   const scale = Math.max(1, Math.min(width, height) / 800);
   const x = camera.x * width;
@@ -23,13 +62,17 @@ function cameraGroup(camera, dimensions, index, selected) {
   const endX = x + Math.cos(endAngle) * radius;
   const endY = y + Math.sin(endAngle) * radius;
   const largeArc = camera.fov_degrees > 180 ? 1 : 0;
+  const warnings = cameraWarnings(camera, catalog);
+  const cameraName = camera.label || `Camera ${index + 1}`;
 
   const group = svgElement("g", {
     class: `camera-item${selected ? " is-selected" : ""}`,
     "data-item-id": camera.id,
     tabindex: "0",
     role: "button",
-    "aria-label": camera.label || `Camera ${index + 1}`,
+    "aria-label": warnings.length
+      ? `${cameraName}. Warning: ${warnings.join(" and ")}`
+      : cameraName,
   });
   group.append(
     svgElement("path", {
@@ -51,6 +94,16 @@ function cameraGroup(camera, dimensions, index, selected) {
       cy: y,
       r: 9 * scale,
     }),
+    ...(warnings.length
+      ? [
+          warningBadge(
+            x + (x < width - 36 * scale ? 23 : -23) * scale,
+            y + (y > 34 * scale ? -21 : 24) * scale,
+            scale,
+            warnings,
+          ),
+        ]
+      : []),
     // Geometry is set by layoutLabels once the text has been measured. The chip sits
     // under the glyphs and carries the hit target for clicking a name.
     svgElement("rect", { class: "camera-label", "data-camera-name": "", rx: 5 * scale }),
@@ -165,10 +218,10 @@ function layoutLabels(overlay, dimensions) {
   }
 }
 
-export function renderPlan(overlay, items, dimensions, selectedId) {
+export function renderPlan(overlay, items, dimensions, selectedId, catalog = []) {
   overlay.replaceChildren(
     ...items.map((item, index) =>
-      cameraGroup(item, dimensions, index, item.id === selectedId),
+      cameraGroup(item, dimensions, index, item.id === selectedId, catalog),
     ),
   );
   layoutLabels(overlay, dimensions);
