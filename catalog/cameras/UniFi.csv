@@ -1,0 +1,30 @@
+model,series,type,resolution,fov
+UVC-G6-Turret,G6 series,Turret,8MP,109.9°
+UVC-G6-Bullet,G6 series,Bullet,8MP,109.9°
+UVC-G6-Dome,G6 series,Dome,8MP,109.9°
+UVC-G6-Mini-Dome,G6 series,Dome,8MP,109.9°
+UVC-G6-Instant,G6 series,Compact,8MP,109.9°
+UVC-G6-180,G6 series,Panoramic,16MP,180°
+UVC-G6-PTZ,G6 series,PTZ,8MP,109.9°-26.6°
+UVC-G6-Pro-Turret,G6 Pro & Edge,Turret,8MP,113.8°-45.5°
+UVC-G6-Pro-Bullet,G6 Pro & Edge,Bullet,8MP,113.8°-45.5°
+UVC-G6-Pro-Dome,G6 Pro & Edge,Dome,8MP,113.8°-45.5°
+UVC-G6-Pro-360,G6 Pro & Edge,Fisheye,12MP,180°
+UVC-G6-Edge-Turret,G6 Pro & Edge,Turret,8MP,113.8°-45.5°
+UVC-G6-Edge-Bullet,G6 Pro & Edge,Bullet,8MP,113.8°-45.5°
+UVC-G6-Edge-Dome,G6 Pro & Edge,Dome,8MP,113.8°-45.5°
+UVC-G6-Pro-Entry,Doorbells,Doorbell,12MP,100°
+UVC-G6-Entry,Doorbells,Doorbell,5MP,100°
+UVC-G4-Doorbell-Pro,Doorbells,Doorbell,2MP,138°
+UVC-Doorbell-Lite,Doorbells,Doorbell,5MP,95.8°
+UVC-AI-Turret,AI series,Turret,8MP,109.9°
+UVC-AI-Dome,AI series,Dome,8MP,109.9°
+UVC-AI-Pro,AI series,Bullet,8MP,109.9°-34.9°
+UVC-AI-LPR,AI series,LPR bullet,8MP,109.9°-35°
+UVC-AI-360,AI series,Fisheye,4MP,360°
+UVC-AI-MS-2,AI series,Multi-sensor,2x8MP,108.8°-42.8°
+UVC-AI-MS-4,AI series,Multi-sensor,4x8MP,108.8°-42.8°
+UVC-G5-Turret-Ultra,G5 series,Turret,4MP,102.4°
+UVC-G5-Dome-Ultra,G5 series,Dome,4MP,102.4°
+UVC-G5-Dome,G5 series,Dome,4MP,102.4°
+UVC-G5-Flex,G5 series,Compact,4MP,102.4°

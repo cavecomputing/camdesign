@@ -274,6 +274,113 @@
   line-height: 1.45;
 }
 
+/* Searchable dropdown. Native controls cannot carry the grey spec line under each
+   option, so this is a text box with a listbox hung off it. */
+.combo {
+  position: relative;
+}
+
+.combo.is-open {
+  /* Above the cards stacked below it, whose own backdrop filter would otherwise
+     paint over the open list. */
+  z-index: 1;
+}
+
+.field .combo__input {
+  padding-right: 1.9rem;
+  text-overflow: ellipsis;
+}
+
+.combo.is-disabled .combo__input {
+  color: var(--ink-500);
+  background: var(--canvas);
+  cursor: not-allowed;
+}
+
+.combo__caret {
+  position: absolute;
+  top: 50%;
+  right: 0.6rem;
+  color: var(--ink-500);
+  font-size: 0.7rem;
+  line-height: 1;
+  pointer-events: none;
+  translate: 0 -50%;
+}
+
+/* Opens upward: the panel lives in the bottom corner, so there is no room below. */
+.combo__list {
+  position: absolute;
+  bottom: calc(100% + 0.3rem);
+  left: 0;
+  width: 100%;
+  max-height: 15rem;
+  margin: 0;
+  padding: 0.25rem;
+  overflow-y: auto;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  list-style: none;
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  overscroll-behavior: contain;
+}
+
+.combo__list[hidden] {
+  display: none;
+}
+
+.combo__group {
+  padding: 0.45rem 0.5rem 0.2rem;
+  color: var(--ink-500);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.combo__option {
+  display: grid;
+  gap: 0.05rem;
+  border-radius: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+}
+
+.combo__option.is-active {
+  background: var(--blue-100);
+}
+
+.combo__option[aria-selected="true"] .combo__option-name {
+  color: var(--blue-700);
+}
+
+.combo__option-name {
+  overflow: hidden;
+  color: var(--ink-950);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The spec line stays one row: it is there to tell models apart at a glance, not to
+   be read in full. */
+.combo__option-meta {
+  overflow: hidden;
+  color: var(--ink-500);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.combo__empty {
+  padding: 0.45rem 0.5rem;
+  color: var(--ink-500);
+  font-size: 0.78rem;
+}
+
 .upload-field {
   display: grid;
   min-height: 12rem;

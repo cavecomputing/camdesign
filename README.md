@@ -16,6 +16,7 @@ are not tested; use a laptop or a tablet in landscape onsite.
 | Aim and set reach | Drag anywhere inside the cone: around to aim, in and out for reach |
 | Name it and add a note | Select it, then use the **Selected camera** panel |
 | Change field of view | 30–180°. With Camera armed it sets the next one; with Select active it retargets the selected camera |
+| Set make and model | Type into the dropdowns to search them. Hanwha adds a WAVE License dropdown. Like field of view, the pick carries to the next camera placed |
 | Delete | `Delete` or `Backspace`, or the sidebar button |
 | Undo | `Ctrl+Z`, or the arrow in the header |
 | Deselect | `Escape` |
@@ -68,6 +69,10 @@ plan image is too small to place cameras accurately, so phones are out of scope.
 ## Data and checks
 
 Runtime data lives in `data/camdesign.sqlite3` and `data/uploads/`; both are ignored by Git.
+
+The equipment offered in the Make / Model / License dropdowns is plain CSV under
+`catalog/`, one file per brand, re-read on every page load — see
+[catalog/README.md](catalog/README.md) to correct a spec or add a vendor.
 
 ```powershell
 uv run pytest

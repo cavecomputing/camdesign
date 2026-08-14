@@ -1,0 +1,11 @@
+sku,name,detail
+WAVE-PRO-01,WAVE Professional 1ch,1 recording channel
+WAVE-PRO-04,WAVE Professional 4ch,4 recording channels
+WAVE-PRO-08,WAVE Professional 8ch,8 recording channels
+WAVE-PRO-16,WAVE Professional 16ch,16 recording channels
+WAVE-PRO-24,WAVE Professional 24ch,24 recording channels
+WAVE-PRO-48,WAVE Professional 48ch,48 recording channels
+WAVE-ENC-04,WAVE Encoder,4 analogue encoder channels
+WAVE-EMB-04,WAVE Embedded recorder,Playback from a Wisenet NVR
+WAVE-IO-01,WAVE I/O module,One I/O module
+WAVE-VW-02,WAVE Video wall,Up to two monitors

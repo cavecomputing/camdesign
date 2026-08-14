@@ -1,0 +1,32 @@
+model,series,type,resolution,fov
+XND-A9084RV,X series AI,Dome,8MP,113°-47°
+XND-A8084RV,X series AI,Dome,5MP,99°-31°
+XNV-A9084R,X series AI,Vandal dome,8MP,113°-47°
+XNV-A8084R,X series AI,Vandal dome,5MP,99°-31°
+XNO-A9084R,X series AI,Bullet,8MP,113°-47°
+XNO-A8084R,X series AI,Bullet,5MP,99°-31°
+XND-C8083RV,X series,Dome,6MP,113°-47°
+XNV-C9083R,X series,Vandal dome,8MP,113°-47°
+XNV-C8083R,X series,Vandal dome,6MP,113°-47°
+XNO-C9083R,X series,Bullet,8MP,113°-47°
+XNO-C8083R,X series,Bullet,6MP,113°-47°
+XNF-9010RV,X series,Fisheye,12MP,360°
+PNV-A9081R,P series,Vandal dome,8MP,101°-46°
+PNO-A9081R,P series,Bullet,8MP,101°-46°
+PND-A9081RF,P series,Flush dome,8MP,101°-46°
+PNM-C9022RV,P series,Panoramic,8MP,209°
+QNV-C9083R,Q series,Vandal dome,8MP,104°-31°
+QNV-C8083R,Q series,Vandal dome,5MP,95°-29°
+QNO-C8083R,Q series,Bullet,5MP,95°-29°
+QNE-C9013RL,Q series,Flateye,8MP,108°
+QNE-C8013RL,Q series,Flateye,5MP,97°
+ANV-L7082R,A series,Vandal dome,4MP,95°-28°
+ANO-L7082R,A series,Bullet,4MP,95°-28°
+ANV-L7012R,A series,Vandal dome,4MP,98°
+ANO-L7012R,A series,Bullet,4MP,98°
+ANE-L7012R,A series,Flateye,4MP,98°
+ANV-L6082R,A series,Vandal dome,2MP,105°-31°
+ANO-L6082R,A series,Bullet,2MP,105°-31°
+ANV-L6012R,A series,Vandal dome,2MP,114°
+ANO-L6012R,A series,Bullet,2MP,114°
+ANE-L6012R,A series,Flateye,2MP,114°

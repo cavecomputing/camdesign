@@ -42,6 +42,12 @@ def _validate_camera(item: dict[str, Any]) -> dict[str, Any]:
         "range": _number(item.get("range"), "camera range", 0.01, 2),
         "label": _text(item.get("label", ""), "camera label", 80),
         "note": _text(item.get("note", ""), "camera note", 1_000),
+        # Equipment lives in hand-edited CSVs under catalog/, so these stay free text
+        # rather than an enum: a plan drawn today must still open after a model is
+        # renamed or retired there.
+        "make": _text(item.get("make", ""), "camera make", 60),
+        "model": _text(item.get("model", ""), "camera model", 60),
+        "license": _text(item.get("license", ""), "camera license", 60),
     }
 
 

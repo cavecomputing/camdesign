@@ -31,6 +31,52 @@ def test_camera_document_is_normalized():
     assert document["items"][0]["id"] == "camera-1"
     assert document["items"][0]["label"] == "C01"
     assert document["items"][0]["note"] == ""
+    # Plans saved before equipment existed have no make/model/license and must still open.
+    assert document["items"][0]["make"] == ""
+    assert document["items"][0]["model"] == ""
+    assert document["items"][0]["license"] == ""
+
+
+def test_camera_equipment_is_kept():
+    document = validate_document(
+        {
+            "schema_version": 1,
+            "items": [
+                {
+                    "id": "camera-1",
+                    "type": "camera",
+                    "x": 0.25,
+                    "y": 0.5,
+                    "direction_degrees": -90,
+                    "fov_degrees": 60,
+                    "range": 0.2,
+                    "make": "Hanwha",
+                    "model": " XND-A9084RV ",
+                    "license": "WAVE-PRO-01",
+                }
+            ],
+        }
+    )
+
+    assert document["items"][0]["make"] == "Hanwha"
+    assert document["items"][0]["model"] == "XND-A9084RV"
+    assert document["items"][0]["license"] == "WAVE-PRO-01"
+
+
+def test_overlong_equipment_is_rejected():
+    camera = {
+        "id": "camera-1",
+        "type": "camera",
+        "x": 0.25,
+        "y": 0.5,
+        "direction_degrees": 0,
+        "fov_degrees": 60,
+        "range": 0.2,
+        "model": "X" * 61,
+    }
+
+    with pytest.raises(InvalidDocument, match="too long"):
+        validate_document({"schema_version": 1, "items": [camera]})
 
 
 @pytest.mark.parametrize(

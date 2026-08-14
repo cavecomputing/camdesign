@@ -9,6 +9,9 @@ DEFAULT_DATA_DIR = PROJECT_ROOT / "data"
 
 class Config:
     DATA_DIR = Path(os.environ.get("CAMDESIGN_DATA_DIR", DEFAULT_DATA_DIR)).resolve()
+    # Committed reference data, not user data, so it lives beside the code rather than
+    # under DATA_DIR. See catalog/README.md for the file layout.
+    CATALOG_DIR = Path(os.environ.get("CAMDESIGN_CATALOG_DIR", PROJECT_ROOT / "catalog")).resolve()
     DATABASE = DATA_DIR / "camdesign.sqlite3"
     UPLOAD_DIR = DATA_DIR / "uploads"
     SECRET_KEY = os.environ.get("CAMDESIGN_SECRET_KEY")

@@ -9,6 +9,7 @@
     data-editor-root
     data-project-id="{{ project.id }}"
     data-document-url="{{ url_for('api.project_document', project_id=project.id) }}"
+    data-catalog-url="{{ url_for('api.equipment_catalog') }}"
   >
     <header class="workspace-bar">
       <a class="brand brand--compact" href="{{ url_for('projects.index') }}" aria-label="Back to projects">
@@ -111,6 +112,57 @@
             <span>Name</span>
             <input type="text" data-camera-label maxlength="80" placeholder="Front door" autocomplete="off">
           </label>
+          <div class="field" data-make-row>
+            <span class="field__label" id="camera-make-label">Make</span>
+            <div class="combo" data-camera-make>
+              <input
+                class="combo__input"
+                type="text"
+                role="combobox"
+                aria-expanded="false"
+                aria-autocomplete="list"
+                aria-labelledby="camera-make-label"
+                autocomplete="off"
+                placeholder="Not specified"
+              >
+              <span class="combo__caret" aria-hidden="true">▾</span>
+              <ul class="combo__list" role="listbox" aria-labelledby="camera-make-label" hidden></ul>
+            </div>
+          </div>
+          <div class="field" data-model-row>
+            <span class="field__label" id="camera-model-label">Model</span>
+            <div class="combo" data-camera-model>
+              <input
+                class="combo__input"
+                type="text"
+                role="combobox"
+                aria-expanded="false"
+                aria-autocomplete="list"
+                aria-labelledby="camera-model-label"
+                autocomplete="off"
+                placeholder="Pick a make first"
+              >
+              <span class="combo__caret" aria-hidden="true">▾</span>
+              <ul class="combo__list" role="listbox" aria-labelledby="camera-model-label" hidden></ul>
+            </div>
+          </div>
+          <div class="field" data-license-row hidden>
+            <span class="field__label" id="camera-license-label">License</span>
+            <div class="combo" data-camera-license>
+              <input
+                class="combo__input"
+                type="text"
+                role="combobox"
+                aria-expanded="false"
+                aria-autocomplete="list"
+                aria-labelledby="camera-license-label"
+                autocomplete="off"
+                placeholder="Not specified"
+              >
+              <span class="combo__caret" aria-hidden="true">▾</span>
+              <ul class="combo__list" role="listbox" aria-labelledby="camera-license-label" hidden></ul>
+            </div>
+          </div>
           <label class="field field--row">
             <span>Field of view</span>
             <input

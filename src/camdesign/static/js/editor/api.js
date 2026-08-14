@@ -29,6 +29,14 @@ export async function loadProject(url, signal) {
   return parseJson(response);
 }
 
+export async function loadCatalog(url, signal) {
+  const response = await fetch(url, {
+    headers: { Accept: "application/json" },
+    signal,
+  });
+  return parseJson(response);
+}
+
 export async function saveProject(url, payload, signal) {
   const response = await fetch(url, {
     method: "PATCH",

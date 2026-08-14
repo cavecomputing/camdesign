@@ -1,4 +1,5 @@
-import { loadProject, saveProject } from "./api.js";
+import { loadCatalog, loadProject, saveProject } from "./api.js";
+import { createCombobox } from "./combobox.js";
 import { renderPlan } from "./rendering.js";
 import { createEditorState } from "./state.js";
 
@@ -28,6 +29,7 @@ if (root) {
     cameraLabel: root.querySelector("[data-camera-label]"),
     cameraNote: root.querySelector("[data-camera-note]"),
     cameraNoteCount: root.querySelector("[data-camera-note-count]"),
+    licenseRow: root.querySelector("[data-license-row]"),
   };
 
   const FIRST_RETRY_MS = 1_000;
@@ -40,6 +42,8 @@ if (root) {
   const DEFAULT_FOV = 90;
 
   const documentUrl = root.dataset.documentUrl;
+  const catalogUrl = root.dataset.catalogUrl;
+  let catalog = [];
   let state;
   let revision;
   let dimensions;
@@ -52,6 +56,11 @@ if (root) {
   // The angle the next placed camera gets. Editing a selected camera's angle also
   // updates it, so a run of cameras keeps whatever was last dialled in.
   let defaultFov = DEFAULT_FOV;
+  // Equipment is sticky for the same reason: a site is usually kitted out with one
+  // model, so the next camera inherits whatever was last picked.
+  let defaultMake = "";
+  let defaultModel = "";
+  let defaultLicense = "";
   let zoom = 1;
   let baseWidth = 0;
   let saveTimer = null;
@@ -227,6 +236,81 @@ if (root) {
     elements.cameraNoteCount.textContent = `${elements.cameraNote.value.length} / 1000`;
   }
 
+  function brandFor(make) {
+    return catalog.find((entry) => entry.make === make) ?? null;
+  }
+
+  function makeOptions() {
+    return catalog.map((entry) => ({
+      value: entry.make,
+      label: entry.make,
+      meta: `${entry.models.length} models`,
+    }));
+  }
+
+  function modelOptions(make) {
+    return (brandFor(make)?.models ?? []).map((model) => ({
+      value: model.model,
+      label: model.model,
+      // The one grey line the estimator picks from: what it sees and how much of it.
+      meta: [model.resolution, model.fov, model.type].filter(Boolean).join(" · "),
+      group: model.series,
+    }));
+  }
+
+  function licenseOptions(make) {
+    return (brandFor(make)?.licenses ?? []).map((license) => ({
+      value: license.sku,
+      label: license.name || license.sku,
+      meta: [license.sku, license.detail].filter(Boolean).join(" · "),
+    }));
+  }
+
+  // Model and license both hang off the make, so they are re-stocked whenever it moves.
+  function syncEquipmentControls(make, model, license) {
+    const brand = brandFor(make);
+    modelCombo.setOptions(modelOptions(make));
+    modelCombo.setValue(model);
+    modelCombo.setDisabled(!brand);
+    modelCombo.setPlaceholder(brand ? "Not specified" : "Pick a make first");
+    // Only brands that actually license software get the extra row.
+    elements.licenseRow?.toggleAttribute("hidden", !brand?.licenses.length);
+    licenseCombo.setOptions(licenseOptions(make));
+    licenseCombo.setValue(license);
+  }
+
+  function applyEquipment(changes) {
+    if ("make" in changes) defaultMake = changes.make;
+    if ("model" in changes) defaultModel = changes.model;
+    if ("license" in changes) defaultLicense = changes.license;
+    const selected = state?.selectedId();
+    if (!selected) return;
+    state.beginChange();
+    state.updateItem(selected, changes);
+    markChanged();
+  }
+
+  const makeCombo = createCombobox(root.querySelector("[data-camera-make]"), {
+    name: "Make",
+    emptyLabel: "Not specified",
+    onCommit: (make) => {
+      // A model number means nothing under a different badge, and neither does a
+      // license, so changing the make clears both rather than leaving a mismatch.
+      syncEquipmentControls(make, "", "");
+      applyEquipment({ make, model: "", license: "" });
+    },
+  });
+  const modelCombo = createCombobox(root.querySelector("[data-camera-model]"), {
+    name: "Model",
+    emptyLabel: "Not specified",
+    onCommit: (model) => applyEquipment({ model }),
+  });
+  const licenseCombo = createCombobox(root.querySelector("[data-camera-license]"), {
+    name: "License",
+    emptyLabel: "Not specified",
+    onCommit: (license) => applyEquipment({ license }),
+  });
+
   // One floating panel serves both jobs: with a camera selected it edits that camera
   // and grows an actions row, otherwise it holds the settings the next camera gets.
   // Kept out of render() so a redraw cannot clobber typing.
@@ -243,6 +327,15 @@ if (root) {
     elements.fov.value = String(Math.round(camera ? camera.fov_degrees : defaultFov));
     elements.cameraLabel.value = camera ? camera.label : "";
     elements.cameraNote.value = camera ? camera.note : "";
+    // With nothing selected the equipment rows show what the next camera will get.
+    const make = camera ? camera.make : defaultMake;
+    makeCombo.setOptions(makeOptions());
+    makeCombo.setValue(make);
+    syncEquipmentControls(
+      make,
+      camera ? camera.model : defaultModel,
+      camera ? camera.license : defaultLicense,
+    );
     updateCameraNoteCount();
     cameraFieldDirty = false;
   }
@@ -302,6 +395,9 @@ if (root) {
       range: 0.16,
       label: nextCameraLabel(),
       note: "",
+      make: defaultMake,
+      model: defaultModel,
+      license: defaultLicense,
     };
   }
 
@@ -484,10 +580,14 @@ if (root) {
 
   async function initialize() {
     try {
-      const [payload] = await Promise.all([
+      const [payload, equipment] = await Promise.all([
         loadProject(documentUrl),
+        // Reference data, not the job: a catalog that will not load costs the estimator
+        // the dropdowns, not the plan they came here to mark up.
+        loadCatalog(catalogUrl).catch(() => ({ makes: [] })),
         elements.image.decode(),
       ]);
+      catalog = equipment.makes ?? [];
       dimensions = {
         width: elements.image.naturalWidth,
         height: elements.image.naturalHeight,

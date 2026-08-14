@@ -1,11 +1,17 @@
 from __future__ import annotations
 
-from flask import abort, jsonify, request
+from flask import abort, current_app, jsonify, request
 
 from camdesign.blueprints.api import api
 from camdesign.db import get_db
+from camdesign.domain.catalog import load_catalog
 from camdesign.domain.documents import InvalidDocument, validate_document
 from camdesign.repositories.projects import SQLiteProjectRepository
+
+
+@api.get("/catalog")
+def equipment_catalog():
+    return jsonify(makes=load_catalog(current_app.config["CATALOG_DIR"]))
 
 
 @api.get("/projects/<uuid:project_id>/document")
