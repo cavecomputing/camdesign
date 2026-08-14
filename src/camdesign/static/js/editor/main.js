@@ -20,9 +20,11 @@ if (root) {
     deleteSelection: root.querySelector("[data-delete-selection]"),
     tools: [...root.querySelectorAll("[data-tool]")],
     shortcuts: [...root.querySelectorAll("[data-shortcut]")],
-    cameraTitle: root.querySelector("[data-camera-title]"),
-    cameraEmpty: root.querySelector("[data-camera-empty]"),
-    cameraFields: root.querySelector("[data-camera-fields]"),
+    settingsPanel: root.querySelector("[data-settings-panel]"),
+    settingsLabel: root.querySelector("[data-settings-label]"),
+    nameRow: root.querySelector("[data-name-row]"),
+    noteRow: root.querySelector("[data-note-row]"),
+    selectionActions: root.querySelector("[data-selection-actions]"),
     cameraLabel: root.querySelector("[data-camera-label]"),
     cameraNote: root.querySelector("[data-camera-note]"),
     cameraNoteCount: root.querySelector("[data-camera-note-count]"),
@@ -47,6 +49,9 @@ if (root) {
   let move = null;
   let pan = null;
   let cameraFieldDirty = false;
+  // The angle the next placed camera gets. Editing a selected camera's angle also
+  // updates it, so a run of cameras keeps whatever was last dialled in.
+  let defaultFov = DEFAULT_FOV;
   let zoom = 1;
   let baseWidth = 0;
   let saveTimer = null;
@@ -63,7 +68,6 @@ if (root) {
 
   function updateControls() {
     elements.undo.disabled = !state?.canUndo();
-    elements.deleteSelection.disabled = !state?.selectedId();
     elements.cameraCount.textContent = state ? state.cameraCount() : "0";
     elements.noteCount.textContent = `${elements.notes.value.length} / 5000`;
   }
@@ -162,6 +166,9 @@ if (root) {
 
   function setTool(tool) {
     activeTool = tool;
+    // Arming a placement tool drops the selection, so the panel shows what the next
+    // camera will get rather than the last one that was touched.
+    if (tool !== "select") state?.select(null);
     for (const button of elements.tools) {
       const active = button.dataset.tool === tool;
       button.classList.toggle("is-active", active);
@@ -172,6 +179,8 @@ if (root) {
         ? "Click for a standard camera cone, or drag to set direction and reach."
         : "Tap a camera to select it. Drag inside its cone to aim it and set how far it reaches.";
     elements.overlay.style.cursor = tool === "camera" ? "crosshair" : "grab";
+    syncSettingsPanel();
+    render();
   }
 
   function pointFromEvent(event) {
@@ -210,7 +219,7 @@ if (root) {
 
   function currentFov() {
     const value = Number(elements.fov.value);
-    if (!Number.isFinite(value) || elements.fov.value.trim() === "") return DEFAULT_FOV;
+    if (!Number.isFinite(value) || elements.fov.value.trim() === "") return defaultFov;
     return Math.min(MAX_FOV, Math.max(MIN_FOV, Math.round(value)));
   }
 
@@ -218,18 +227,20 @@ if (root) {
     elements.cameraNoteCount.textContent = `${elements.cameraNote.value.length} / 1000`;
   }
 
-  // Point the inspector at whatever is selected, so the fields always edit what is
-  // highlighted on the plan. Kept out of render() so a redraw cannot clobber typing.
-  function syncSelectionPanel() {
+  // One floating panel serves both jobs: with a camera selected it edits that camera
+  // and grows an actions row, otherwise it holds the settings the next camera gets.
+  // Kept out of render() so a redraw cannot clobber typing.
+  function syncSettingsPanel() {
     const selected = state?.selectedId();
     const camera = selected ? state.itemById(selected) : null;
-    elements.cameraFields.hidden = !camera;
-    elements.cameraEmpty.hidden = Boolean(camera);
-    elements.cameraNoteCount.hidden = !camera;
-    elements.cameraTitle.textContent = camera
+    elements.settingsPanel.hidden = !camera && activeTool === "select";
+    elements.settingsLabel.textContent = camera
       ? camera.label || "Unnamed camera"
-      : "None selected";
-    if (camera) elements.fov.value = String(Math.round(camera.fov_degrees));
+      : "New camera";
+    elements.nameRow.hidden = !camera;
+    elements.noteRow.hidden = !camera;
+    elements.selectionActions.hidden = !camera;
+    elements.fov.value = String(Math.round(camera ? camera.fov_degrees : defaultFov));
     elements.cameraLabel.value = camera ? camera.label : "";
     elements.cameraNote.value = camera ? camera.note : "";
     updateCameraNoteCount();
@@ -252,14 +263,14 @@ if (root) {
 
   function deleteSelectedCamera() {
     if (!state?.deleteSelected()) return;
-    syncSelectionPanel();
+    syncSettingsPanel();
     render();
     markChanged();
   }
 
   function undoLastChange() {
     if (!state?.undo()) return;
-    syncSelectionPanel();
+    syncSettingsPanel();
     render();
     markChanged();
   }
@@ -287,7 +298,7 @@ if (root) {
       x: point.x / dimensions.width,
       y: point.y / dimensions.height,
       direction_degrees: -90,
-      fov_degrees: currentFov(),
+      fov_degrees: defaultFov,
       range: 0.16,
       label: nextCameraLabel(),
       note: "",
@@ -333,7 +344,7 @@ if (root) {
     if (activeTool === "select") {
       const itemId = item?.dataset.itemId ?? null;
       state.select(itemId);
-      syncSelectionPanel();
+      syncSettingsPanel();
       const camera = itemId ? state.itemById(itemId) : null;
       if (camera && event.target.closest?.("[data-camera-name]")) {
         // A name can sit well away from its camera once labels have been nudged
@@ -466,7 +477,7 @@ if (root) {
     draft = null;
     releasePointer(event.pointerId);
     // The tool stays armed so a run of cameras can be placed without reselecting it.
-    syncSelectionPanel();
+    syncSettingsPanel();
     render();
     markChanged();
   }
@@ -487,7 +498,7 @@ if (root) {
       revision = payload.revision;
       elements.notes.value = payload.project.notes;
       setSaveState("All changes saved", "saved");
-      syncSelectionPanel();
+      syncSettingsPanel();
       render();
     } catch (error) {
       if (error.name !== "AbortError") setSaveState(error.message, "error");
@@ -527,7 +538,7 @@ if (root) {
     if (event.key === "Escape") {
       event.target.blur?.();
       state?.select(null);
-      syncSelectionPanel();
+      syncSettingsPanel();
       render();
       return;
     }
@@ -553,7 +564,7 @@ if (root) {
   });
   elements.cameraLabel.addEventListener("input", () => {
     applyCameraField({ label: elements.cameraLabel.value });
-    elements.cameraTitle.textContent = elements.cameraLabel.value || "Unnamed camera";
+    elements.settingsLabel.textContent = elements.cameraLabel.value || "Unnamed camera";
   });
   elements.cameraLabel.addEventListener("blur", () => {
     // Every camera needs an identifier on the quote, so a cleared name falls back
@@ -561,7 +572,7 @@ if (root) {
     if (!state?.selectedId() || elements.cameraLabel.value.trim() !== "") return;
     const label = nextCameraLabel();
     elements.cameraLabel.value = label;
-    elements.cameraTitle.textContent = label;
+    elements.settingsLabel.textContent = label;
     applyCameraField({ label });
   });
   elements.cameraNote.addEventListener("focus", () => {
@@ -576,9 +587,10 @@ if (root) {
     const fov = currentFov();
     // Reflect the clamped value so the number shown is the number that gets used.
     elements.fov.value = String(fov);
-    // While the camera tool is armed this is the angle for the next camera, so leave
-    // the one just placed alone. Retargeting a camera is a Select-tool action.
-    const selected = activeTool === "select" ? state?.selectedId() : null;
+    // The one control does both jobs: it retargets whatever is selected and becomes
+    // the angle for the next camera placed.
+    defaultFov = fov;
+    const selected = state?.selectedId();
     if (!selected) return;
     state.beginChange();
     state.updateItem(selected, { fov_degrees: fov });

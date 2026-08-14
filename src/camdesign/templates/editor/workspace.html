@@ -32,7 +32,14 @@
       </div>
     </header>
 
-    <nav class="tool-bar" aria-label="Plan tools">
+    <section class="plan-panel" data-plan-panel aria-label="Site plan editor">
+      <div class="plan-stage" data-plan-stage>
+        <img src="{{ url_for('projects.asset', project_id=project.id) }}" alt="Site plan for {{ project.name }}" data-plan-image>
+        <svg class="plan-overlay" data-plan-overlay role="img" aria-label="Camera coverage markup"></svg>
+      </div>
+    </section>
+
+    <nav class="tool-dock" aria-label="Plan tools">
       <button
         class="tool-button is-active"
         type="button"
@@ -40,9 +47,11 @@
         data-shortcut="1"
         aria-keyshortcuts="1"
         aria-pressed="true"
+        aria-label="Select"
+        title="Select — 1"
       >
-        <span aria-hidden="true">↖</span><strong>Select</strong>
-        <kbd class="tool-button__key" aria-hidden="true">1</kbd>
+        <span class="tool-button__icon" aria-hidden="true">↖</span>
+        <span class="tool-button__key" aria-hidden="true">1</span>
       </button>
       <button
         class="tool-button"
@@ -51,88 +60,93 @@
         data-shortcut="2"
         aria-keyshortcuts="2"
         aria-pressed="false"
+        aria-label="Camera"
+        title="Camera — 2"
       >
-        <span aria-hidden="true">◉</span><strong>Camera</strong>
-        <kbd class="tool-button__key" aria-hidden="true">2</kbd>
+        <span class="tool-button__icon" aria-hidden="true">◉</span>
+        <span class="tool-button__key" aria-hidden="true">2</span>
       </button>
-      <button class="tool-button" type="button" data-shortcut="3" disabled title="Coming next">
-        <span aria-hidden="true">⌁</span><strong>Ethernet</strong><small>Next</small>
-        <kbd class="tool-button__key" aria-hidden="true">3</kbd>
+      <button
+        class="tool-button"
+        type="button"
+        data-shortcut="3"
+        disabled
+        aria-label="Ethernet run"
+        title="Ethernet run — coming next"
+      >
+        <span class="tool-button__icon" aria-hidden="true">⌁</span>
+        <span class="tool-button__key" aria-hidden="true">3</span>
       </button>
-      <button class="tool-button" type="button" data-shortcut="4" disabled title="Coming next">
-        <span aria-hidden="true">▦</span><strong>MDF / IDF</strong><small>Next</small>
-        <kbd class="tool-button__key" aria-hidden="true">4</kbd>
+      <button
+        class="tool-button"
+        type="button"
+        data-shortcut="4"
+        disabled
+        aria-label="MDF / IDF"
+        title="MDF / IDF — coming next"
+      >
+        <span class="tool-button__icon" aria-hidden="true">▦</span>
+        <span class="tool-button__key" aria-hidden="true">4</span>
       </button>
-      <button class="tool-button" type="button" data-shortcut="5" disabled title="Coming next">
-        <span aria-hidden="true">●</span><strong>Linked note</strong><small>Later</small>
-        <kbd class="tool-button__key" aria-hidden="true">5</kbd>
+      <button
+        class="tool-button"
+        type="button"
+        data-shortcut="5"
+        disabled
+        aria-label="Linked note"
+        title="Linked note — later"
+      >
+        <span class="tool-button__icon" aria-hidden="true">●</span>
+        <span class="tool-button__key" aria-hidden="true">5</span>
       </button>
     </nav>
 
-    <section class="plan-panel" data-plan-panel aria-label="Site plan editor">
-      <div class="plan-panel__hint" data-plan-hint>Select the Camera tool, then click or drag on the plan.</div>
-      <div class="plan-stage" data-plan-stage>
-        <img src="{{ url_for('projects.asset', project_id=project.id) }}" alt="Site plan for {{ project.name }}" data-plan-image>
-        <svg class="plan-overlay" data-plan-overlay role="img" aria-label="Camera coverage markup"></svg>
-      </div>
-    </section>
+    <p class="plan-hint" data-plan-hint>Select the Camera tool, then click or drag on the plan.</p>
 
-    <aside class="inspector" aria-label="Project details">
-      <section class="inspector__section">
-        <p class="eyebrow">Placement</p>
-        <h2>Camera defaults</h2>
-        <label class="field field--compact">
-          <span>Field of view</span>
-          <input
-            type="number"
-            data-camera-fov
-            min="30"
-            max="180"
-            step="1"
-            value="90"
-            inputmode="numeric"
-            autocomplete="off"
-          >
-        </label>
-        <p class="helper-text">30–180°. Sets the next camera you place; in Select mode it retargets the selected one.</p>
-        <button class="button button--danger button--full" type="button" data-delete-selection disabled>Delete selected camera</button>
-      </section>
-      <section class="inspector__section inspector__section--camera">
-        <div class="inspector__heading">
-          <div>
-            <p class="eyebrow">Selected camera</p>
-            <h2 data-camera-title>None selected</h2>
-          </div>
-          <span class="note-count" data-camera-note-count hidden>0 / 1000</span>
-        </div>
-        <p class="helper-text" data-camera-empty>Tap a camera on the plan to name it and record what you saw.</p>
-        <div class="camera-fields" data-camera-fields hidden>
-          <label class="field">
+    <div class="dock-stack">
+      <section class="dock-card dock-card--enter" data-settings-panel aria-label="Camera settings" hidden>
+        <p class="dock-card__label" data-settings-label>Camera</p>
+        <div class="prop-rows">
+          <label class="field field--row" data-name-row hidden>
             <span>Name</span>
             <input type="text" data-camera-label maxlength="80" placeholder="Front door" autocomplete="off">
           </label>
-          <label class="field">
+          <label class="field field--row">
+            <span>Field of view</span>
+            <input
+              type="number"
+              data-camera-fov
+              min="30"
+              max="180"
+              step="5"
+              value="90"
+              inputmode="numeric"
+              autocomplete="off"
+            >
+          </label>
+          <label class="field" data-note-row hidden>
             <span>Note</span>
-            <textarea data-camera-note maxlength="1000" rows="4" placeholder="Mounting height, power, cable path, customer request…"></textarea>
+            <textarea data-camera-note maxlength="1000" rows="3" placeholder="Mounting height, power, cable path…"></textarea>
+            <small class="count" data-camera-note-count>0 / 1000</small>
           </label>
         </div>
+        <div class="dock-card__actions" data-selection-actions hidden>
+          <button class="button button--quiet button--sm" type="button" data-delete-selection>
+            <span aria-hidden="true">🗑</span> Delete
+          </button>
+        </div>
       </section>
-      <section class="inspector__section inspector__section--notes">
-        <div class="inspector__heading">
-          <div>
-            <p class="eyebrow">Onsite capture</p>
-            <h2>Project notes</h2>
-          </div>
-          <span class="note-count" data-note-count>0 / 5000</span>
+
+      <section class="dock-card" aria-label="Project overview">
+        <div class="dock-card__head">
+          <p class="dock-card__label">Project</p>
+          <span class="stat-pill"><strong data-camera-count>0</strong> cameras</span>
         </div>
         <label class="visually-hidden" for="project-notes">Project notes</label>
-        <textarea id="project-notes" data-project-notes maxlength="5000" placeholder="Access, mounting height, cable path concerns, customer requests…"></textarea>
+        <textarea id="project-notes" data-project-notes maxlength="5000" rows="3" placeholder="Access, mounting height, cable path concerns…"></textarea>
+        <small class="count" data-note-count>0 / 5000</small>
       </section>
-      <section class="inspector__section inspector__section--summary">
-        <span>Cameras</span>
-        <strong data-camera-count>0</strong>
-      </section>
-    </aside>
+    </div>
   </main>
 {% endblock %}
 
