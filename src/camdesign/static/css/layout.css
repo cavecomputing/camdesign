@@ -74,6 +74,9 @@
   --gutter-right: calc(var(--stack-width) + var(--space-4) * 2);
   --plan-pad: var(--space-5);
   --plan-reserve-bottom: 0rem;
+  /* Sized so the top islands centre with exactly --space-4 above them, matching
+     the --space-4 gap on their left/right — see .workspace-bar__brand. */
+  --bar-height: 6.25rem;
 
   position: relative;
   display: grid;
@@ -95,6 +98,7 @@
   align-items: center;
   gap: var(--space-3);
   min-width: 0;
+  min-height: 2.75rem;
   padding: var(--space-3) var(--space-4);
   justify-self: start;
 }
