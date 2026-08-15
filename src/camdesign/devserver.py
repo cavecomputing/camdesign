@@ -113,9 +113,10 @@ def _open_browser_when_ready(url: str, timeout: float = 20.0) -> None:
         time.sleep(0.25)
 
 
-def run_development_server(app_factory: AppFactory) -> int:
+def run_development_server(app_factory: AppFactory, *, port: int | None = None) -> int:
     host = os.environ.get("CAMDESIGN_HOST", "127.0.0.1")
-    port = 5000
+    if port is None:
+        port = int(os.environ.get("CAMDESIGN_PORT", "5000"))
     browser_url = f"http://127.0.0.1:{port}"
 
     try:

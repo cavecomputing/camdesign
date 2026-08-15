@@ -82,9 +82,16 @@ uv run app.py
 
 `uv run app.py` runs the entry-point script in the project's managed environment and is equivalent to `uv run python app.py`. Open <http://127.0.0.1:5000> and stop the server with `Ctrl+C`. On later starts, only the final command is normally needed.
 
+To run on a different port (e.g. if 5000 is already taken), pass `--port`:
+
+```powershell
+uv run app.py --port 5050
+```
+
 The supported launchers hold a single-instance lock for the lifetime of the server,
-disable Flask's child-process reloader, and refuse to start if port 5000 belongs to
-another process. The browser opens only after CamDesign returns a healthy response.
+disable Flask's child-process reloader, and refuse to start if the configured port
+belongs to another process. The browser opens only after CamDesign returns a healthy
+response.
 
 The app applies any pending database migrations as it starts, so pulling schema
 changes needs no extra step. To run them on their own — to check a migration
