@@ -2,10 +2,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: var(--bar-height);
-  padding: 0 var(--space-6);
-  border-bottom: 1px solid var(--line);
-  background: rgb(255 253 250 / 94%);
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.site-header__brand,
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
 }
 
 .page-shell {
