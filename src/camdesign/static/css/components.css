@@ -578,11 +578,14 @@
     color var(--duration-fast) var(--ease-out);
 }
 
-/* Floating panels: the tool dock, the settings island, and the project card all
-   share one raised surface so they read as pieces of the same kit. */
+/* Floating panels: the tool dock, the settings island, the project card, and the
+   top bar's own islands all share one raised surface so they read as pieces of
+   the same kit. */
 .tool-dock,
 .dock-card,
-.plan-hint {
+.plan-hint,
+.workspace-bar__brand,
+.workspace-bar__actions {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: rgb(255 253 250 / 94%);

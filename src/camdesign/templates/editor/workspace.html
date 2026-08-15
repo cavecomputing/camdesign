@@ -12,20 +12,85 @@
     data-catalog-url="{{ url_for('api.equipment_catalog') }}"
   >
     <header class="workspace-bar">
-      <a class="brand" href="{{ url_for('projects.index') }}" aria-label="Back to projects">
-        <img
-          class="brand__logo"
-          src="{{ url_for('static', filename='images/camdesign-logo.png') }}"
-          width="640"
-          height="353"
-          alt=""
-        >
-        <span>CamDesign</span>
-      </a>
-      <div class="workspace-bar__project">
-        <strong>{{ project.name }}</strong>
-        <span class="workspace-bar__address">{{ project.site_address or project.client_name or "Field quote" }}</span>
+      <div class="workspace-bar__brand">
+        <a class="brand" href="{{ url_for('projects.index') }}" aria-label="Back to projects">
+          <img
+            class="brand__logo"
+            src="{{ url_for('static', filename='images/camdesign-logo.png') }}"
+            width="640"
+            height="353"
+            alt=""
+          >
+          <span>CamDesign</span>
+        </a>
+        <div class="workspace-bar__project">
+          <strong>{{ project.name }}</strong>
+          <span class="workspace-bar__address">{{ project.site_address or project.client_name or "Field quote" }}</span>
+        </div>
       </div>
+
+      <nav class="tool-dock" aria-label="Plan tools">
+        <button
+          class="tool-button is-active"
+          type="button"
+          data-tool="select"
+          data-shortcut="1"
+          aria-keyshortcuts="1"
+          aria-pressed="true"
+          aria-label="Select"
+          title="Select — 1"
+        >
+          <span class="tool-button__icon" aria-hidden="true">↖</span>
+          <span class="tool-button__key" aria-hidden="true">1</span>
+        </button>
+        <button
+          class="tool-button"
+          type="button"
+          data-tool="camera"
+          data-shortcut="2"
+          aria-keyshortcuts="2"
+          aria-pressed="false"
+          aria-label="Camera"
+          title="Camera — 2"
+        >
+          <span class="tool-button__icon" aria-hidden="true">◉</span>
+          <span class="tool-button__key" aria-hidden="true">2</span>
+        </button>
+        <button
+          class="tool-button"
+          type="button"
+          data-shortcut="3"
+          disabled
+          aria-label="Ethernet run"
+          title="Ethernet run — coming next"
+        >
+          <span class="tool-button__icon" aria-hidden="true">⌁</span>
+          <span class="tool-button__key" aria-hidden="true">3</span>
+        </button>
+        <button
+          class="tool-button"
+          type="button"
+          data-shortcut="4"
+          disabled
+          aria-label="MDF / IDF"
+          title="MDF / IDF — coming next"
+        >
+          <span class="tool-button__icon" aria-hidden="true">▦</span>
+          <span class="tool-button__key" aria-hidden="true">4</span>
+        </button>
+        <button
+          class="tool-button"
+          type="button"
+          data-shortcut="5"
+          disabled
+          aria-label="Linked note"
+          title="Linked note — later"
+        >
+          <span class="tool-button__icon" aria-hidden="true">●</span>
+          <span class="tool-button__key" aria-hidden="true">5</span>
+        </button>
+      </nav>
+
       <div class="workspace-bar__actions">
         <span class="save-state" data-save-state role="status">Loading…</span>
         <button class="icon-button" type="button" data-undo aria-label="Undo last change" disabled>↶</button>
@@ -37,7 +102,7 @@
             aria-expanded="false"
             aria-controls="export-formats"
           >
-            Export PDF
+            Export
             <span class="export-menu__caret" aria-hidden="true">▾</span>
           </button>
           <ul class="export-menu__list" id="export-formats" data-export-list hidden>
@@ -62,68 +127,6 @@
         <svg class="plan-overlay" data-plan-overlay role="img" aria-label="Camera coverage markup"></svg>
       </div>
     </section>
-
-    <nav class="tool-dock" aria-label="Plan tools">
-      <button
-        class="tool-button is-active"
-        type="button"
-        data-tool="select"
-        data-shortcut="1"
-        aria-keyshortcuts="1"
-        aria-pressed="true"
-        aria-label="Select"
-        title="Select — 1"
-      >
-        <span class="tool-button__icon" aria-hidden="true">↖</span>
-        <span class="tool-button__key" aria-hidden="true">1</span>
-      </button>
-      <button
-        class="tool-button"
-        type="button"
-        data-tool="camera"
-        data-shortcut="2"
-        aria-keyshortcuts="2"
-        aria-pressed="false"
-        aria-label="Camera"
-        title="Camera — 2"
-      >
-        <span class="tool-button__icon" aria-hidden="true">◉</span>
-        <span class="tool-button__key" aria-hidden="true">2</span>
-      </button>
-      <button
-        class="tool-button"
-        type="button"
-        data-shortcut="3"
-        disabled
-        aria-label="Ethernet run"
-        title="Ethernet run — coming next"
-      >
-        <span class="tool-button__icon" aria-hidden="true">⌁</span>
-        <span class="tool-button__key" aria-hidden="true">3</span>
-      </button>
-      <button
-        class="tool-button"
-        type="button"
-        data-shortcut="4"
-        disabled
-        aria-label="MDF / IDF"
-        title="MDF / IDF — coming next"
-      >
-        <span class="tool-button__icon" aria-hidden="true">▦</span>
-        <span class="tool-button__key" aria-hidden="true">4</span>
-      </button>
-      <button
-        class="tool-button"
-        type="button"
-        data-shortcut="5"
-        disabled
-        aria-label="Linked note"
-        title="Linked note — later"
-      >
-        <span class="tool-button__icon" aria-hidden="true">●</span>
-        <span class="tool-button__key" aria-hidden="true">5</span>
-      </button>
-    </nav>
 
     <p class="plan-hint" data-plan-hint>Select the Camera tool, then click or drag on the plan.</p>
 
