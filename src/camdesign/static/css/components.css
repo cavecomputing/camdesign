@@ -708,6 +708,57 @@
   white-space: nowrap;
 }
 
+.dock-card__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.dock-card__toggle:hover {
+  color: var(--ink-800);
+}
+
+.dock-card__toggle-icon {
+  margin-top: 0.05em;
+  font-size: 0.7rem;
+  line-height: 1;
+  transition: rotate var(--duration-fast) var(--ease-out);
+}
+
+.dock-card__toggle[aria-expanded="false"] .dock-card__toggle-icon {
+  rotate: -90deg;
+}
+
+/* Animated open/closed by JS setting an explicit max-height (see setNotesCollapsed
+   in main.js) — a plain 1fr/0fr grid-row transition can't collapse this, since the
+   card's own height is auto rather than definite, so the fr track never shrinks. */
+.project-notes-collapse {
+  overflow: hidden;
+  transition: max-height var(--duration-med) var(--ease-out);
+}
+
+.project-notes-collapse__inner {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Collapsed, the card is just the head row: match its bottom padding to the
+   top and drop the row gap, rather than leaving room sized for the hidden pane. */
+.dock-card[data-notes-card] {
+  transition:
+    gap var(--duration-med) var(--ease-out),
+    padding-bottom var(--duration-med) var(--ease-out);
+}
+
+.dock-card.is-collapsed {
+  gap: 0;
+  padding-bottom: var(--space-3);
+}
+
 .prop-rows {
   display: grid;
   gap: var(--space-2);

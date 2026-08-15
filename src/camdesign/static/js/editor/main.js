@@ -32,6 +32,9 @@ if (root) {
     cameraNoteCount: root.querySelector("[data-camera-note-count]"),
     licenseRow: root.querySelector("[data-license-row]"),
     notesResize: root.querySelector("[data-project-notes-resize]"),
+    notesToggle: root.querySelector("[data-notes-toggle]"),
+    notesBody: root.querySelector("[data-notes-body]"),
+    notesCard: root.querySelector("[data-notes-card]"),
   };
 
   const FIRST_RETRY_MS = 1_000;
@@ -877,6 +880,33 @@ if (root) {
     setNotesHeight(elements.notes.getBoundingClientRect().height + direction * 16);
   });
   setNotesHeight(elements.notes.getBoundingClientRect().height);
+  // A plain CSS grid-rows transition can't collapse this pane: its height is
+  // auto rather than definite, so 0fr and 1fr resolve to the same size. Measure
+  // the content and drive max-height directly instead.
+  function setNotesCollapsed(collapsed) {
+    const body = elements.notesBody;
+    body.inert = collapsed;
+    elements.notesCard.classList.toggle("is-collapsed", collapsed);
+    if (collapsed) {
+      body.style.maxHeight = `${body.scrollHeight}px`;
+      void body.offsetHeight;
+      body.style.maxHeight = "0px";
+    } else {
+      body.style.maxHeight = `${body.scrollHeight}px`;
+      body.addEventListener(
+        "transitionend",
+        () => {
+          body.style.maxHeight = "";
+        },
+        { once: true },
+      );
+    }
+  }
+  elements.notesToggle.addEventListener("click", () => {
+    const expanded = elements.notesToggle.getAttribute("aria-expanded") === "true";
+    elements.notesToggle.setAttribute("aria-expanded", String(!expanded));
+    setNotesCollapsed(expanded);
+  });
   elements.undo.addEventListener("click", undoLastChange);
   elements.deleteSelection.addEventListener("click", deleteSelectedCamera);
   createExportMenu(root.querySelector("[data-export-menu]"), { onSelect: exportPdf });
