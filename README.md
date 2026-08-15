@@ -6,7 +6,7 @@
 
 CamDesign is a field-friendly Flask workspace for turning site images into rough security-camera quote plans. It currently supports resumable projects, camera field-of-view placement, per-camera and project notes, and debounced SQLite autosave.
 
-![The editor with six cameras placed on a market floor plan, each cone showing its field of view, and the inspector open beside it](assets/screenshot-editor.png)
+![The editor with cameras placed on a site map, each cone showing its field of view, and the selected camera's inspector open beside it](assets/screenshot-editor.png)
 
 **Supported on desktop and tablet only.** The editor is built for a mouse or a
 large touch screen at 768px wide and up. Phone-width layouts are not supported and
