@@ -94,7 +94,7 @@ def test_delete_project_removes_record_and_uploaded_asset(client, app):
 
     confirmation = client.get(f"/projects/{project_id}/delete")
     assert confirmation.status_code == 200
-    assert b"This action cannot be undone" in confirmation.data
+    assert b"This can't be undone." in confirmation.data
 
     deleted = client.post(
         f"/projects/{project_id}/delete",

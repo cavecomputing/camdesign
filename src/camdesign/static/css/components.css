@@ -1,674 +1,697 @@
+/* ---------- Top bar ---------- */
+
 .brand {
-  display: inline-flex;
+  display: flex;
+  flex: none;
   align-items: center;
-  gap: var(--space-3);
-  color: var(--ink-950);
-  font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  text-decoration: none;
-  transition: opacity var(--duration-fast) var(--ease-out);
+  gap: var(--space-12);
+  color: var(--on-bar);
 }
 
 .brand:hover {
-  opacity: 0.72;
-}
-
-.brand__logo {
-  display: block;
-  width: auto;
-  height: 2.2rem;
-  flex: none;
-}
-
-.button,
-.icon-button {
-  display: inline-flex;
-  min-height: 2.75rem;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  padding: 0.7rem 1rem;
-  font-weight: 750;
   text-decoration: none;
-  cursor: pointer;
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
 }
 
-.button:not(:disabled):active,
-.icon-button:not(:disabled):active {
-  transform: translateY(1px);
-}
-
-.button:disabled,
-.icon-button:disabled,
-.tool-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.48;
-}
-
-.button--primary {
-  color: white;
-  background: var(--ink-950);
-  box-shadow: var(--shadow-sm);
-}
-
-.button--primary:not(:disabled):hover {
-  background: var(--blue-700);
-}
-
-.button--quiet,
-.icon-button {
-  color: var(--ink-800);
-  border-color: var(--line);
+/* The logo's black lettering doesn't read on navy, so it always sits on a white chip. */
+.brand-chip {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 3px 8px;
+  border-radius: var(--radius-md);
   background: var(--surface);
 }
 
-.button--quiet:not(:disabled):hover,
-.icon-button:not(:disabled):hover {
-  border-color: var(--line-strong);
-  background: var(--canvas);
+.brand-chip img {
+  width: auto;
+  height: 34px;
 }
 
-.button--danger:not(:disabled):hover {
-  border-color: var(--danger-line-strong);
-  background: var(--danger-150);
+.topbar-title {
+  display: grid;
+  white-space: nowrap;
 }
 
-.button--danger {
-  color: var(--danger-700);
-  border-color: var(--danger-line);
-  background: var(--coral-100);
+.topbar-title strong {
+  font-size: var(--text-bar-title);
+  line-height: 1.2;
 }
 
-.button--full {
-  width: 100%;
+.topbar-title small {
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.75;
 }
 
-.button--sm {
-  min-height: 2.1rem;
-  gap: 0.35rem;
-  padding: 0.3rem 0.7rem;
-  font-size: var(--text-sm);
+.bar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--bar-line);
+  border-radius: var(--radius-md);
+  background: var(--bar-fill);
+  color: var(--on-bar);
+  font-size: var(--text-small);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
-.icon-button {
-  width: 2.75rem;
+.bar-button:not(:disabled):hover {
+  background: var(--bar-fill-hover);
+  text-decoration: none;
+}
+
+.bar-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.bar-button--icon {
+  width: 36px;
   padding: 0;
-  font-size: 1.35rem;
 }
 
-.eyebrow {
-  margin-bottom: var(--space-2);
-  color: var(--blue-700);
-  font-size: var(--text-xs);
-  font-weight: 800;
-  letter-spacing: 0.11em;
+/* 16px line drawings in currentColor: the system's only icon style. */
+.icon-16 {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 860px) {
+  .topbar-title small {
+    display: none;
+  }
+}
+
+/* In the editor the app name gives way to the project name once the tools need the
+   room; the logo stays and still links home. */
+@media (max-width: 1180px) {
+  .workspace-bar .topbar-title {
+    display: none;
+  }
+}
+
+/* ---------- Buttons ---------- */
+
+/* At most one primary per view; danger only for the yes of something that can't be
+   undone. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-control);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--bg);
+  text-decoration: none;
+}
+
+.button.primary {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: var(--on-bar);
+}
+
+.button.primary:hover {
+  background: var(--brand-deep);
+}
+
+.button.danger {
+  border-color: var(--error);
+  background: var(--error);
+  color: var(--on-bar);
+}
+
+.button.danger:hover {
+  border-color: var(--error-deep);
+  background: var(--error-deep);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.small-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.small-button:hover {
+  border-color: var(--brand-line);
+  background: var(--brand-soft);
+  color: var(--brand);
+  text-decoration: none;
+}
+
+/* ---------- Fields ---------- */
+
+.label {
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-.notice {
-  margin-bottom: var(--space-5);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: var(--space-4);
-  animation: drop-in var(--duration-med) var(--ease-out) both;
+.label__required {
+  color: var(--brand);
 }
 
-.notice--error {
-  color: var(--danger-800);
-  border-color: var(--danger-line);
-  background: var(--coral-100);
+.field {
+  display: grid;
+  gap: var(--space-6);
+}
+
+/* Label beside its control keeps a short property to a single line in a dock. */
+.field--row {
+  grid-template-columns: minmax(0, 1fr) 88px;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.input--area {
+  height: auto;
+  padding: 8px 12px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* Notes in a dock: the system's note size. */
+.input--dense {
+  min-height: 60px;
+  font-size: var(--text-body-sm);
+  line-height: 1.45;
+}
+
+.input:focus {
+  border-color: var(--brand);
+  outline: none;
+  box-shadow: var(--focus-halo);
+}
+
+.input::placeholder {
+  color: var(--ink-3);
+}
+
+/* ---------- Page furniture ---------- */
+
+.lede {
+  color: var(--ink-2);
+  font-size: var(--text-lede);
+}
+
+.notice {
+  margin: 0 0 var(--space-16);
+  padding: 10px 14px;
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  background: var(--error-bg);
+  color: var(--error);
+  font-weight: 500;
 }
 
 .notice--success {
-  color: var(--green-700);
-  border-color: var(--green-line);
-  background: var(--green-100);
+  border-color: var(--approved);
+  background: var(--approved-bg);
+  color: var(--approved);
 }
+
+/* A region with nothing in it yet: dashed, faintly striped. */
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-16);
+  padding: 48px 32px;
+  border: 1px dashed var(--brand-line);
+  border-radius: var(--radius);
+  background: repeating-linear-gradient(45deg, transparent 0 10px, rgb(29 78 137 / 3%) 10px 20px);
+  text-align: center;
+}
+
+.empty__text {
+  color: var(--ink-3);
+  font-style: italic;
+}
+
+.callout {
+  display: flex;
+  gap: var(--space-12);
+  padding: var(--space-14) var(--space-16);
+  border: 1px solid var(--brand-line);
+  border-radius: var(--radius);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-size: var(--text-control);
+}
+
+.callout b {
+  display: block;
+}
+
+/* How every identifier is shown, exactly as written. */
+.id-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--brand-line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--brand);
+  font: 500 var(--text-caption) / 1.5 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+/* One short message and its answers: a confirmation, or an error page. */
+.message-card {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-12);
+  max-width: 480px;
+  margin: 48px auto 0;
+  padding: 28px;
+}
+
+.message-card__title {
+  font-size: var(--text-section-heading);
+  letter-spacing: -0.01em;
+}
+
+.message-card__text {
+  color: var(--ink-2);
+}
+
+.message-card__actions {
+  display: flex;
+  gap: var(--space-8);
+  justify-self: end;
+  margin-top: var(--space-12);
+}
+
+/* ---------- Projects ---------- */
 
 .project-card {
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  color: inherit;
+  border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  text-decoration: none;
   transition:
-    transform var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.project-card:hover {
+  border-color: var(--brand-line);
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
 }
 
 .project-card__open {
   flex: 1;
   color: inherit;
+}
+
+.project-card__open:hover {
   text-decoration: none;
 }
 
-.project-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
 .project-card__preview {
-  position: relative;
-  height: 12rem;
-  overflow: hidden;
-  background: var(--canvas);
+  height: 168px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
 }
 
 .project-card__preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--duration-med) var(--ease-out);
-}
-
-.project-card:hover .project-card__preview img {
-  transform: scale(1.04);
-}
-
-.project-card__status {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-  border-radius: 999px;
-  padding: 0.35rem 0.65rem;
-  color: var(--green-700);
-  background: rgb(233 247 238 / 94%);
-  font-size: var(--text-sm);
-  font-weight: 750;
 }
 
 .project-card__body {
-  padding: var(--space-4);
+  display: grid;
+  gap: 2px;
+  padding: var(--space-14) var(--space-16) var(--space-4);
 }
 
-.project-card__body p {
-  margin-bottom: var(--space-3);
+.project-card__title {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-card-title);
 }
 
-.project-card__body span {
-  color: var(--ink-500);
-  font-size: var(--text-sm);
+.project-card__client {
+  color: var(--ink);
+  font-size: var(--text-body-sm);
 }
 
-.project-card__body .project-card__address {
-  display: block;
-  margin-bottom: var(--space-3);
-  color: var(--ink-650);
-  font-size: var(--text-md);
+.project-card__address {
+  color: var(--ink-2);
+  font-size: var(--text-small);
 }
 
 .project-card__footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
-  padding: 0 var(--space-4) var(--space-4);
+  gap: var(--space-12);
+  padding: var(--space-10) var(--space-16) var(--space-14);
 }
 
-.project-card__footer > span {
-  color: var(--ink-500);
-  font-size: var(--text-sm);
-}
-
-.empty-state {
-  display: grid;
-  min-height: 27rem;
-  place-items: center;
-  align-content: center;
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--radius-lg);
-  padding: var(--space-7);
-  text-align: center;
-  background: var(--canvas);
-}
-
-.confirmation-card {
-  width: min(34rem, 100%);
-  margin: var(--space-7) auto 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  padding: var(--space-7);
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
-}
-
-.confirmation-card p:not(.eyebrow) {
-  margin-top: var(--space-3);
-}
-
-.confirmation-card__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-3);
-  margin-top: var(--space-6);
-}
-
-.empty-state p {
-  max-width: 34rem;
-}
-
-.empty-state__icon {
-  display: grid;
-  width: 4rem;
-  height: 4rem;
-  margin-bottom: var(--space-4);
-  place-items: center;
-  border-radius: 1.25rem;
-  color: var(--blue-700);
-  background: var(--blue-100);
-  font-size: 2rem;
-  animation: float-soft 3.4s ease-in-out infinite;
+.project-card__date {
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
 }
 
 .form-intro {
-  position: sticky;
-  top: var(--space-6);
+  display: grid;
+  gap: var(--space-8);
 }
 
-.form-intro__tip {
-  display: grid;
-  gap: var(--space-2);
-  margin-top: var(--space-6);
-  border-left: 3px solid var(--coral-600);
-  padding: var(--space-3) var(--space-4);
-  color: var(--ink-650);
-  background: var(--coral-100);
+.form-intro .callout {
+  margin-top: var(--space-16);
 }
 
 .project-form {
   display: grid;
-  gap: var(--space-5);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  padding: clamp(1.25rem, 4vw, 2.5rem);
-  background: var(--surface);
-  box-shadow: var(--shadow-md);
-}
-
-.field {
-  display: grid;
-  gap: var(--space-2);
-  color: var(--ink-800);
-  font-size: var(--text-md);
-  font-weight: 700;
-}
-
-.field b {
-  color: var(--coral-600);
-}
-
-.field input,
-.field textarea,
-.field select,
-.dock-card textarea {
-  width: 100%;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
-  padding: 0.78rem 0.9rem;
-  color: var(--ink-950);
-  background: var(--surface);
-  font-weight: 500;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-.field input:focus,
-.field textarea:focus,
-.field select:focus,
-.dock-card textarea:focus {
-  border-color: var(--blue-600);
-  outline: 0;
-  box-shadow: var(--focus-ring);
-}
-
-/* Label beside its control keeps each property to a single line in the island. */
-.field--row {
-  grid-template-columns: minmax(0, 1fr) 5.5rem;
-  align-items: center;
-}
-
-.dock-card .field {
-  gap: var(--space-1);
-  font-size: var(--text-sm);
-}
-
-.dock-card input,
-.dock-card textarea {
-  padding: 0.45rem 0.6rem;
-  font-size: var(--text-md);
-}
-
-.dock-card textarea {
-  min-height: 3.6rem;
-  resize: vertical;
-  line-height: 1.45;
-}
-
-.project-notes {
-  position: relative;
-  display: flex;
-  min-height: 0;
-  flex-direction: column;
-}
-
-.dock-card .project-notes textarea {
-  flex: 0 1 auto;
-  height: 14rem;
-  min-height: 6rem;
-  padding-top: 1.2rem;
-  resize: none;
-}
-
-.project-notes__resize {
-  position: absolute;
-  top: 1px;
-  left: 50%;
-  width: 3rem;
-  height: 1.1rem;
-  border: 0;
-  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-  padding: 0;
-  cursor: ns-resize;
-  touch-action: none;
-  translate: -50% 0;
-  /* Two short rules: the usual drag-handle mark, read as "pull this edge". */
-  background:
-    linear-gradient(var(--ink-500), var(--ink-500)) center calc(50% - 0.14rem) / 1.25rem 1.5px
-      no-repeat,
-    linear-gradient(var(--ink-500), var(--ink-500)) center calc(50% + 0.14rem) / 1.25rem 1.5px
-      no-repeat;
-}
-
-.project-notes__resize:hover {
-  background-color: var(--blue-100);
-}
-
-.project-notes__resize:focus-visible {
-  outline: 2px solid var(--blue-600);
-  outline-offset: -3px;
-}
-
-/* Searchable dropdown. Native controls cannot carry the grey spec line under each
-   option, so this is a text box with a listbox hung off it. */
-.combo {
-  position: relative;
-}
-
-.combo.is-open {
-  /* Above the cards stacked below it, whose own backdrop filter would otherwise
-     paint over the open list. */
-  z-index: 1;
-}
-
-.field .combo__input {
-  padding-right: 1.9rem;
-  text-overflow: ellipsis;
-}
-
-.combo.is-disabled .combo__input {
-  color: var(--ink-500);
-  background: var(--canvas);
-  cursor: not-allowed;
-}
-
-.combo__caret {
-  position: absolute;
-  top: 50%;
-  right: 0.6rem;
-  color: var(--ink-500);
-  font-size: var(--text-xs);
-  line-height: 1;
-  pointer-events: none;
-  translate: 0 -50%;
-}
-
-/* Equipment choices follow the reading direction and open below their controls. */
-.combo__list {
-  position: absolute;
-  top: calc(100% + 0.3rem);
-  bottom: auto;
-  left: 0;
-  width: 100%;
-  max-height: 15rem;
-  margin: 0;
-  padding: 0.25rem;
-  overflow-y: auto;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
-  list-style: none;
-  background: var(--surface);
-  box-shadow: var(--shadow-md);
-  overscroll-behavior: contain;
-}
-
-.combo__group {
-  padding: 0.45rem 0.5rem 0.2rem;
-  color: var(--ink-500);
-  font-size: var(--text-2xs);
-  font-weight: 800;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-.combo__option {
-  display: grid;
-  gap: 0.05rem;
-  border-radius: 0.35rem;
-  padding: 0.35rem 0.5rem;
-  cursor: pointer;
-}
-
-.combo__option.is-active {
-  background: var(--blue-100);
-}
-
-.combo__option[aria-selected="true"] .combo__option-name {
-  color: var(--blue-700);
-}
-
-.combo__option-name {
-  overflow: hidden;
-  color: var(--ink-950);
-  font-size: var(--text-md);
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* The spec line stays one row: it is there to tell models apart at a glance, not to
-   be read in full. */
-.combo__option-meta {
-  overflow: hidden;
-  color: var(--ink-500);
-  font-size: var(--text-2xs);
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.combo__empty {
-  padding: 0.45rem 0.5rem;
-  color: var(--ink-500);
-  font-size: var(--text-sm);
+  gap: var(--space-16);
+  padding: 28px;
 }
 
 .upload-field {
   display: grid;
-  min-height: 12rem;
   place-items: center;
   align-content: center;
-  gap: var(--space-2);
-  border: 1px dashed var(--blue-600);
-  border-radius: var(--radius-md);
-  padding: var(--space-5);
-  color: var(--ink-650);
+  gap: var(--space-4);
+  min-height: 176px;
+  padding: var(--space-24);
+  border: 1.5px dashed var(--brand-line);
+  border-radius: var(--radius);
+  background:
+    repeating-linear-gradient(45deg, transparent 0 10px, rgb(29 78 137 / 3%) 10px 20px),
+    var(--surface);
+  color: var(--ink-2);
+  font-size: var(--text-small);
   text-align: center;
-  background: var(--blue-50);
   cursor: pointer;
   transition:
     background-color var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
+    border-color var(--duration-fast) var(--ease-out);
 }
 
-.upload-field:hover {
-  border-color: var(--blue-700);
-  background: var(--blue-75);
+.upload-field:hover,
+.upload-field.is-dragover {
+  border-color: var(--brand);
+  background: var(--brand-soft);
 }
 
 .upload-field:focus-within {
-  box-shadow: var(--focus-ring);
+  border-color: var(--brand);
+  box-shadow: var(--focus-halo);
 }
 
 .upload-field strong {
   max-width: 100%;
   overflow: hidden;
+  color: var(--ink);
+  font-size: var(--text-control);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.upload-field.is-dragover {
-  border: 1px solid var(--blue-700);
-  background: var(--blue-100);
-  transform: scale(1.01);
-}
-
 .upload-field.has-file {
-  border: 1px solid var(--blue-600);
-  background: var(--blue-100);
-}
-
-.upload-field.has-file .upload-field__icon {
-  color: white;
-  background: var(--blue-700);
+  border-style: solid;
+  border-color: var(--brand);
+  background: var(--brand-soft);
 }
 
 .upload-field.has-error {
-  border: 1px solid var(--danger-line-strong);
-  background: var(--coral-100);
+  border-style: solid;
+  border-color: var(--error);
+  background: var(--error-bg);
 }
 
-.upload-field.has-error .upload-field__icon {
-  color: var(--danger-700);
-  background: var(--danger-200);
+.upload-field.has-error strong {
+  color: var(--error);
 }
 
 .upload-field__icon {
   display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin-bottom: var(--space-2);
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--space-8);
   place-items: center;
   border-radius: 50%;
-  color: var(--blue-700);
-  background: var(--blue-100);
-  font-size: 1.5rem;
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out);
+  background: var(--brand-soft);
+  color: var(--brand);
 }
 
-/* Floating panels: the tool dock, the settings island, the project card, and the
-   editor and site header's own islands all share one raised surface so they read
-   as pieces of the same kit. */
-.tool-dock,
-.dock-card,
-.plan-hint,
-.workspace-bar__brand,
-.workspace-bar__actions,
-.site-header__brand,
-.site-header__actions {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: rgb(255 253 250 / 94%);
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(10px);
+.upload-field.has-file .upload-field__icon {
+  background: var(--brand);
+  color: var(--on-bar);
 }
 
-.tool-dock {
-  padding: 0.3rem;
+.upload-field.has-error .upload-field__icon {
+  background: var(--surface);
+  color: var(--error);
+}
+
+/* One glyph per state; the field's class picks which one shows. */
+.upload-field__glyph--done,
+.upload-field__glyph--error,
+.upload-field.has-file .upload-field__glyph--add,
+.upload-field.has-error .upload-field__glyph--add {
+  display: none;
+}
+
+.upload-field.has-file .upload-field__glyph--done,
+.upload-field.has-error .upload-field__glyph--error {
+  display: block;
+}
+
+/* ---------- Editor bar ---------- */
+
+.tool-group {
+  display: flex;
+  gap: var(--space-4);
 }
 
 .tool-button {
   position: relative;
   display: grid;
-  width: 2.6rem;
-  height: 2.6rem;
+  width: 40px;
+  height: 40px;
+  padding: 0;
   place-items: center;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  color: var(--ink-950);
-  background: transparent;
+  border: 1px solid var(--bar-line);
+  border-radius: var(--radius-md);
+  background: var(--bar-fill);
+  color: var(--on-bar);
   cursor: pointer;
   transition:
     background-color var(--duration-fast) var(--ease-out),
     border-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
+    color var(--duration-fast) var(--ease-out);
 }
 
-.tool-button:not(:disabled):not(.is-active):hover {
-  background: var(--canvas);
+.tool-button:not(:disabled, [aria-pressed="true"]):hover {
+  background: var(--bar-fill-hover);
 }
 
-.tool-button:not(:disabled):active {
-  transform: scale(0.96);
+/* The bar's inverse of a pressed page button: white, with the icon in brand. */
+.tool-button[aria-pressed="true"] {
+  border-color: var(--surface);
+  background: var(--surface);
+  color: var(--brand);
+}
+
+.tool-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .tool-button__icon {
-  font-size: 1.2rem;
-  line-height: 1;
-}
-
-.tool-button.is-active {
-  color: var(--blue-700);
-  border-color: var(--blue-line);
-  background: var(--blue-100);
+  width: 18px;
+  height: 18px;
 }
 
 .tool-button__key {
   position: absolute;
-  right: 0.24rem;
-  bottom: 0.16rem;
-  color: var(--ink-500);
-  font-size: var(--text-key);
-  font-weight: 800;
-  line-height: 1;
+  right: 3px;
+  bottom: 2px;
+  font: 600 10px / 1 var(--font-mono);
+  opacity: 0.75;
 }
 
-.tool-button.is-active .tool-button__key {
-  color: var(--blue-700);
+/* A status badge: the save state's word in the strong colour of its pair. */
+.save-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--planned-bg);
+  color: var(--planned);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.plan-hint {
+.save-state::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: currentcolor;
+}
+
+.save-state.is-saving {
+  background: var(--review-bg);
+  color: var(--review);
+}
+
+.save-state.is-saving::before {
+  animation: pulse-dot 1s var(--ease-out) infinite;
+}
+
+.save-state.is-saved {
+  background: var(--approved-bg);
+  color: var(--approved);
+}
+
+/* Failures carry a sentence worth reading, so they may wrap where the short states do not. */
+.save-state.is-error {
+  max-width: 16rem;
+  border-radius: var(--radius-md);
+  background: var(--error-bg);
+  color: var(--error);
+  line-height: 1.3;
+  white-space: normal;
+}
+
+/* Export is a menu button: one format today, more as the design package fills out. */
+.export-menu {
+  position: relative;
+}
+
+.export-menu__caret {
+  transition: rotate var(--duration-fast) var(--ease-out);
+}
+
+.export-menu.is-open .export-menu__caret {
+  rotate: 180deg;
+}
+
+.export-menu__list {
+  position: absolute;
+  z-index: 4;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 260px;
   margin: 0;
-  /* It sits over the top of the plan, so clicks and drags go straight through. */
-  pointer-events: none;
-  border-radius: 999px;
-  padding: 0.4rem 0.85rem;
-  color: var(--ink-650);
-  box-shadow: var(--shadow-sm);
-  font-size: var(--text-sm);
+  padding: var(--space-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  list-style: none;
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+  animation: drop-in var(--duration-fast) var(--ease-out) both;
 }
+
+.export-menu__item {
+  display: grid;
+  width: 100%;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.export-menu__item:hover,
+.export-menu__item:focus-visible {
+  outline: none;
+  background: var(--brand-soft);
+}
+
+.export-menu__item-name {
+  font-size: var(--text-control);
+  font-weight: 600;
+}
+
+.export-menu__item-meta {
+  color: var(--ink-2);
+  font-size: var(--text-small);
+}
+
+/* ---------- Editor docks ---------- */
 
 .dock-card {
   display: grid;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4) var(--space-4);
+  gap: var(--space-10);
+  padding: var(--space-14) var(--space-16) var(--space-16);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
   pointer-events: auto;
 }
 
@@ -677,50 +700,38 @@
   animation: dock-enter 170ms ease-out;
 }
 
-@keyframes dock-enter {
-  from {
-    opacity: 0;
-    translate: 0 0.75rem;
-  }
+.dock-card__title {
+  overflow: hidden;
+  color: var(--brand-ink);
+  font-size: var(--text-card-title);
+  font-weight: 700;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dock-card__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
-}
-
-.dock-card__label {
-  overflow: hidden;
-  margin: 0;
-  color: var(--ink-500);
-  font-size: var(--text-2xs);
-  font-weight: 800;
-  letter-spacing: 0.09em;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  white-space: nowrap;
+  gap: var(--space-12);
 }
 
 .dock-card__toggle {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--space-6);
+  padding: 0;
   border: 0;
   background: none;
-  padding: 0;
   cursor: pointer;
 }
 
 .dock-card__toggle:hover {
-  color: var(--ink-800);
+  color: var(--brand);
 }
 
 .dock-card__toggle-icon {
-  margin-top: 0.05em;
-  font-size: var(--text-xs);
-  line-height: 1;
   transition: rotate var(--duration-fast) var(--ease-out);
 }
 
@@ -728,8 +739,34 @@
   rotate: -90deg;
 }
 
+/* Appended below the properties, the way Excalidraw tacks actions onto its island. */
+.dock-card__actions {
+  display: flex;
+  gap: var(--space-8);
+  margin-top: var(--space-4);
+  padding-top: var(--space-12);
+  border-top: 1px solid var(--line);
+}
+
+/* Collapsed, the card is just the head row: match its bottom padding to the top and
+   drop the row gap, rather than leaving room sized for the hidden pane. */
+.dock-card--notes {
+  display: flex;
+  min-height: 0;
+  flex: 0 1 auto;
+  flex-direction: column;
+  transition:
+    gap var(--duration-med) var(--ease-out),
+    padding-bottom var(--duration-med) var(--ease-out);
+}
+
+.dock-card.is-collapsed {
+  gap: 0;
+  padding-bottom: var(--space-14);
+}
+
 /* Animated open/closed by JS setting an explicit max-height (see setNotesCollapsed
-   in main.js) — a plain 1fr/0fr grid-row transition can't collapse this, since the
+   in main.js): a plain 1fr/0fr grid-row transition can't collapse this, since the
    card's own height is auto rather than definite, so the fr track never shrinks. */
 .project-notes-collapse {
   display: flex;
@@ -743,228 +780,187 @@
   display: flex;
   min-height: 0;
   flex-direction: column;
-  gap: var(--space-2);
-}
-
-/* Collapsed, the card is just the head row: match its bottom padding to the
-   top and drop the row gap, rather than leaving room sized for the hidden pane. */
-.dock-card[data-notes-card] {
-  display: flex;
-  min-height: 0;
-  flex: 0 1 auto;
-  flex-direction: column;
-  transition:
-    gap var(--duration-med) var(--ease-out),
-    padding-bottom var(--duration-med) var(--ease-out);
-}
-
-.dock-card.is-collapsed {
-  gap: 0;
-  padding-bottom: var(--space-3);
+  gap: var(--space-6);
 }
 
 .prop-rows {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-10);
 }
 
-/* Appended below the properties, the way Excalidraw tacks actions onto its island. */
-.dock-card__actions {
-  display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-1);
-  border-top: 1px solid var(--line);
-  padding-top: var(--space-3);
-}
-
-.stat-pill {
+.dock-count {
   flex: none;
-  border-radius: 999px;
-  padding: 0.2rem 0.55rem;
-  color: var(--ink-650);
-  background: var(--canvas);
-  font-size: var(--text-sm);
-  font-weight: 700;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
 }
 
-.stat-pill strong {
-  color: var(--ink-950);
+.dock-count strong {
+  color: var(--ink);
 }
 
 .count {
-  color: var(--ink-500);
-  font-size: var(--text-2xs);
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
   text-align: right;
+}
+
+.project-notes {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.project-notes__input {
+  flex: 0 1 auto;
+  height: 224px;
+  min-height: 96px;
+  padding-top: 18px;
+  resize: none;
+}
+
+.project-notes__resize {
+  position: absolute;
+  top: 1px;
+  left: 50%;
+  width: 48px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  cursor: ns-resize;
+  touch-action: none;
+  translate: -50% 0;
+  /* Two short rules: the usual drag-handle mark, read as "pull this edge". */
+  background:
+    linear-gradient(var(--ink-3), var(--ink-3)) center calc(50% - 2px) / 20px 1.5px no-repeat,
+    linear-gradient(var(--ink-3), var(--ink-3)) center calc(50% + 2px) / 20px 1.5px no-repeat;
+}
+
+.project-notes__resize:hover {
+  background-color: var(--brand-soft);
+}
+
+/* Searchable dropdown. Native controls cannot carry the grey spec line under each
+   option, so this is a text box with a listbox hung off it. */
+.combo {
+  position: relative;
+}
+
+.combo.is-open {
+  /* Above the cards stacked below it. */
+  z-index: 1;
+}
+
+/* The caret is two gradient triangles, as the design system's select draws it: the CSP
+   allows no data: URL. */
+.combo__input {
+  padding-right: 30px;
+  text-overflow: ellipsis;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--ink-2) 50%) right 15px center / 5px 5px
+      no-repeat,
+    linear-gradient(135deg, var(--ink-2) 50%, transparent 50%) right 10px center / 5px 5px
+      no-repeat,
+    var(--surface);
+}
+
+.combo.is-disabled .combo__input {
+  color: var(--ink-2);
+  background-color: var(--bg);
+  cursor: not-allowed;
+}
+
+/* Equipment choices follow the reading direction and open below their controls. */
+.combo__list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  max-height: 240px;
+  margin: 0;
+  padding: var(--space-6);
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  list-style: none;
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+  overscroll-behavior: contain;
+  scrollbar-color: var(--line) transparent;
+  scrollbar-width: thin;
+}
+
+.combo__group {
+  padding: 8px 10px 4px;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.combo__option {
+  display: grid;
+  gap: 1px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.combo__option.is-active {
+  background: var(--brand-soft);
+}
+
+.combo__option[aria-selected="true"] .combo__option-name {
+  color: var(--brand);
+}
+
+.combo__option-name {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: var(--text-control);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The spec line stays one row: it is there to tell models apart at a glance, not to
+   be read in full. */
+.combo__option-meta {
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.combo__empty {
+  padding: 8px 10px;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+}
+
+.plan-hint {
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  /* It sits over the plan, so clicks and drags go straight through. */
+  pointer-events: none;
 }
 
 .plan-hint.is-swap {
   animation: hint-swap var(--duration-med) var(--ease-out);
 }
 
-/* Export is a menu button: one format today, more as the quote package fills out. It
-   hangs off the header rather than opening upward like the equipment dropdowns. */
-.export-menu {
-  position: relative;
-}
-
-.export-menu__caret {
-  margin-left: 0.4rem;
-  font-size: var(--text-xs);
-  line-height: 1;
-  transition: rotate var(--duration-fast) var(--ease-out);
-}
-
-.export-menu.is-open .export-menu__caret {
-  rotate: 180deg;
-}
-
-.export-menu__list {
-  position: absolute;
-  z-index: 4;
-  top: calc(100% + 0.4rem);
-  right: 0;
-  min-width: 16rem;
-  margin: 0;
-  padding: 0.25rem;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
-  list-style: none;
-  background: var(--surface);
-  box-shadow: var(--shadow-md);
-  animation: drop-in var(--duration-fast) var(--ease-out) both;
-}
-
-.export-menu__item {
-  display: grid;
-  width: 100%;
-  gap: 0.1rem;
-  border: 0;
-  border-radius: 0.35rem;
-  padding: 0.5rem 0.6rem;
-  text-align: left;
-  background: none;
-  cursor: pointer;
-}
-
-.export-menu__item:hover,
-.export-menu__item:focus-visible {
-  background: var(--blue-100);
-}
-
-.export-menu__item-name {
-  color: var(--ink-950);
-  font-size: var(--text-md);
-  font-weight: 700;
-}
-
-.export-menu__item-meta {
-  color: var(--ink-500);
-  font-size: var(--text-xs);
-  font-weight: 600;
-}
-
-.save-state {
-  display: inline-flex;
-  white-space: nowrap;
-  align-items: center;
-  gap: 0.45rem;
-  color: var(--ink-500);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  transition: color var(--duration-fast) var(--ease-out);
-}
-
-.save-state::before {
-  content: "";
-  width: 0.5rem;
-  height: 0.5rem;
-  flex: none;
-  border-radius: 50%;
-  background: currentcolor;
-  transition: background-color var(--duration-fast) var(--ease-out);
-}
-
-.save-state.is-dirty {
-  color: var(--blue-700);
-}
-
-.save-state.is-saving {
-  color: var(--blue-700);
-}
-
-.save-state.is-saving::before {
-  animation: pulse-dot 1s var(--ease-out) infinite;
-}
-
-.save-state.is-saved {
-  color: var(--green-700);
-}
-
-/* Failures carry a sentence worth reading, so they may wrap where the short states do not. */
-.save-state.is-error {
-  max-width: 16rem;
-  color: var(--danger-700);
-  white-space: normal;
-}
-
-.camera-cone {
-  fill: rgb(40 117 232 / 26%);
-  stroke: var(--blue-600);
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-  transition: fill var(--duration-fast) var(--ease-out);
-}
-
-.camera-source {
-  fill: var(--ink-950);
-  stroke: white;
-  stroke-width: 3;
-  vector-effect: non-scaling-stroke;
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: transform var(--duration-fast) var(--ease-out);
-}
-
-.camera-warning {
-  pointer-events: none;
-}
-
-.camera-warning__shape {
-  fill: var(--amber-500);
-  stroke: white;
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-}
-
-.camera-warning__mark {
-  fill: var(--ink-950);
-  font-weight: 900;
-}
-
-/* Hovering does not re-render, so these transitions survive the redraw cycle. */
-.camera-item:hover .camera-source {
-  transform: scale(1.2);
-}
-
-.camera-item:hover .camera-cone {
-  fill: rgb(40 117 232 / 38%);
-}
-
-.camera-item.is-selected:hover .camera-cone {
-  fill: rgb(239 107 87 / 40%);
-}
-
-.camera-label {
-  fill: white;
-  stroke: var(--ink-950);
-  stroke-width: 0.5;
-}
-
-.camera-label-text {
-  fill: var(--ink-950);
-  font-weight: 800;
-  pointer-events: none;
-}
+/* ---------- Plan markup ---------- */
 
 .camera-item {
   cursor: pointer;
@@ -976,8 +972,26 @@
 }
 
 .camera-item:focus-visible {
-  outline: 2px solid var(--blue-600);
+  outline: 2px solid var(--brand);
   outline-offset: 3px;
+}
+
+.camera-cone {
+  fill: rgb(59 130 214 / 24%);
+  stroke: var(--accent);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  transition: fill var(--duration-fast) var(--ease-out);
+}
+
+.camera-source {
+  fill: var(--brand-ink);
+  stroke: var(--surface);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform var(--duration-fast) var(--ease-out);
 }
 
 /* Transparent rather than none, so the enlarged grab target still hit-tests. */
@@ -989,14 +1003,67 @@
   cursor: move;
 }
 
-.camera-item.is-selected .camera-cone {
-  fill: rgb(239 107 87 / 28%);
-  stroke: var(--coral-600);
+/* Hovering does not re-render, so these transitions survive the redraw cycle. */
+.camera-item:hover .camera-source {
+  transform: scale(1.2);
 }
 
-.camera-item.is-selected .camera-source {
-  fill: var(--coral-600);
+.camera-item:hover .camera-cone {
+  fill: rgb(59 130 214 / 36%);
 }
+
+/* A camera's name is its identifier on the quote, so it reads as an ID chip. */
+.camera-label {
+  fill: var(--surface);
+  stroke: var(--brand-line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.camera-label-text {
+  fill: var(--brand);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* Selected is the current item: the system's brand, with the chip filled solid. */
+.camera-item.is-selected .camera-cone {
+  fill: rgb(29 78 137 / 34%);
+  stroke: var(--brand);
+  stroke-width: 2.5;
+}
+
+.camera-item.is-selected .camera-source,
+.camera-item.is-selected .camera-label {
+  fill: var(--brand);
+}
+
+.camera-item.is-selected .camera-label {
+  stroke: var(--brand);
+}
+
+.camera-item.is-selected .camera-label-text {
+  fill: var(--on-bar);
+}
+
+.camera-warning {
+  pointer-events: none;
+}
+
+.camera-warning__shape {
+  fill: var(--living-dot);
+  stroke: var(--surface);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.camera-warning__mark {
+  fill: var(--brand-ink);
+  font-weight: 800;
+}
+
+/* ---------- Utilities ---------- */
 
 .visually-hidden {
   position: absolute;
@@ -1009,51 +1076,24 @@
   border: 0;
 }
 
-/* Thin, quiet scrollbars for the workspace's scrollable panes. The sidebars this was
-   written for are floating docks now, and the plan panel is a fixed window that pans by
-   transform, so the long model list is what is left to scroll. */
-.combo__list {
-  scrollbar-color: var(--line-strong) transparent;
-  scrollbar-width: thin;
-}
-
-.combo__list::-webkit-scrollbar {
-  width: 0.6rem;
-  height: 0.6rem;
-}
-
-.combo__list::-webkit-scrollbar-thumb {
-  border: 0.15rem solid transparent;
-  border-radius: 999px;
-  background: var(--line-strong);
-  background-clip: padding-box;
-}
-
-@keyframes rise-in {
+@keyframes dock-enter {
   from {
     opacity: 0;
-    transform: translateY(0.6rem);
+    translate: 0 12px;
   }
 }
 
 @keyframes drop-in {
   from {
     opacity: 0;
-    transform: translateY(-0.5rem);
-  }
-}
-
-@keyframes stage-in {
-  from {
-    opacity: 0;
-    transform: scale(0.985);
+    transform: translateY(-8px);
   }
 }
 
 @keyframes hint-swap {
   from {
     opacity: 0.25;
-    transform: translateY(-0.3rem);
+    transform: translateY(-5px);
   }
 }
 
@@ -1066,16 +1106,6 @@
   50% {
     opacity: 0.45;
     transform: scale(0.72);
-  }
-}
-
-@keyframes float-soft {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-0.25rem);
   }
 }
 

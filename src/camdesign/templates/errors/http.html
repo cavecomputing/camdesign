@@ -3,10 +3,12 @@
 {% block title %}{{ error.name }} · CamDesign{% endblock %}
 
 {% block content %}
-  <section class="empty-state">
-    <p class="eyebrow">{{ error.code }}</p>
-    <h1>{{ error.name }}</h1>
-    <p>{{ error.description }}</p>
-    <a class="button button--primary" href="{{ url_for('projects.index') }}">Back to projects</a>
+  <section class="message-card panel">
+    <span class="id-chip">{{ error.code }}</span>
+    <h1 class="message-card__title">{{ error.name }}</h1>
+    <p class="message-card__text">{{ error.description }}</p>
+    <div class="message-card__actions">
+      <a class="button primary" href="{{ url_for('projects.index') }}">Back to projects</a>
+    </div>
   </section>
 {% endblock %}

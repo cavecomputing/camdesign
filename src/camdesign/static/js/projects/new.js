@@ -2,11 +2,9 @@ const field = document.querySelector("[data-upload-field]");
 
 if (field) {
   const input = field.querySelector('input[type="file"]');
-  const icon = field.querySelector("[data-upload-icon]");
   const title = field.querySelector("[data-upload-title]");
   const detail = field.querySelector("[data-upload-detail]");
   const initial = {
-    icon: icon.textContent,
     title: title.textContent,
     detail: detail.textContent,
   };
@@ -30,7 +28,6 @@ if (field) {
     }
     field.classList.remove("has-error");
     field.classList.add("has-file");
-    icon.textContent = "✓";
     title.textContent = file.name;
     detail.textContent = `${formatSize(file.size)} · click or drop another image to replace it`;
   }
@@ -40,14 +37,12 @@ if (field) {
     input.value = "";
     field.classList.remove("has-file");
     field.classList.add("has-error");
-    icon.textContent = "!";
     title.textContent = message;
     detail.textContent = "Use a PNG, JPEG, or WebP image up to 20 MB.";
   }
 
   function reset() {
     field.classList.remove("has-file", "has-error");
-    icon.textContent = initial.icon;
     title.textContent = initial.title;
     detail.textContent = initial.detail;
   }

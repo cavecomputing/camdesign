@@ -32,11 +32,11 @@ page for the next visit.
 | Place a camera | With Camera armed, click for a default cone or drag to aim it. The tool stays armed for the next one |
 | Move a camera | Drag the circle at the cone's point |
 | Aim and set reach | Drag anywhere inside the cone: around to aim, in and out for reach |
-| Name it and add a note | Select it, then use the **Selected camera** panel |
+| Name it and add a note | Select it, then use the camera panel at the right |
 | Select from the keyboard | `Tab` to a camera on the plan, then `Enter` or `Space` |
 | Change field of view | 30–180°. With Camera armed it sets the next one; with Select active it retargets the selected camera |
 | Set make and model | Type into the dropdowns to search them. Hanwha adds a WAVE License dropdown. Like field of view, the pick carries to the next camera placed |
-| Delete | `Delete` or `Backspace`, or the sidebar button |
+| Delete | `Delete` or `Backspace`, or **Delete** in the camera panel |
 | Undo | `Ctrl+Z`, or the arrow in the header |
 | Back out | `Escape` closes an open dropdown, then leaves the field you are typing in, then drops the selection, then puts the armed tool away |
 | Zoom and pan | Scroll to zoom at the cursor, double-click to fit. Drag empty canvas or middle-drag anywhere to pan |
@@ -46,7 +46,7 @@ keeps retrying on its own, so a brief dead spot on the network does not lose wor
 
 ## Exporting
 
-**Export PDF** in the header opens the list of formats. There is one so far:
+**Export** in the header opens the list of formats. There is one so far:
 
 | Format | What comes out |
 | --- | --- |

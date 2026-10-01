@@ -1,54 +1,113 @@
+/* The look CamDesign shares with the team's other apps. Names and values follow the shared
+   design system's tokens.json so the two can be compared and re-synced; this is the subset
+   CamDesign uses. Light only, by the system's decision. */
+
+/* Vendored rather than hosted, as the system requires: the CSP allows nothing but 'self'.
+   Licences sit beside the files in static/fonts/. */
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/inter-latin-wght-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin-wght-normal.woff2") format("woff2");
+}
+
 :root {
   color-scheme: light;
-  --ink-950: #0c2148;
-  --ink-800: #18365f;
-  --ink-650: #49607c;
-  --ink-500: #708096;
-  --blue-700: #1457c7;
-  --blue-600: #2875e8;
-  --blue-100: #e8f1ff;
-  --coral-600: #ef6b57;
-  --coral-100: #fff0ec;
-  --danger-800: #8b2f25;
-  --danger-700: #a33a2c;
-  --danger-line-strong: #e3a295;
-  --danger-line: #f0c6bd;
-  --danger-200: #ffded6;
-  --danger-150: #ffe4dc;
-  --blue-line: #a8c9fb;
-  --blue-75: #eff5ff;
-  --blue-50: #f7faff;
-  --green-line: #b8dfc5;
-  --green-700: #318754;
-  --green-100: #e9f7ee;
-  --amber-500: #f4b942;
-  --paper: #fffdfa;
-  --canvas: #f5f2ec;
+
+  /* brand marks what is interactive or current; brand-deep → brand is the bar. */
+  --brand: #1d4e89;
+  --brand-deep: #0f2d52;
+  --brand-ink: #0b1f3a;
+  --brand-soft: #e9f0f9;
+  --brand-line: #c9d8ec;
+  /* The lighter blue of the hero's family. Never text: white on it is 3.9:1. */
+  --accent: #3b82d6;
+
+  --bg: #f4f7fb;
   --surface: #ffffff;
-  --line: #e3dfd7;
-  --line-strong: #d3cec5;
-  --shadow-sm: 0 2px 8px rgb(12 33 72 / 8%);
-  --shadow-md: 0 14px 42px rgb(12 33 72 / 12%);
-  --radius-sm: 0.55rem;
-  --radius-md: 0.9rem;
-  --radius-lg: 1.25rem;
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2rem;
-  --space-7: 3rem;
-  --bar-height: 4.75rem;
-  /* One small type scale for the UI chrome; headings set their own sizes in base. */
-  --text-key: 0.58rem;
-  --text-2xs: 0.68rem;
-  --text-xs: 0.72rem;
-  --text-sm: 0.78rem;
-  --text-md: 0.86rem;
-  --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --focus-ring: 0 0 0 3px rgb(40 117 232 / 24%);
+  --ink: #0f172a;
+  --ink-2: #475569;
+  /* 2.6:1 on surface: only for text a reader can do without. */
+  --ink-3: #94a3b8;
+  --line: #e2e8f0;
+
+  --on-bar: #ffffff;
+  --bar-fill: rgb(255 255 255 / 10%);
+  --bar-fill-hover: rgb(255 255 255 / 18%);
+  --bar-line: rgb(255 255 255 / 30%);
+
+  /* Status pairs: a strong text colour on its pale fill. Map states onto these rather
+     than adding colours, and always show the word too. */
+  --planned: #64748b;
+  --planned-bg: #f1f5f9;
+  --draft: #c2410c;
+  --draft-bg: #ffedd5;
+  --living-dot: #eab308;
+  --review: #1d4ed8;
+  --review-bg: #dbeafe;
+  --approved: #047857;
+  --approved-bg: #d1fae5;
+  --error: var(--draft);
+  --error-bg: var(--draft-bg);
+  --error-deep: #9a3412;
+
+  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, monospace;
+
+  /* The system's type styles, by name. */
+  --text-page-title: 30px;
+  --text-section-heading: 19px;
+  --text-card-title: 15px;
+  --text-bar-title: 16px;
+  --text-body: 15px;
+  --text-lede: 15.5px;
+  --text-control: 14px;
+  --text-body-sm: 13.5px;
+  --text-small: 13px;
+  --text-caption: 12px;
+  --text-label: 11px;
+
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-36: 36px;
+  --gutter: 40px;
+  --topbar-h: 60px;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  /* One resting shadow; the float is only for things above the page. */
+  --shadow: 0 1px 2px rgb(15 45 82 / 6%), 0 4px 16px rgb(15 45 82 / 6%);
+  --shadow-float: 0 12px 32px rgb(11 31 58 / 25%);
+  /* Always with a brand border: the border is what carries focus (8.4:1). */
+  --focus-halo: 0 0 0 3px var(--brand-soft);
+
   --duration-fast: 150ms;
   --duration-med: 280ms;
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@media (max-width: 860px) {
+  :root {
+    --gutter: 16px;
+  }
 }

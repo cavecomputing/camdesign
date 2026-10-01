@@ -1,164 +1,136 @@
-.site-header {
+/* The navy bar across the top of every page. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-4);
+  gap: var(--space-16);
+  height: var(--topbar-h);
+  padding: 0 var(--gutter);
+  background: linear-gradient(90deg, var(--brand-deep), var(--brand));
+  color: var(--on-bar);
 }
 
-.site-header__brand,
-.site-header__actions {
-  display: flex;
-  align-items: center;
-  padding: var(--space-3) var(--space-4);
+.page {
+  padding: var(--space-36) var(--gutter) 48px;
 }
 
-.page-shell {
-  width: min(76rem, calc(100% - 2rem));
-  margin: 0 auto;
-  padding: var(--space-7) 0;
-}
-
-.page-heading {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: var(--space-6);
-}
-
-/* Gentle first-paint settle for server-rendered pages; content follows the heading. */
-.page-heading,
-.empty-state,
-.form-intro {
-  animation: rise-in var(--duration-med) var(--ease-out) both;
-}
-
-.project-grid,
-.project-form {
-  animation: rise-in var(--duration-med) var(--ease-out) 70ms both;
-}
-
-.page-heading p {
-  max-width: 38rem;
+.page-head {
+  display: grid;
+  gap: var(--space-6);
+  margin-bottom: var(--space-24);
 }
 
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr));
-  gap: var(--space-5);
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: var(--space-16);
 }
 
 .form-layout {
   display: grid;
-  grid-template-columns: minmax(16rem, 0.75fr) minmax(0, 1.35fr);
-  gap: clamp(2rem, 7vw, 7rem);
+  grid-template-columns: minmax(16rem, 0.7fr) minmax(0, 1.3fr);
+  gap: 48px;
   align-items: start;
+  max-width: 1120px;
 }
 
 .field-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+  gap: var(--space-14);
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--space-3);
+  gap: var(--space-8);
+  margin-top: var(--space-6);
 }
 
 .editor-page {
   height: 100vh;
   overflow: hidden;
-  background: var(--canvas);
 }
 
 .workspace {
   /* Margins the floating docks sit in, kept clear of the plan so nothing is covered. */
-  --stack-width: 17.5rem;
+  --stack-width: 280px;
   --gutter-left: var(--plan-pad);
-  --gutter-right: calc(var(--stack-width) + var(--space-4) * 2);
-  --plan-pad: var(--space-5);
-  --plan-reserve-bottom: 0rem;
-  /* Sized so the top islands centre with exactly --space-4 above them, matching
-     the --space-4 gap on their left/right — see .workspace-bar__brand. */
-  --bar-height: 6.25rem;
+  --gutter-right: calc(var(--stack-width) + var(--space-16) * 2);
+  --plan-pad: var(--space-24);
+  --plan-reserve-bottom: 0px;
 
   position: relative;
   display: grid;
-  grid-template-rows: var(--bar-height) minmax(0, 1fr);
+  grid-template-rows: var(--topbar-h) minmax(0, 1fr);
   height: 100vh;
 }
 
+/* The editor's bar runs at the docks' 16px margin rather than the page gutter, so the
+   bar, the plan and the docks line up. */
 .workspace-bar {
-  z-index: 3;
   display: grid;
   /* The tools stay centred while there is room. When the window narrows, the actions
-     keep their full width and the project name gives way instead of the islands
-     sliding under one another. */
+     keep their full width and the project name gives way instead of the groups sliding
+     under one another. */
   grid-template-columns: minmax(0, 1fr) auto minmax(max-content, 1fr);
-  align-items: center;
-  gap: var(--space-4);
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-16);
 }
 
-.workspace-bar__brand {
+.workspace-bar__lead {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-12);
   min-width: 0;
-  max-width: 100%;
-  min-height: 2.75rem;
-  padding: var(--space-3) var(--space-4);
-  justify-self: start;
 }
 
 .workspace-bar__project {
   min-width: 0;
-  max-width: 18rem;
+  padding-left: var(--space-12);
+  border-left: 1px solid var(--bar-line);
+  line-height: 1.3;
 }
 
 .workspace-bar__project strong,
-.workspace-bar__address {
+.workspace-bar__project span {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.workspace-bar__address {
-  margin-top: 0.15rem;
-  color: var(--ink-500);
-  font-size: 0.76rem;
-  font-weight: 600;
+.workspace-bar__project strong {
+  font-size: var(--text-control);
+}
+
+.workspace-bar__project span {
+  font-size: var(--text-caption);
+  opacity: 0.75;
 }
 
 .workspace-bar__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  justify-self: end;
-}
-
-.tool-dock {
-  display: flex;
-  flex-direction: row;
-  gap: 0.15rem;
+  justify-content: flex-end;
+  gap: var(--space-8);
 }
 
 .dock-stack {
   position: absolute;
   z-index: 3;
-  right: var(--space-4);
-  bottom: var(--space-4);
+  right: var(--space-16);
+  bottom: var(--space-16);
   display: flex;
   width: var(--stack-width);
-  /* Never taller than the room under the top bar: the project notes give up height
-     first, so the camera panel cannot ride up over the Export button. */
-  max-height: calc(100% - var(--bar-height) - var(--space-4));
+  /* Never taller than the room under the bar: the project notes give up height first,
+     so the camera panel cannot ride up over the bar. */
+  max-height: calc(100% - var(--topbar-h) - var(--space-16) * 2);
   flex-direction: column;
   justify-content: flex-end;
-  gap: var(--space-3);
+  gap: var(--space-12);
   /* Only the cards take the pointer, so the plan stays reachable between them. */
   pointer-events: none;
 }
@@ -167,7 +139,7 @@
 .plan-hint {
   position: absolute;
   z-index: 3;
-  bottom: var(--space-4);
+  bottom: var(--space-16);
   left: calc(var(--gutter-left) + (100% - var(--gutter-left) - var(--gutter-right)) / 2);
   width: max-content;
   max-width: calc(100% - var(--gutter-left) - var(--gutter-right));
@@ -184,9 +156,9 @@
   /* The stage is moved with a transform rather than scrolled, so the panel is a
      fixed window onto it: scrolling here would fight the pan and zoom gestures. */
   overflow: hidden;
-  background-color: var(--canvas);
-  background-image: radial-gradient(circle, rgb(12 33 72 / 9%) 1px, transparent 1px);
-  background-size: 1.25rem 1.25rem;
+  background-color: var(--bg);
+  background-image: radial-gradient(circle, rgb(11 31 58 / 10%) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* Pinned to one corner and placed by the transform, including the centring at fit.
@@ -202,19 +174,18 @@
   width: max-content;
   max-width: calc(100% - var(--gutter-left) - var(--gutter-right));
   overflow: hidden;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   touch-action: none;
-  animation: stage-in var(--duration-med) var(--ease-out) both;
 }
 
 .plan-stage img {
   width: auto;
   max-width: 100%;
   max-height: calc(
-    100vh - var(--bar-height) - var(--plan-pad) * 2 - var(--plan-reserve-bottom)
+    100vh - var(--topbar-h) - var(--plan-pad) * 2 - var(--plan-reserve-bottom)
   );
   user-select: none;
 }
@@ -241,27 +212,22 @@
 @media (max-width: 1000px) {
   .form-layout {
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-24);
   }
 
   /* Too narrow to hold a full-height gutter: the cards float over the plan instead,
      and only the band they rest in stays clear. */
   .workspace {
-    --stack-width: 15.5rem;
-    --gutter-right: var(--space-4);
-    --plan-pad: var(--space-4);
-    --plan-reserve-bottom: 11rem;
-  }
-
-  /* The logo alone links home, leaving the project name room beside the tools. */
-  .workspace-bar .brand > span {
-    display: none;
+    --stack-width: 248px;
+    --gutter-right: var(--space-16);
+    --plan-pad: var(--space-16);
+    --plan-reserve-bottom: 176px;
   }
 
   /* Left of the cards rather than centred, so the two share the bottom band. */
   .plan-hint {
     left: var(--gutter-left);
-    max-width: calc(100% - var(--gutter-left) - var(--stack-width) - var(--space-6));
+    max-width: calc(100% - var(--gutter-left) - var(--stack-width) - var(--space-36));
     translate: none;
   }
 

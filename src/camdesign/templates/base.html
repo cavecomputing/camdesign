@@ -11,27 +11,16 @@
   </head>
   <body class="{% block body_class %}{% endblock %}">
     {% block body %}
-      <header class="site-header">
-        <div class="site-header__brand">
-          <a class="brand" href="{{ url_for('projects.index') }}" aria-label="CamDesign projects">
-            <img
-              class="brand__logo"
-              src="{{ url_for('static', filename='images/camdesign-logo.png') }}"
-              width="640"
-              height="353"
-              alt=""
-            >
-            <span>CamDesign</span>
-          </a>
-        </div>
-        <div class="site-header__actions">
-          <a class="button button--primary" href="{{ url_for('projects.new') }}">New project</a>
-        </div>
+      <header class="topbar">
+        {% include "partials/topbar_brand.html" %}
+        {% block bar_actions %}
+          <a class="bar-button" href="{{ url_for('projects.new') }}">New project</a>
+        {% endblock %}
       </header>
-      <main class="page-shell">
+      <main class="page">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% for category, message in messages %}
-            <div class="notice notice--{{ category }}" role="alert">{{ message }}</div>
+            <div class="notice notice--{{ category }}" role="{{ 'alert' if category == 'error' else 'status' }}">{{ message }}</div>
           {% endfor %}
         {% endwith %}
         {% block content %}{% endblock %}

@@ -2,47 +2,54 @@
 
 {% block title %}New project · CamDesign{% endblock %}
 
+{% block bar_actions %}{% endblock %}
+
 {% block content %}
   <div class="form-layout">
     <section class="form-intro">
-      <p class="eyebrow">New project</p>
-      <h1>Set up the site plan</h1>
-      <p>Add what you know now. Everything except the project name and site image can be refined later.</p>
-      <div class="form-intro__tip">
-        <strong>Best results</strong>
-        <span>Use a clear, high-resolution overhead image with the full property visible.</span>
+      <h1>New project</h1>
+      <p class="lede">Add what you know now. Everything except the project name and site image can be filled in later.</p>
+      <div class="callout">
+        <div>
+          <b>Best results</b>
+          Use a clear, high-resolution overhead image with the full property visible.
+        </div>
       </div>
     </section>
 
-    <form class="project-form" method="post" action="{{ url_for('projects.create') }}" enctype="multipart/form-data">
+    <form class="project-form panel" method="post" action="{{ url_for('projects.create') }}" enctype="multipart/form-data">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label class="field">
-        <span>Project name <b aria-hidden="true">*</b></span>
-        <input name="name" value="{{ form.name if form else '' }}" maxlength="120" required placeholder="Oak & Main Market">
+        <span class="label">Project name <span class="label__required" aria-hidden="true">*</span></span>
+        <input class="input" name="name" value="{{ form.name if form else '' }}" maxlength="120" required placeholder="Oak & Main Market">
       </label>
       <div class="field-row">
         <label class="field">
-          <span>Client</span>
-          <input name="client_name" value="{{ form.client_name if form else '' }}" maxlength="120" placeholder="Client or company">
+          <span class="label">Client</span>
+          <input class="input" name="client_name" value="{{ form.client_name if form else '' }}" maxlength="120" placeholder="Client or company">
         </label>
         <label class="field">
-          <span>Site address</span>
-          <input name="site_address" value="{{ form.site_address if form else '' }}" maxlength="240" placeholder="123 Main Street">
+          <span class="label">Site address</span>
+          <input class="input" name="site_address" value="{{ form.site_address if form else '' }}" maxlength="240" placeholder="123 Main Street">
         </label>
       </div>
       <label class="upload-field" data-upload-field>
-        <span class="upload-field__icon" aria-hidden="true" data-upload-icon>＋</span>
+        <span class="upload-field__icon" aria-hidden="true">
+          <svg class="icon-16 upload-field__glyph--add" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></svg>
+          <svg class="icon-16 upload-field__glyph--done" viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-7"/></svg>
+          <svg class="icon-16 upload-field__glyph--error" viewBox="0 0 16 16"><path d="M8 3.5v5.5M8 12.5v.01"/></svg>
+        </span>
         <strong data-upload-title>Choose a map or site-plan image</strong>
         <span data-upload-detail>PNG, JPEG, or WebP up to 20 MB — or drag one here</span>
         <input class="visually-hidden" type="file" name="site_image" accept="image/png,image/jpeg,image/webp" required>
       </label>
       <label class="field">
-        <span>Initial field notes</span>
-        <textarea name="notes" maxlength="5000" rows="5" placeholder="Access details, mounting concerns, customer requests…">{{ form.notes if form else '' }}</textarea>
+        <span class="label">Initial field notes</span>
+        <textarea class="input input--area" name="notes" maxlength="5000" rows="5" placeholder="Access details, mounting concerns, customer requests…">{{ form.notes if form else '' }}</textarea>
       </label>
       <div class="form-actions">
-        <a class="button button--quiet" href="{{ url_for('projects.index') }}">Cancel</a>
-        <button class="button button--primary" type="submit">Create project</button>
+        <a class="button" href="{{ url_for('projects.index') }}">Cancel</a>
+        <button class="button primary" type="submit">Create project</button>
       </div>
     </form>
   </div>

@@ -27,11 +27,12 @@ from reportlab.platypus import (
 from camdesign.domain.bom import Bom
 from camdesign.repositories.projects import Project
 
-INK = colors.HexColor("#0c2148")
-INK_MUTED = colors.HexColor("#49607c")
-LINE = colors.HexColor("#d3cec5")
-BAND = colors.HexColor("#e8f1ff")
-STRIPE = colors.HexColor("#f7f5f1")
+# The editor's palette (static/css/tokens.css): brand-ink, ink-2, line, brand-soft and bg.
+INK = colors.HexColor("#0b1f3a")
+INK_MUTED = colors.HexColor("#475569")
+LINE = colors.HexColor("#e2e8f0")
+BAND = colors.HexColor("#e9f0f9")
+STRIPE = colors.HexColor("#f4f7fb")
 
 MARGIN = 0.6 * inch
 # LINE, MANUFACTURER, MODEL / SKU, DESCRIPTION, QTY, CAMERAS — 525pt across a letter page.
