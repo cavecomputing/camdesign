@@ -2,7 +2,7 @@
 
 ## Mission
 
-Build a reliable, maintainable Flask web app for creating and editing blueprint designs. Prefer a small, well-tested vertical slice over broad scaffolding or speculative features. Keep geometry, persistence, HTTP, and rendering concerns separate so each can evolve independently.
+Build a reliable, maintainable Flask web app for designing networks on site plans: placing and documenting cameras, cable runs, network closets, and other network equipment on blueprint designs, then exporting the result as a quote or design package. Security-camera quoting is the first workflow shipped, not the product's boundary. Prefer a small, well-tested vertical slice over broad scaffolding or speculative features. Keep geometry, persistence, HTTP, and rendering concerns separate so each can evolve independently.
 
 ## Instruction priority
 
@@ -13,11 +13,12 @@ Build a reliable, maintainable Flask web app for creating and editing blueprint 
 
 ## Scope and product boundaries
 
-- The primary workflow is: create a client quote project, add one or more building/floor plans from user-supplied images or PDFs, mark up each plan, save and resume the work, then export a polished PDF quote package.
-- Optimize the initial product for a field estimator assembling a rough, trustworthy quote package onsite. Favor fast capture, large touch-friendly controls, obvious save state, and useful notes over CAD-level precision or equipment-catalog complexity.
+- The product is a general network design tool. Camera placement and quoting came first; cabling, MDF/IDF and other network equipment are part of the same design surface, so name things (UI copy, modules, schema) for network design rather than camera quoting unless the code is genuinely camera-specific.
+- The first workflow is: create a client project, add one or more building/floor plans from user-supplied images or PDFs, mark up each plan, save and resume the work, then export a polished PDF package (a quote today, design documentation as it grows).
+- Optimize the initial product for a field technician or estimator assembling a rough, trustworthy design and quote package onsite. Favor fast capture, large touch-friendly controls, obvious save state, and useful notes over CAD-level precision or equipment-catalog complexity.
 - Target desktop and tablet only, at 768px wide and up. Phone-width layouts are out of scope: do not add phone breakpoints, and do not compromise the desktop editor to accommodate one. Below 768px the plan image is too small to place cameras accurately.
 - Use `assets/ui-direction-light-estimator.png` as the visual direction: warm off-white workspace, ink-navy typography, restrained blue/coral accents, generous spacing, and a map-first layout. Treat it as inspiration rather than a pixel-perfect specification.
-- Keep the hierarchy explicit: a project represents the client/quote; a plan represents one building, floor, or area and owns its source asset, address/location label, markup document, notes, and revision. Do not overload one project row with a single plan.
+- Keep the hierarchy explicit: a project represents the client/site engagement; a plan represents one building, floor, or area and owns its source asset, address/location label, markup document, notes, and revision. Do not overload one project row with a single plan.
 - List plans in the editor's left sidebar with a readable plan name and address/location subtext. Adding a plan starts a focused upload flow that captures or confirms both values; a plan may inherit the project's site address but remains independently editable.
 - Preserve an uploaded PDF as an immutable source. Markup operates on deterministic rasterized page assets; never draw directly into an embedded browser PDF. A selected PDF page becomes a plan, and a multi-page PDF may create multiple plans only through an explicit user choice.
 - The initial markup vocabulary is deliberately small: cameras with a source point and field-of-view cone, Ethernet cable runs, MDF/IDF locations, and notes. Keep these symbols minimal, legible, and visually consistent in both the editor and PDF.

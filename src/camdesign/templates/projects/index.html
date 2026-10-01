@@ -5,9 +5,9 @@
 {% block content %}
   <section class="page-heading">
     <div>
-      <p class="eyebrow">Field quote workspace</p>
-      <h1>Your camera plans</h1>
-      <p>Pick up an onsite plan where you left off or start a new quote.</p>
+      <p class="eyebrow">Network design workspace</p>
+      <h1>Your site plans</h1>
+      <p>Pick up an onsite design where you left off or start a new one.</p>
     </div>
   </section>
 
@@ -22,7 +22,7 @@
             </div>
             <div class="project-card__body">
               <h2>{{ project.name }}</h2>
-              <p>{{ project.client_name or "Camera quote" }}</p>
+              <p>{{ project.client_name or "No client yet" }}</p>
               {% if project.site_address %}
                 <span class="project-card__address">{{ project.site_address }}</span>
               {% endif %}
@@ -40,9 +40,20 @@
     </div>
   {% else %}
     <section class="empty-state">
-      <div class="empty-state__icon" aria-hidden="true">⌁</div>
+      <div class="empty-state__icon" aria-hidden="true">
+        <svg width="30" height="30" viewBox="0 0 24 24">
+          <mask id="empty-camera-lens">
+            <rect x="0" y="0" width="24" height="24" fill="white" />
+            <circle cx="12" cy="13.5" r="3.4" fill="black" />
+          </mask>
+          <g mask="url(#empty-camera-lens)">
+            <rect x="9" y="4.5" width="6" height="3" rx="1" fill="currentColor" />
+            <rect x="3" y="7" width="18" height="12" rx="2.5" fill="currentColor" />
+          </g>
+        </svg>
+      </div>
       <h2>Start with a site image</h2>
-      <p>Upload a map screenshot or site plan, then place cameras and capture field notes.</p>
+      <p>Upload a map screenshot or site plan, then place equipment and capture field notes.</p>
       <a class="button button--primary" href="{{ url_for('projects.new') }}">Create your first project</a>
     </section>
   {% endif %}

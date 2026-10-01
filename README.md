@@ -4,7 +4,9 @@
 
 # CamDesign
 
-CamDesign is a field-friendly Flask workspace for turning site images into rough security-camera quote plans. It currently supports resumable projects, camera field-of-view placement, per-camera and project notes, and debounced SQLite autosave.
+CamDesign is a field-friendly Flask workspace for designing networks on top of site images: where the cameras go, how the cable runs, where the network closets sit, and what it all costs. Security-camera layout and quoting is the first workflow it ships; cable runs, MDF/IDF markers and other network equipment are next.
+
+It currently supports resumable projects, camera field-of-view placement with make, model and license, per-camera and project notes, debounced SQLite autosave, and a bill-of-materials PDF.
 
 ![The editor with cameras placed on a site map, each cone showing its field of view, and the selected camera's inspector open beside it](assets/screenshot-editor.png)
 
