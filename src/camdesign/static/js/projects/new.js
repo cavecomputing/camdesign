@@ -12,6 +12,9 @@ if (field) {
   };
   // Mirrors the server's allow-list; drops bypass the input's accept filter.
   const ACCEPTED_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
+  // The server's request limit. Past it the upload is refused with an error page and
+  // everything typed into the form is gone, so catch it here while it is still cheap.
+  const MAX_BYTES = 20 * 1024 * 1024;
   let dragDepth = 0;
 
   function formatSize(bytes) {
@@ -21,6 +24,10 @@ if (field) {
   }
 
   function showFile(file) {
+    if (file.size > MAX_BYTES) {
+      showError(`That image is ${formatSize(file.size)}, over the 20 MB limit`);
+      return;
+    }
     field.classList.remove("has-error");
     field.classList.add("has-file");
     icon.textContent = "✓";
@@ -35,7 +42,7 @@ if (field) {
     field.classList.add("has-error");
     icon.textContent = "!";
     title.textContent = message;
-    detail.textContent = "Use a PNG, JPEG, or WebP image.";
+    detail.textContent = "Use a PNG, JPEG, or WebP image up to 20 MB.";
   }
 
   function reset() {
@@ -81,5 +88,23 @@ if (field) {
     } catch {
       showError("Couldn't read that file — try the picker instead");
     }
+  });
+}
+
+// A large image takes a moment to upload, and a second click in that time creates the
+// project twice. The browser runs its required-field checks before this fires.
+const form = document.querySelector(".project-form");
+const submit = form?.querySelector('button[type="submit"]');
+
+if (form && submit) {
+  const idleLabel = submit.textContent;
+  form.addEventListener("submit", () => {
+    submit.disabled = true;
+    submit.textContent = "Creating…";
+  });
+  // Coming back with the Back button restores this page from cache, button and all.
+  window.addEventListener("pageshow", () => {
+    submit.disabled = false;
+    submit.textContent = idleLabel;
   });
 }

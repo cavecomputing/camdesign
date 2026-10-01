@@ -16,7 +16,7 @@ are not tested; use a laptop or a tablet in landscape onsite.
 
 ## Starting a plan
 
-Every quote begins with a photo or a drawing of the site. Name the job, drop the
+Every design begins with a photo or a drawing of the site. Name the job, drop the
 image in, and the plan opens ready to mark up. Finished plans wait on the front
 page for the next visit.
 
@@ -33,6 +33,7 @@ page for the next visit.
 | Move a camera | Drag the circle at the cone's point |
 | Aim and set reach | Drag anywhere inside the cone: around to aim, in and out for reach |
 | Name it and add a note | Select it, then use the **Selected camera** panel |
+| Select from the keyboard | `Tab` to a camera on the plan, then `Enter` or `Space` |
 | Change field of view | 30–180°. With Camera armed it sets the next one; with Select active it retargets the selected camera |
 | Set make and model | Type into the dropdowns to search them. Hanwha adds a WAVE License dropdown. Like field of view, the pick carries to the next camera placed |
 | Delete | `Delete` or `Backspace`, or the sidebar button |

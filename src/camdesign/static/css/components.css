@@ -77,13 +77,13 @@
 }
 
 .button--danger:not(:disabled):hover {
-  border-color: #e3a295;
-  background: #ffe4dc;
+  border-color: var(--danger-line-strong);
+  background: var(--danger-150);
 }
 
 .button--danger {
-  color: #a33a2c;
-  border-color: #f0c6bd;
+  color: var(--danger-700);
+  border-color: var(--danger-line);
   background: var(--coral-100);
 }
 
@@ -95,7 +95,7 @@
   min-height: 2.1rem;
   gap: 0.35rem;
   padding: 0.3rem 0.7rem;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
 }
 
 .icon-button {
@@ -107,7 +107,7 @@
 .eyebrow {
   margin-bottom: var(--space-2);
   color: var(--blue-700);
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   font-weight: 800;
   letter-spacing: 0.11em;
   text-transform: uppercase;
@@ -122,14 +122,14 @@
 }
 
 .notice--error {
-  color: #8b2f25;
-  border-color: #efb9ae;
+  color: var(--danger-800);
+  border-color: var(--danger-line);
   background: var(--coral-100);
 }
 
 .notice--success {
   color: var(--green-700);
-  border-color: #b8dfc5;
+  border-color: var(--green-line);
   background: var(--green-100);
 }
 
@@ -185,7 +185,7 @@
   padding: 0.35rem 0.65rem;
   color: var(--green-700);
   background: rgb(233 247 238 / 94%);
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   font-weight: 750;
 }
 
@@ -199,14 +199,14 @@
 
 .project-card__body span {
   color: var(--ink-500);
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
 }
 
 .project-card__body .project-card__address {
   display: block;
   margin-bottom: var(--space-3);
   color: var(--ink-650);
-  font-size: 0.84rem;
+  font-size: var(--text-md);
 }
 
 .project-card__footer {
@@ -219,7 +219,7 @@
 
 .project-card__footer > span {
   color: var(--ink-500);
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
 }
 
 .empty-state {
@@ -301,7 +301,7 @@
   display: grid;
   gap: var(--space-2);
   color: var(--ink-800);
-  font-size: 0.86rem;
+  font-size: var(--text-md);
   font-weight: 700;
 }
 
@@ -342,13 +342,13 @@
 
 .dock-card .field {
   gap: var(--space-1);
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
 }
 
 .dock-card input,
 .dock-card textarea {
   padding: 0.45rem 0.6rem;
-  font-size: 0.86rem;
+  font-size: var(--text-md);
 }
 
 .dock-card textarea {
@@ -359,29 +359,37 @@
 
 .project-notes {
   position: relative;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
 }
 
 .dock-card .project-notes textarea {
+  flex: 0 1 auto;
   height: 14rem;
   min-height: 6rem;
-  padding-top: 1.7rem;
+  padding-top: 1.2rem;
   resize: none;
 }
 
 .project-notes__resize {
   position: absolute;
   top: 1px;
-  left: 1px;
-  width: 2rem;
-  height: 2rem;
+  left: 50%;
+  width: 3rem;
+  height: 1.1rem;
   border: 0;
-  border-radius: var(--radius-sm) 0 var(--radius-sm) 0;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
   padding: 0;
   cursor: ns-resize;
   touch-action: none;
+  translate: -50% 0;
+  /* Two short rules: the usual drag-handle mark, read as "pull this edge". */
   background:
-    linear-gradient(135deg, transparent 44%, var(--ink-500) 45% 51%, transparent 52%)
-    center / 0.85rem 0.85rem no-repeat;
+    linear-gradient(var(--ink-500), var(--ink-500)) center calc(50% - 0.14rem) / 1.25rem 1.5px
+      no-repeat,
+    linear-gradient(var(--ink-500), var(--ink-500)) center calc(50% + 0.14rem) / 1.25rem 1.5px
+      no-repeat;
 }
 
 .project-notes__resize:hover {
@@ -421,7 +429,7 @@
   top: 50%;
   right: 0.6rem;
   color: var(--ink-500);
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   line-height: 1;
   pointer-events: none;
   translate: 0 -50%;
@@ -446,14 +454,10 @@
   overscroll-behavior: contain;
 }
 
-.combo__list[hidden] {
-  display: none;
-}
-
 .combo__group {
   padding: 0.45rem 0.5rem 0.2rem;
   color: var(--ink-500);
-  font-size: 0.62rem;
+  font-size: var(--text-2xs);
   font-weight: 800;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -478,7 +482,7 @@
 .combo__option-name {
   overflow: hidden;
   color: var(--ink-950);
-  font-size: 0.82rem;
+  font-size: var(--text-md);
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -489,7 +493,7 @@
 .combo__option-meta {
   overflow: hidden;
   color: var(--ink-500);
-  font-size: 0.68rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -498,7 +502,7 @@
 .combo__empty {
   padding: 0.45rem 0.5rem;
   color: var(--ink-500);
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
 }
 
 .upload-field {
@@ -512,7 +516,7 @@
   padding: var(--space-5);
   color: var(--ink-650);
   text-align: center;
-  background: #f7faff;
+  background: var(--blue-50);
   cursor: pointer;
   transition:
     background-color var(--duration-fast) var(--ease-out),
@@ -523,7 +527,7 @@
 
 .upload-field:hover {
   border-color: var(--blue-700);
-  background: #eff5ff;
+  background: var(--blue-75);
 }
 
 .upload-field:focus-within {
@@ -554,13 +558,13 @@
 }
 
 .upload-field.has-error {
-  border: 1px solid #e3a295;
+  border: 1px solid var(--danger-line-strong);
   background: var(--coral-100);
 }
 
 .upload-field.has-error .upload-field__icon {
-  color: #a33a2c;
-  background: #ffded6;
+  color: var(--danger-700);
+  background: var(--danger-200);
 }
 
 .upload-field__icon {
@@ -625,10 +629,6 @@
   transform: scale(0.96);
 }
 
-.tool-button:not(:disabled):hover {
-  background: var(--canvas);
-}
-
 .tool-button__icon {
   font-size: 1.2rem;
   line-height: 1;
@@ -636,7 +636,7 @@
 
 .tool-button.is-active {
   color: var(--blue-700);
-  border-color: #a8c9fb;
+  border-color: var(--blue-line);
   background: var(--blue-100);
 }
 
@@ -645,7 +645,7 @@
   right: 0.24rem;
   bottom: 0.16rem;
   color: var(--ink-500);
-  font-size: 0.56rem;
+  font-size: var(--text-key);
   font-weight: 800;
   line-height: 1;
 }
@@ -662,14 +662,7 @@
   padding: 0.4rem 0.85rem;
   color: var(--ink-650);
   box-shadow: var(--shadow-sm);
-  font-size: 0.76rem;
-}
-
-/* Each of these sets a display, which outranks the browser's own [hidden] rule. */
-.dock-card[hidden],
-.dock-card__actions[hidden],
-.field[hidden] {
-  display: none;
+  font-size: var(--text-sm);
 }
 
 .dock-card {
@@ -702,7 +695,7 @@
   overflow: hidden;
   margin: 0;
   color: var(--ink-500);
-  font-size: 0.68rem;
+  font-size: var(--text-2xs);
   font-weight: 800;
   letter-spacing: 0.09em;
   text-overflow: ellipsis;
@@ -726,7 +719,7 @@
 
 .dock-card__toggle-icon {
   margin-top: 0.05em;
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   line-height: 1;
   transition: rotate var(--duration-fast) var(--ease-out);
 }
@@ -739,18 +732,27 @@
    in main.js) — a plain 1fr/0fr grid-row transition can't collapse this, since the
    card's own height is auto rather than definite, so the fr track never shrinks. */
 .project-notes-collapse {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
   overflow: hidden;
   transition: max-height var(--duration-med) var(--ease-out);
 }
 
 .project-notes-collapse__inner {
-  display: grid;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
   gap: var(--space-2);
 }
 
 /* Collapsed, the card is just the head row: match its bottom padding to the
    top and drop the row gap, rather than leaving room sized for the hidden pane. */
 .dock-card[data-notes-card] {
+  display: flex;
+  min-height: 0;
+  flex: 0 1 auto;
+  flex-direction: column;
   transition:
     gap var(--duration-med) var(--ease-out),
     padding-bottom var(--duration-med) var(--ease-out);
@@ -781,7 +783,7 @@
   padding: 0.2rem 0.55rem;
   color: var(--ink-650);
   background: var(--canvas);
-  font-size: 0.74rem;
+  font-size: var(--text-sm);
   font-weight: 700;
 }
 
@@ -791,7 +793,7 @@
 
 .count {
   color: var(--ink-500);
-  font-size: 0.66rem;
+  font-size: var(--text-2xs);
   text-align: right;
 }
 
@@ -807,7 +809,7 @@
 
 .export-menu__caret {
   margin-left: 0.4rem;
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   line-height: 1;
   transition: rotate var(--duration-fast) var(--ease-out);
 }
@@ -832,10 +834,6 @@
   animation: drop-in var(--duration-fast) var(--ease-out) both;
 }
 
-.export-menu__list[hidden] {
-  display: none;
-}
-
 .export-menu__item {
   display: grid;
   width: 100%;
@@ -855,22 +853,23 @@
 
 .export-menu__item-name {
   color: var(--ink-950);
-  font-size: 0.85rem;
+  font-size: var(--text-md);
   font-weight: 700;
 }
 
 .export-menu__item-meta {
   color: var(--ink-500);
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 
 .save-state {
   display: inline-flex;
+  white-space: nowrap;
   align-items: center;
   gap: 0.45rem;
   color: var(--ink-500);
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   transition: color var(--duration-fast) var(--ease-out);
 }
@@ -901,8 +900,11 @@
   color: var(--green-700);
 }
 
+/* Failures carry a sentence worth reading, so they may wrap where the short states do not. */
 .save-state.is-error {
-  color: #a33a2c;
+  max-width: 16rem;
+  color: var(--danger-700);
+  white-space: normal;
 }
 
 .camera-cone {
@@ -1085,12 +1087,5 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-}
-
-@media (max-width: 620px) {
-  .workspace-bar__actions .button {
-    display: none;
   }
 }

@@ -86,17 +86,31 @@ if (root) {
 
   function reportSaveState() {
     const settled = savedVersion === changeVersion;
-    setSaveState(settled ? "All changes saved" : "Unsaved changes", settled ? "saved" : "dirty");
+    setSaveState(settled ? "Saved" : "Unsaved", settled ? "saved" : "dirty");
+  }
+
+  function hintText() {
+    if (activeTool === "camera") {
+      return "Click for a standard camera cone, or drag to set direction and reach.";
+    }
+    if (!state?.cameraCount()) return "Pick the Camera tool or press 2, then click the plan.";
+    return "Click a camera to select it. Drag inside its cone to aim it and set its reach.";
   }
 
   function updateControls() {
     elements.undo.disabled = !state?.canUndo();
     elements.cameraCount.textContent = state ? state.cameraCount() : "0";
     elements.noteCount.textContent = `${elements.notes.value.length} / 5000`;
+    elements.hint.textContent = hintText();
   }
 
   function render() {
     if (!state || !dimensions) return;
+    // Every redraw replaces the camera elements, so a camera reached with Tab would
+    // otherwise drop keyboard focus the moment it is selected or nudged.
+    const focusedId = elements.overlay.contains(document.activeElement)
+      ? document.activeElement.closest("[data-item-id]")?.dataset.itemId
+      : null;
     renderPlan(
       elements.overlay,
       state.itemsWith(draft),
@@ -104,6 +118,11 @@ if (root) {
       state.selectedId(),
       catalog,
     );
+    if (focusedId) {
+      elements.overlay
+        .querySelector(`[data-item-id="${CSS.escape(focusedId)}"]`)
+        ?.focus({ preventScroll: true });
+    }
     updateControls();
   }
 
@@ -185,7 +204,7 @@ if (root) {
 
   function markChanged() {
     changeVersion += 1;
-    setSaveState("Unsaved changes", "dirty");
+    setSaveState("Unsaved", "dirty");
     clearTimeout(saveTimer);
     saveTimer = window.setTimeout(saveNow, 650);
   }
@@ -200,10 +219,6 @@ if (root) {
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-pressed", String(active));
     }
-    elements.hint.textContent =
-      tool === "camera"
-        ? "Click for a standard camera cone, or drag to set direction and reach."
-        : "Tap a camera to select it. Drag inside its cone to aim it and set how far it reaches.";
     // Retoggle the class so the swap animation replays on every tool change.
     elements.hint.classList.remove("is-swap");
     void elements.hint.offsetWidth;
@@ -333,7 +348,7 @@ if (root) {
     return catalog.map((entry) => ({
       value: entry.make,
       label: entry.make,
-      meta: `${entry.models.length} models`,
+      meta: `${entry.models.length} ${entry.models.length === 1 ? "model" : "models"}`,
     }));
   }
 
@@ -545,6 +560,12 @@ if (root) {
       beginPan(event);
       return;
     }
+    // Right-click and the extra mouse buttons are not drawing gestures.
+    if (event.button !== 0) return;
+    // Finish any edit in the panel first, while it still belongs to the camera it was
+    // typed for: the camera tool cancels the focus change a click would normally make,
+    // and in either tool the selection is about to move on.
+    if (document.activeElement?.matches?.("input, textarea")) document.activeElement.blur();
     const item = event.target.closest?.("[data-item-id]");
     if (activeTool === "select") {
       const itemId = item?.dataset.itemId ?? null;
@@ -709,7 +730,7 @@ if (root) {
       state = createEditorState(payload.document);
       revision = payload.revision;
       elements.notes.value = payload.project.notes;
-      setSaveState("All changes saved", "saved");
+      setSaveState("Saved", "saved");
       syncSettingsPanel();
       render();
     } catch (error) {
@@ -723,6 +744,17 @@ if (root) {
   elements.overlay.addEventListener("pointerdown", onPointerDown);
   elements.overlay.addEventListener("pointermove", onPointerMove);
   elements.overlay.addEventListener("pointerup", onPointerUp);
+  // Cameras are reachable with Tab; Enter or Space selects one, as a click would.
+  elements.overlay.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const itemId = event.target.closest?.("[data-item-id]")?.dataset.itemId;
+    if (!itemId || !state) return;
+    event.preventDefault();
+    setTool("select");
+    state.select(itemId);
+    syncSettingsPanel();
+    render();
+  });
   elements.overlay.addEventListener("pointercancel", () => {
     const edited = Boolean(adjust?.started || move?.started);
     draft = null;
