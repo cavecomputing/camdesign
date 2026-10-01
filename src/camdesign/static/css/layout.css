@@ -150,6 +150,11 @@
   position: relative;
   min-width: 0;
   min-height: 0;
+  /* Every press here pans, aims or places, so none may start a text selection: a drag
+     begun in the margin beside the plan, or a double-click on a camera's name, would
+     otherwise highlight the image and the labels. Safari still needs the prefix. */
+  -webkit-user-select: none;
+  user-select: none;
   /* The gutters keep the fitted plan clear of the floating docks. */
   padding: var(--plan-pad) var(--gutter-right)
     calc(var(--plan-pad) + var(--plan-reserve-bottom)) var(--gutter-left);
@@ -187,7 +192,6 @@
   max-height: calc(
     100vh - var(--topbar-h) - var(--plan-pad) * 2 - var(--plan-reserve-bottom)
   );
-  user-select: none;
 }
 
 /* Zoomed past fit the stage is driven by an explicit width and pans past the panel. */
