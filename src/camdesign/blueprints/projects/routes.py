@@ -9,6 +9,7 @@ from camdesign.blueprints.projects import projects
 from camdesign.db import get_db
 from camdesign.domain.bom import build_bom
 from camdesign.domain.catalog import load_catalog
+from camdesign.domain.documents import count_cameras
 from camdesign.exports import bom_filename, render_bom_pdf
 from camdesign.repositories.projects import SQLiteProjectRepository
 from camdesign.services.projects import InvalidProject, create_project, delete_project
@@ -17,7 +18,13 @@ from camdesign.services.projects import InvalidProject, create_project, delete_p
 @projects.get("/")
 def index():
     repository = SQLiteProjectRepository(get_db())
-    return render_template("projects/index.html", projects=repository.list_recent())
+    cards = [(project, count_cameras(project.document)) for project in repository.list_recent()]
+    return render_template(
+        "projects/index.html",
+        cards=cards,
+        cameras=sum(count.cameras for _, count in cards),
+        without_model=sum(count.without_model for _, count in cards),
+    )
 
 
 @projects.get("/projects/new")

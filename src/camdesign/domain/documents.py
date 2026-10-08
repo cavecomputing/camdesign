@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, NamedTuple
 
 SCHEMA_VERSION = 1
 MAX_ITEMS = 1_000
@@ -10,8 +10,19 @@ class InvalidDocument(ValueError):
     pass
 
 
+class CameraCount(NamedTuple):
+    cameras: int
+    without_model: int
+
+
 def empty_document() -> dict[str, Any]:
     return {"schema_version": SCHEMA_VERSION, "items": []}
+
+
+def count_cameras(document: dict[str, Any]) -> CameraCount:
+    """How many cameras a document holds, and how many would bill as Not specified."""
+    cameras = [item for item in document["items"] if item["type"] == "camera"]
+    return CameraCount(len(cameras), sum(1 for camera in cameras if not camera["model"]))
 
 
 def _number(value: Any, name: str, minimum: float, maximum: float) -> float:

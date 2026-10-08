@@ -144,16 +144,25 @@
 
     <p class="plan-hint" data-plan-hint>Pick the Camera tool or press 2, then click the plan.</p>
 
-    <div class="dock-stack">
-      <section class="dock-card dock-card--enter" data-settings-panel aria-label="Camera settings" hidden>
-        <p class="dock-card__title" data-settings-label>Camera</p>
-        <div class="prop-rows">
-          <label class="field field--row" data-name-row hidden>
-            <span class="label">Name</span>
-            <input class="input" type="text" data-camera-label maxlength="80" placeholder="Front door" autocomplete="off">
+    <aside class="inspector" aria-label="Selection and project">
+      <section class="card dock-card dock-card--enter" data-settings-panel aria-label="Camera settings" hidden>
+        <div class="card-head">
+          <span class="icon-tile">
+            <svg class="icon-16" viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M5.8 4.5 6.7 3h2.6l.9 1.5" />
+              <rect x="1.75" y="4.5" width="12.5" height="9" rx="2" />
+              <circle cx="8" cy="9" r="2.4" />
+            </svg>
+          </span>
+          <h2 class="card-head__title" data-settings-label>Camera</h2>
+        </div>
+        <div class="card-body">
+          <label class="field-line field-line--compact" data-name-row hidden>
+            <span>Name</span>
+            <input class="input input--mono" type="text" data-camera-label maxlength="80" placeholder="Front door" autocomplete="off">
           </label>
-          <div class="field" data-make-row>
-            <span class="label" id="camera-make-label">Make</span>
+          <div class="field-line field-line--compact" data-make-row>
+            <span id="camera-make-label">Make</span>
             <div class="combo" data-camera-make>
               <input
                 class="input combo__input"
@@ -168,11 +177,11 @@
               <ul class="combo__list" role="listbox" aria-labelledby="camera-make-label" hidden></ul>
             </div>
           </div>
-          <div class="field" data-model-row>
-            <span class="label" id="camera-model-label">Model</span>
+          <div class="field-line field-line--compact" data-model-row>
+            <span id="camera-model-label">Model</span>
             <div class="combo" data-camera-model>
               <input
-                class="input combo__input"
+                class="input input--mono combo__input"
                 type="text"
                 role="combobox"
                 aria-expanded="false"
@@ -184,8 +193,8 @@
               <ul class="combo__list" role="listbox" aria-labelledby="camera-model-label" hidden></ul>
             </div>
           </div>
-          <div class="field" data-license-row hidden>
-            <span class="label" id="camera-license-label">License</span>
+          <div class="field-line field-line--compact" data-license-row hidden>
+            <span id="camera-license-label">License</span>
             <div class="combo" data-camera-license>
               <input
                 class="input combo__input"
@@ -200,51 +209,60 @@
               <ul class="combo__list" role="listbox" aria-labelledby="camera-license-label" hidden></ul>
             </div>
           </div>
-          <label class="field field--row">
-            <span class="label">Field of view</span>
-            <input
-              class="input"
-              type="number"
-              data-camera-fov
-              min="30"
-              max="180"
-              step="5"
-              value="90"
-              inputmode="numeric"
-              autocomplete="off"
-            >
+          <label class="field-line field-line--compact">
+            <span>Field of view</span>
+            <span class="unit-input">
+              <input
+                class="input input--mono"
+                type="number"
+                data-camera-fov
+                min="30"
+                max="180"
+                step="5"
+                value="90"
+                inputmode="numeric"
+                autocomplete="off"
+              >
+              <span class="unit-input__unit" aria-hidden="true">°</span>
+            </span>
           </label>
-          <label class="field" data-note-row hidden>
-            <span class="label">Note</span>
-            <textarea class="input input--area input--dense" data-camera-note maxlength="1000" rows="3" placeholder="Mounting height, power, cable path…"></textarea>
-            <small class="count" data-camera-note-count>0 / 1000</small>
+          <label class="field-line field-line--compact field-line--top" data-note-row hidden>
+            <span>Note</span>
+            <span class="field-line__control">
+              <textarea class="input input--area input--dense" data-camera-note maxlength="1000" rows="2" placeholder="Mounting height, power, cable path…"></textarea>
+              <small class="count" data-camera-note-count>0 / 1000</small>
+            </span>
           </label>
         </div>
-        <div class="dock-card__actions" data-selection-actions hidden>
-          <button class="small-button" type="button" data-delete-selection>
+        <div class="card-foot" data-selection-actions hidden>
+          <button class="small-button small-button--danger" type="button" data-delete-selection>
             <svg class="icon-16" viewBox="0 0 16 16" aria-hidden="true">
               <path d="M2.5 4.5h11M6.5 4.5v-2h3v2M4 4.5l.7 9h6.6l.7-9" />
             </svg>
             Delete
           </button>
+          <kbd class="kbd">Del</kbd>
         </div>
       </section>
 
-      <section class="dock-card dock-card--notes" aria-label="Project overview" data-notes-card>
-        <div class="dock-card__head">
+      <section class="card dock-card dock-card--notes" aria-label="Project overview" data-notes-card>
+        <div class="card-head">
+          <span class="icon-tile">
+            <svg class="icon-16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.5h10M3 6.5h10M3 9.5h7M3 12.5h5" /></svg>
+          </span>
           <button
-            class="dock-card__toggle label"
+            class="card-head__title card-head__toggle"
             type="button"
             data-notes-toggle
             aria-expanded="true"
             aria-controls="project-notes-body"
           >
-            <svg class="icon-16 dock-card__toggle-icon" viewBox="0 0 16 16" aria-hidden="true">
+            Project notes
+            <svg class="icon-16 card-head__toggle-icon" viewBox="0 0 16 16" aria-hidden="true">
               <path d="m4 6 4 4 4-4" />
             </svg>
-            Project
           </button>
-          <span class="dock-count"><strong data-camera-count>0</strong> cameras</span>
+          <span class="card-head__end tag"><b data-camera-count>0</b> cameras</span>
         </div>
         <div class="project-notes-collapse" id="project-notes-body" data-notes-body>
           <div class="project-notes-collapse__inner">
@@ -275,7 +293,7 @@
           </div>
         </div>
       </section>
-    </div>
+    </aside>
   </main>
 {% endblock %}
 

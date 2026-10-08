@@ -14,40 +14,31 @@
 }
 
 .page {
-  padding: var(--space-36) var(--gutter) 48px;
-}
-
-.page-head {
-  display: grid;
-  gap: var(--space-6);
-  margin-bottom: var(--space-24);
+  max-width: calc(1300px + var(--gutter) * 2);
+  margin-inline: auto;
+  padding: var(--space-24) var(--gutter) 48px;
 }
 
 .project-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
   gap: var(--space-16);
+  margin-top: var(--space-16);
 }
 
 .form-layout {
   display: grid;
-  grid-template-columns: minmax(16rem, 0.7fr) minmax(0, 1.3fr);
+  grid-template-columns: minmax(16rem, 0.75fr) minmax(0, 1.25fr);
   gap: 48px;
   align-items: start;
-  max-width: 1120px;
-}
-
-.field-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-14);
+  max-width: 1180px;
 }
 
 .form-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: var(--space-8);
-  margin-top: var(--space-6);
 }
 
 .editor-page {
@@ -55,23 +46,25 @@
   overflow: hidden;
 }
 
+/* The bar across the top, the plan, and a docked column of inspector cards beside it. */
 .workspace {
-  /* Margins the floating docks sit in, kept clear of the plan so nothing is covered. */
-  --stack-width: 280px;
   --gutter-left: var(--plan-pad);
-  --gutter-right: calc(var(--stack-width) + var(--space-16) * 2);
+  --gutter-right: var(--plan-pad);
   --plan-pad: var(--space-24);
-  --plan-reserve-bottom: 0px;
+  /* Room under the fitted plan for the hint, so it never sits on the drawing. */
+  --plan-reserve-bottom: 36px;
 
   position: relative;
   display: grid;
   grid-template-rows: var(--topbar-h) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) var(--inspector-w);
   height: 100vh;
 }
 
 /* The editor's bar runs at the docks' 16px margin rather than the page gutter, so the
    bar, the plan and the docks line up. */
 .workspace-bar {
+  grid-column: 1 / -1;
   display: grid;
   /* The tools stay centred while there is room. When the window narrows, the actions
      keep their full width and the project name gives way instead of the groups sliding
@@ -118,31 +111,25 @@
   gap: var(--space-8);
 }
 
-.dock-stack {
-  position: absolute;
-  z-index: 3;
-  right: var(--space-16);
-  bottom: var(--space-16);
+.inspector {
   display: flex;
-  width: var(--stack-width);
-  /* Never taller than the room under the bar: the project notes give up height first,
-     so the camera panel cannot ride up over the bar. */
-  max-height: calc(100% - var(--topbar-h) - var(--space-16) * 2);
+  min-height: 0;
   flex-direction: column;
-  justify-content: flex-end;
   gap: var(--space-12);
-  /* Only the cards take the pointer, so the plan stays reachable between them. */
-  pointer-events: none;
+  padding: var(--space-12);
+  overflow-y: auto;
+  border-left: 1px solid var(--line);
+  background: var(--surface);
 }
 
-/* Centred on the plan rather than the window, so the docks do not push it off-axis. */
+/* Centred on the plan rather than the window, so the inspector does not push it off-axis. */
 .plan-hint {
   position: absolute;
   z-index: 3;
   bottom: var(--space-16);
-  left: calc(var(--gutter-left) + (100% - var(--gutter-left) - var(--gutter-right)) / 2);
+  left: calc((100% - var(--inspector-w)) / 2);
   width: max-content;
-  max-width: calc(100% - var(--gutter-left) - var(--gutter-right));
+  max-width: calc(100% - var(--inspector-w) - var(--plan-pad) * 2);
   translate: -50% 0;
 }
 
@@ -155,13 +142,13 @@
      otherwise highlight the image and the labels. Safari still needs the prefix. */
   -webkit-user-select: none;
   user-select: none;
-  /* The gutters keep the fitted plan clear of the floating docks. */
+  /* The gutters keep the fitted plan clear of the floating cards on a tablet. */
   padding: var(--plan-pad) var(--gutter-right)
     calc(var(--plan-pad) + var(--plan-reserve-bottom)) var(--gutter-left);
   /* The stage is moved with a transform rather than scrolled, so the panel is a
      fixed window onto it: scrolling here would fight the pan and zoom gestures. */
   overflow: hidden;
-  background-color: var(--bg);
+  background-color: var(--inset);
   background-image: radial-gradient(circle, rgb(11 31 58 / 10%) 1px, transparent 1px);
   background-size: 20px 20px;
 }
@@ -219,23 +206,41 @@
     gap: var(--space-24);
   }
 
-  /* Too narrow to hold a full-height gutter: the cards float over the plan instead,
-     and only the band they rest in stays clear. */
+  /* Too narrow to give up a column: the cards float over the plan instead, and only
+     the band they rest in stays clear. */
   .workspace {
-    --stack-width: 248px;
-    --gutter-right: var(--space-16);
     --plan-pad: var(--space-16);
     --plan-reserve-bottom: 176px;
+
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .inspector {
+    position: absolute;
+    z-index: 3;
+    right: var(--space-16);
+    bottom: var(--space-16);
+    width: 272px;
+    /* Never taller than the room under the bar: the project notes give up height first,
+       so the camera card cannot ride up over the bar. */
+    max-height: calc(100% - var(--topbar-h) - var(--space-16) * 2);
+    justify-content: flex-end;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    background: none;
+    /* Only the cards take the pointer, so the plan stays reachable between them. */
+    pointer-events: none;
+  }
+
+  .inspector > * {
+    pointer-events: auto;
   }
 
   /* Left of the cards rather than centred, so the two share the bottom band. */
   .plan-hint {
     left: var(--gutter-left);
-    max-width: calc(100% - var(--gutter-left) - var(--stack-width) - var(--space-36));
+    max-width: calc(100% - var(--gutter-left) - 272px - var(--space-36));
     translate: none;
-  }
-
-  .field-row {
-    grid-template-columns: 1fr;
   }
 }

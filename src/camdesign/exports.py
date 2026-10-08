@@ -27,19 +27,34 @@ from reportlab.platypus import (
 from camdesign.domain.bom import Bom
 from camdesign.repositories.projects import Project
 
-# The editor's palette (static/css/tokens.css): brand-ink, ink-2, line, brand-soft and bg.
+# The editor's palette (static/css/tokens.css): brand-ink, ink-2, line, brand-soft, bg,
+# raised and brand.
 INK = colors.HexColor("#0b1f3a")
 INK_MUTED = colors.HexColor("#475569")
 LINE = colors.HexColor("#e2e8f0")
 BAND = colors.HexColor("#e9f0f9")
 STRIPE = colors.HexColor("#f4f7fb")
+RAISED = colors.HexColor("#f7f9fc")
+BRAND = colors.HexColor("#1d4e89")
 
 MARGIN = 0.6 * inch
 # LINE, MANUFACTURER, MODEL / SKU, DESCRIPTION, QTY, CAMERAS — 525pt across a letter page.
 COLUMNS = (28, 78, 105, 155, 30, 129)
 COLUMN_HEADINGS = ("#", "MANUFACTURER", "MODEL / SKU", "DESCRIPTION", "QTY", "CAMERAS")
 
-_TITLE = ParagraphStyle("title", fontName="Helvetica-Bold", fontSize=17, textColor=INK, leading=20)
+_KIND = ParagraphStyle(
+    "kind", fontName="Helvetica-Bold", fontSize=7, textColor=INK_MUTED, leading=9
+)
+_TITLE = ParagraphStyle("title", fontName="Helvetica-Bold", fontSize=19, textColor=INK, leading=23)
+_SUBTITLE = ParagraphStyle(
+    "subtitle", fontName="Helvetica", fontSize=10, textColor=INK_MUTED, leading=13
+)
+_META_LABEL = ParagraphStyle(
+    "meta-label", fontName="Helvetica-Bold", fontSize=6.5, textColor=INK_MUTED, leading=9
+)
+_META_VALUE = ParagraphStyle(
+    "meta-value", fontName="Helvetica-Bold", fontSize=9, textColor=INK, leading=12
+)
 _META = ParagraphStyle("meta", fontName="Helvetica", fontSize=9, textColor=INK_MUTED, leading=13)
 _HEAD = ParagraphStyle(
     "head", fontName="Helvetica-Bold", fontSize=7, textColor=colors.white, leading=9
@@ -83,34 +98,60 @@ def _page_furniture(canvas, document) -> None:
 
 
 def _heading(project: Project, generated_on: date) -> list:
-    rows = [
+    # The document header the editor's cards share: a raised panel under a brand rule,
+    # saying what kind of document this is before naming the project it is for.
+    meta = [
         (label, value)
         for label, value in (
-            ("Customer", project.client_name),
-            ("Site", project.site_address),
-            ("Project", project.name),
-            ("Generated", generated_on.strftime("%d %B %Y")),
+            ("CUSTOMER", project.client_name),
+            ("SITE", project.site_address),
+            ("GENERATED", generated_on.strftime("%d %B %Y")),
         )
         if value
     ]
-    meta = Table(
-        [[_cell(label, _META), _cell(value, _META)] for label, value in rows],
-        colWidths=(60, sum(COLUMNS) - 60),
+    meta_table = Table(
+        [
+            [_cell(label, _META_LABEL) for label, _ in meta],
+            [_cell(value, _META_VALUE) for _, value in meta],
+        ],
+        colWidths=[150] * len(meta),
+        hAlign="LEFT",
         style=TableStyle(
             [
-                ("VALIGN", (0, 0), (-1, -1), "TOP"),
                 ("LEFTPADDING", (0, 0), (-1, -1), 0),
-                ("TOPPADDING", (0, 0), (-1, -1), 1),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+                ("TOPPADDING", (0, 0), (-1, -1), 0),
                 ("BOTTOMPADDING", (0, 0), (-1, -1), 1),
             ]
         ),
     )
-    return [
-        Paragraph("Bill of materials", _TITLE),
-        Spacer(1, 8),
-        meta,
-        Spacer(1, 14),
-    ]
+    subtitle = " · ".join(value for value in (project.client_name, project.site_address) if value)
+    rows = [[_cell("BILL OF MATERIALS", _KIND)], [_cell(project.name, _TITLE)]]
+    if subtitle:
+        rows.append([_cell(subtitle, _SUBTITLE)])
+    rows.append([meta_table])
+    last = len(rows) - 1
+    panel = Table(
+        rows,
+        colWidths=(sum(COLUMNS),),
+        style=TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, -1), RAISED),
+                ("BOX", (0, 0), (-1, -1), 0.5, LINE),
+                ("LINEABOVE", (0, 0), (-1, 0), 3, BRAND),
+                ("LEFTPADDING", (0, 0), (-1, -1), 16),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 16),
+                ("TOPPADDING", (0, 0), (-1, -1), 2),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+                ("TOPPADDING", (0, 0), (-1, 0), 12),
+                ("TOPPADDING", (0, 1), (-1, 1), 8),
+                ("LINEABOVE", (0, last), (-1, last), 0.5, LINE),
+                ("TOPPADDING", (0, last), (-1, last), 9),
+                ("BOTTOMPADDING", (0, last), (-1, last), 11),
+            ]
+        ),
+    )
+    return [panel, Spacer(1, 16)]
 
 
 def _table(bom: Bom) -> Table:

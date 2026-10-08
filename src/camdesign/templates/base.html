@@ -14,7 +14,10 @@
       <header class="topbar">
         {% include "partials/topbar_brand.html" %}
         {% block bar_actions %}
-          <a class="bar-button" href="{{ url_for('projects.new') }}">New project</a>
+          <a class="bar-button bar-button--solid" href="{{ url_for('projects.new') }}">
+            <svg class="icon-16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg>
+            New project
+          </a>
         {% endblock %}
       </header>
       <main class="page">

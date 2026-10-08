@@ -6,13 +6,13 @@
 
 html {
   min-width: 20rem;
-  background: var(--bg);
+  background: var(--surface);
 }
 
 body {
   min-height: 100vh;
   margin: 0;
-  background: var(--bg);
+  background: var(--surface);
   color: var(--ink);
   font: var(--text-body) / 1.6 var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -45,7 +45,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Utility exception: a component's display (e.g. .field's grid) must never resurrect an
+/* Utility exception: a component's display (e.g. .field-line's grid) must never resurrect an
    element the markup has hidden. */
 [hidden] {
   display: none !important;
@@ -53,6 +53,7 @@ a:hover {
 
 h1,
 h2,
+h3,
 p {
   margin: 0;
 }

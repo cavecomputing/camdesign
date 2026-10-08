@@ -16,15 +16,16 @@
 .brand-chip {
   display: flex;
   align-items: center;
-  height: 40px;
-  padding: 3px 8px;
+  height: 36px;
+  padding: 3px 7px;
   border-radius: var(--radius-md);
   background: var(--surface);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 18%);
 }
 
 .brand-chip img {
   width: auto;
-  height: 34px;
+  height: 30px;
 }
 
 .topbar-title {
@@ -38,12 +39,10 @@
 }
 
 .topbar-title small {
-  font-size: var(--text-label);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.12em;
+  font: 600 9.5px / 1.4 var(--font-mono);
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  opacity: 0.75;
+  opacity: 0.72;
 }
 
 .bar-button {
@@ -76,6 +75,18 @@
 .bar-button--icon {
   width: 36px;
   padding: 0;
+}
+
+/* The bar's one call to action: white, so it reads first against the navy. */
+.bar-button--solid {
+  border-color: var(--surface);
+  background: var(--surface);
+  color: var(--brand);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 22%);
+}
+
+.bar-button--solid:not(:disabled):hover {
+  background: var(--brand-soft);
 }
 
 /* 16px line drawings in currentColor: the system's only icon style. */
@@ -123,11 +134,18 @@
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
 }
 
-.button:hover {
-  background: var(--bg);
+/* Buttons rise 1px under the pointer rather than changing colour. */
+.button:not(:disabled):hover {
+  box-shadow: var(--shadow-lift);
   text-decoration: none;
+  transform: translateY(-1px);
 }
 
 .button.primary {
@@ -154,6 +172,7 @@
 .button:disabled {
   opacity: 0.6;
   cursor: default;
+  box-shadow: none;
 }
 
 .small-button {
@@ -179,53 +198,100 @@
   text-decoration: none;
 }
 
+/* Small buttons that remove something warm up on hover, before the click lands. */
+.small-button--danger:hover {
+  border-color: #f3c3a7;
+  background: var(--draft-bg);
+  color: var(--draft);
+}
+
 /* ---------- Fields ---------- */
 
-.label {
-  color: var(--ink-2);
-  font-size: var(--text-label);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
 .label__required {
-  color: var(--brand);
+  color: var(--draft);
+  font-weight: 700;
 }
 
-.field {
+.hint {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+}
+
+/* A setting on one line: the label, with a hint under it, beside its control. */
+.field-line {
   display: grid;
-  gap: var(--space-6);
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-16);
+  padding: var(--space-10) 0;
 }
 
-/* Label beside its control keeps a short property to a single line in a dock. */
-.field--row {
-  grid-template-columns: minmax(0, 1fr) 88px;
-  align-items: center;
-  gap: var(--space-8);
+.field-line + .field-line {
+  border-top: 1px solid var(--line-soft);
+}
+
+.field-line > :first-child {
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.field-line--top {
+  align-items: start;
+}
+
+.field-line--top > :first-child {
+  padding-top: var(--space-10);
+}
+
+/* The inspector's narrower column. */
+.field-line--compact {
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: var(--space-12);
+  padding: var(--space-6) 0;
+}
+
+.field-line__control {
+  display: grid;
+  gap: var(--space-4);
 }
 
 .input {
   width: 100%;
-  height: 38px;
-  padding: 0 12px;
+  height: 36px;
+  padding: 0 11px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface);
   color: var(--ink);
+  font-size: var(--text-body-sm);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* Names, models and numbers: anything read as an identifier or a figure. */
+.input--mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  font-weight: 600;
 }
 
 .input--area {
   height: auto;
-  padding: 8px 12px;
+  padding: 8px 11px;
   line-height: 1.5;
   resize: vertical;
 }
 
-/* Notes in a dock: the system's note size. */
+/* Notes in a card: the system's note size. */
 .input--dense {
   min-height: 60px;
-  font-size: var(--text-body-sm);
+  font-size: var(--text-small);
   line-height: 1.45;
 }
 
@@ -237,6 +303,22 @@
 
 .input::placeholder {
   color: var(--ink-3);
+}
+
+.unit-input {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.unit-input .input {
+  width: 72px;
+  text-align: right;
+}
+
+.unit-input__unit {
+  color: var(--ink-2);
+  font: 600 var(--text-small) / 1 var(--font-mono);
 }
 
 /* ---------- Page furniture ---------- */
@@ -262,36 +344,222 @@
   color: var(--approved);
 }
 
-/* A region with nothing in it yet: dashed, faintly striped. */
-.empty {
-  display: grid;
-  justify-items: center;
-  gap: var(--space-16);
-  padding: 48px 32px;
-  border: 1px dashed var(--brand-line);
-  border-radius: var(--radius);
-  background: repeating-linear-gradient(45deg, transparent 0 10px, rgb(29 78 137 / 3%) 10px 20px);
-  text-align: center;
-}
-
-.empty__text {
-  color: var(--ink-3);
-  font-style: italic;
-}
-
 .callout {
   display: flex;
-  gap: var(--space-12);
-  padding: var(--space-14) var(--space-16);
-  border: 1px solid var(--brand-line);
+  align-items: baseline;
+  gap: var(--space-10);
+  padding: 10px 13px;
+  border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--brand-soft);
-  color: var(--brand-ink);
-  font-size: var(--text-control);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-small);
+  line-height: 1.5;
 }
 
-.callout b {
+/* A short mono label says what kind of aside it is: NOTE, TIP, HEADS UP. */
+.callout__label {
+  flex: none;
+  color: var(--brand);
+  font: 700 10.5px / 1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.callout--warn .callout__label {
+  color: var(--draft);
+}
+
+.eyebrow {
   display: block;
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--line);
+  color: var(--brand);
+  font: 700 var(--text-label) / 1 var(--font-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* A section's heading: mono, with an icon and a "| qualifier", over a brand rule. */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  margin-top: 28px;
+  padding-bottom: var(--space-10);
+  border-bottom: 2px solid var(--brand-line);
+  color: var(--brand);
+}
+
+.section-title .icon-16 {
+  width: 18px;
+  height: 18px;
+}
+
+.section-title h2 {
+  font: 700 17px / 1.2 var(--font-mono);
+  letter-spacing: -0.01em;
+}
+
+.section-title small,
+.card-head__title small {
+  margin-left: var(--space-4);
+  color: var(--ink-2);
+  font: 400 var(--text-small) / 1 var(--font-sans);
+  letter-spacing: 0;
+}
+
+.section-title small::before,
+.card-head__title small::before {
+  content: "| ";
+  color: var(--ink-3);
+}
+
+/* Words in the strong colour of a status pair, after a dot of it. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  height: 24px;
+  padding: 0 10px 0 9px;
+  border-radius: var(--radius-pill);
+  background: var(--planned-bg);
+  color: var(--planned);
+  font: 700 10.5px / 1 var(--font-mono);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: currentcolor;
+}
+
+.badge--warn {
+  background: var(--draft-bg);
+  color: var(--draft);
+}
+
+/* A count or a short spec, recessed. */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: 22px;
+  padding: 0 7px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--inset);
+  color: var(--ink-2);
+  font: 500 var(--text-label) / 1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tag b {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 5px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--ink-2);
+  font: 600 10.5px / 1 var(--font-mono);
+}
+
+/* A card's emblem: the icon in brand on brand-soft. */
+.icon-tile {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--brand-line);
+  border-radius: var(--radius-md);
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.icon-tile--lg {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+}
+
+/* A raised card on the white page: a header, rows of settings, sometimes a footer. */
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--raised);
+  box-shadow: var(--shadow-card);
+}
+
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-10);
+  padding: 12px 14px 11px;
+  border-bottom: 1px solid var(--line);
+}
+
+.card-head__title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--brand-ink);
+  font: 700 14.5px / 1.25 var(--font-mono);
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-head__text {
+  flex-basis: 100%;
+  padding-left: 40px;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  line-height: 1.4;
+}
+
+.card-head__end {
+  margin-left: auto;
+}
+
+.card-body {
+  padding: var(--space-4) var(--space-14) var(--space-8);
+}
+
+.card-body--pad {
+  padding: var(--space-14);
+}
+
+.card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-10);
+  padding: 9px 14px;
+  border-top: 1px solid var(--line);
 }
 
 /* How every identifier is shown, exactly as written. */
@@ -342,13 +610,91 @@
 
 /* ---------- Projects ---------- */
 
+/* The home page's one navy panel. Its only ornament is the big rotated square. */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 28px 32px 26px;
+  border-radius: var(--radius-xl);
+  background: radial-gradient(120% 140% at 100% 0%, #2f6bb3 0%, var(--brand) 45%, var(--brand-deep) 100%);
+  box-shadow: var(--shadow-hero);
+  color: var(--on-bar);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 260px;
+  height: 260px;
+  border: 18px solid rgb(255 255 255 / 7%);
+  border-radius: 40px;
+  transform: rotate(18deg);
+}
+
+.hero h1 {
+  color: inherit;
+  font-size: 32px;
+  line-height: 1.15;
+}
+
+.hero p {
+  max-width: 560px;
+  margin-top: var(--space-8);
+  opacity: 0.86;
+}
+
+.stats {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 200px));
+  gap: var(--space-12);
+  margin-top: var(--space-24);
+}
+
+.stat {
+  display: grid;
+  gap: 3px;
+  padding: 12px 14px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: var(--radius);
+  background: var(--bar-fill);
+}
+
+.stat strong {
+  font: 700 26px / 1.1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.stat span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgb(255 255 255 / 82%);
+  font-size: var(--text-small);
+}
+
+.stat--flag span::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--living-dot);
+}
+
 .project-card {
   display: flex;
+  min-width: 0;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--raised);
+  box-shadow: var(--shadow-card);
   transition:
     border-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out),
@@ -357,7 +703,7 @@
 
 .project-card:hover {
   border-color: var(--brand-line);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-lift);
   transform: translateY(-1px);
 }
 
@@ -371,9 +717,10 @@
 }
 
 .project-card__preview {
+  position: relative;
   height: 168px;
   border-bottom: 1px solid var(--line);
-  background: var(--bg);
+  background: var(--inset);
 }
 
 .project-card__preview img {
@@ -382,20 +729,32 @@
   object-fit: cover;
 }
 
+.project-card__preview .badge {
+  position: absolute;
+  top: var(--space-10);
+  left: var(--space-10);
+  box-shadow: 0 1px 3px rgb(15 45 82 / 16%);
+}
+
 .project-card__body {
   display: grid;
   gap: 2px;
-  padding: var(--space-14) var(--space-16) var(--space-4);
+  padding: var(--space-14) var(--space-16);
 }
 
 .project-card__title {
-  margin-bottom: var(--space-4);
-  font-size: var(--text-card-title);
+  overflow: hidden;
+  color: var(--brand-ink);
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .project-card__client {
   color: var(--ink);
-  font-size: var(--text-body-sm);
+  font-size: var(--text-small);
 }
 
 .project-card__address {
@@ -403,18 +762,60 @@
   font-size: var(--text-small);
 }
 
+.project-card__body .tags {
+  margin-top: var(--space-10);
+}
+
 .project-card__footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-12);
-  padding: var(--space-10) var(--space-16) var(--space-14);
+  padding: 9px 14px;
+  border-top: 1px solid var(--line);
 }
 
 .project-card__date {
   color: var(--ink-2);
-  font-size: var(--text-small);
+  font: 500 var(--text-label) / 1.3 var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* The next project, waiting: dashed and faintly striped like an empty region. */
+.new-card {
+  display: flex;
+  min-height: 280px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-24);
+  border: 1.5px dashed var(--brand-line);
+  border-radius: var(--radius);
+  background:
+    repeating-linear-gradient(135deg, rgb(29 78 137 / 3.5%) 0 10px, transparent 10px 20px),
+    var(--surface);
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  text-align: center;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.new-card:hover {
+  border-color: var(--brand);
+  background-color: var(--brand-soft);
+  text-decoration: none;
+}
+
+.new-card .icon-tile {
+  margin-bottom: var(--space-4);
+}
+
+.new-card strong {
+  color: var(--brand-ink);
+  font-size: var(--text-card-title);
 }
 
 .form-intro {
@@ -426,27 +827,71 @@
   margin-top: var(--space-16);
 }
 
+.next-steps {
+  margin-top: var(--space-24);
+}
+
+.steps {
+  display: grid;
+  gap: var(--space-14);
+  margin: var(--space-14) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  column-gap: var(--space-12);
+}
+
+.steps__number {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--brand);
+  color: var(--on-bar);
+  font: 600 var(--text-small) / 1 var(--font-mono);
+}
+
+.steps strong {
+  display: block;
+  padding-top: 3px;
+  font-size: var(--text-control);
+  line-height: 1.4;
+}
+
+.steps div span {
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+
 .project-form {
   display: grid;
   gap: var(--space-16);
-  padding: 28px;
+}
+
+.form-actions__hint {
+  margin-right: auto;
+  color: var(--ink-2);
+  font: 500 var(--text-label) / 1 var(--font-mono);
 }
 
 .upload-field {
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: var(--space-4);
-  min-height: 176px;
-  padding: var(--space-24);
+  display: flex;
+  align-items: center;
+  gap: var(--space-14);
+  padding: 18px;
   border: 1.5px dashed var(--brand-line);
   border-radius: var(--radius);
   background:
-    repeating-linear-gradient(45deg, transparent 0 10px, rgb(29 78 137 / 3%) 10px 20px),
+    repeating-linear-gradient(135deg, rgb(29 78 137 / 3.5%) 0 10px, transparent 10px 20px),
     var(--surface);
   color: var(--ink-2);
   font-size: var(--text-small);
-  text-align: center;
   cursor: pointer;
   transition:
     background-color var(--duration-fast) var(--ease-out),
@@ -456,7 +901,7 @@
 .upload-field:hover,
 .upload-field.is-dragover {
   border-color: var(--brand);
-  background: var(--brand-soft);
+  background-color: var(--brand-soft);
 }
 
 .upload-field:focus-within {
@@ -464,13 +909,23 @@
   box-shadow: var(--focus-halo);
 }
 
+.upload-field__text {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  line-height: 1.4;
+}
+
 .upload-field strong {
-  max-width: 100%;
   overflow: hidden;
-  color: var(--ink);
+  color: var(--brand-ink);
   font-size: var(--text-control);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.upload-field__browse {
+  pointer-events: none;
 }
 
 .upload-field.has-file {
@@ -491,21 +946,29 @@
 
 .upload-field__icon {
   display: grid;
-  width: 40px;
-  height: 40px;
-  margin-bottom: var(--space-8);
+  width: 44px;
+  height: 44px;
+  flex: none;
   place-items: center;
-  border-radius: 50%;
+  border: 1px solid var(--brand-line);
+  border-radius: var(--radius);
   background: var(--brand-soft);
   color: var(--brand);
 }
 
+.upload-field__icon .icon-16 {
+  width: 20px;
+  height: 20px;
+}
+
 .upload-field.has-file .upload-field__icon {
+  border-color: var(--brand);
   background: var(--brand);
   color: var(--on-bar);
 }
 
 .upload-field.has-error .upload-field__icon {
+  border-color: var(--error);
   background: var(--surface);
   color: var(--error);
 }
@@ -527,19 +990,23 @@
 
 .tool-group {
   display: flex;
-  gap: var(--space-4);
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--bar-line);
+  border-radius: 11px;
+  background: rgb(255 255 255 / 7%);
 }
 
 .tool-button {
   position: relative;
   display: grid;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   place-items: center;
-  border: 1px solid var(--bar-line);
+  border: 0;
   border-radius: var(--radius-md);
-  background: var(--bar-fill);
+  background: transparent;
   color: var(--on-bar);
   cursor: pointer;
   transition:
@@ -554,9 +1021,9 @@
 
 /* The bar's inverse of a pressed page button: white, with the icon in brand. */
 .tool-button[aria-pressed="true"] {
-  border-color: var(--surface);
   background: var(--surface);
   color: var(--brand);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 25%);
 }
 
 .tool-button:disabled {
@@ -573,8 +1040,8 @@
   position: absolute;
   right: 3px;
   bottom: 2px;
-  font: 600 10px / 1 var(--font-mono);
-  opacity: 0.75;
+  font: 600 9px / 1 var(--font-mono);
+  opacity: 0.7;
 }
 
 /* A status badge: the save state's word in the strong colour of its pair. */
@@ -582,12 +1049,14 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-6);
-  padding: 2px 10px;
+  min-height: 24px;
+  padding: 0 10px 0 9px;
   border-radius: var(--radius-pill);
   background: var(--planned-bg);
   color: var(--planned);
-  font-size: var(--text-caption);
-  font-weight: 600;
+  font: 700 10.5px / 1 var(--font-mono);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -617,7 +1086,11 @@
 /* Failures carry a sentence worth reading, so they may wrap where the short states do not. */
 .save-state.is-error {
   max-width: 16rem;
+  padding-block: 4px;
   border-radius: var(--radius-md);
+  font: 600 var(--text-caption) / 1.3 var(--font-sans);
+  letter-spacing: 0;
+  text-transform: none;
   background: var(--error-bg);
   color: var(--error);
   line-height: 1.3;
@@ -682,17 +1155,10 @@
   font-size: var(--text-small);
 }
 
-/* ---------- Editor docks ---------- */
+/* ---------- Editor inspector ---------- */
 
 .dock-card {
-  display: grid;
-  gap: var(--space-10);
-  padding: var(--space-14) var(--space-16) var(--space-16);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-  pointer-events: auto;
+  flex: none;
 }
 
 /* Slid in above the resident project card when a tool is armed or a camera is picked. */
@@ -700,24 +1166,7 @@
   animation: dock-enter 170ms ease-out;
 }
 
-.dock-card__title {
-  overflow: hidden;
-  color: var(--brand-ink);
-  font-size: var(--text-card-title);
-  font-weight: 700;
-  line-height: 1.3;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dock-card__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-12);
-}
-
-.dock-card__toggle {
+.card-head__toggle {
   display: inline-flex;
   align-items: center;
   gap: var(--space-6);
@@ -727,42 +1176,29 @@
   cursor: pointer;
 }
 
-.dock-card__toggle:hover {
+.card-head__toggle:hover {
   color: var(--brand);
 }
 
-.dock-card__toggle-icon {
+.card-head__toggle-icon {
+  color: var(--ink-2);
   transition: rotate var(--duration-fast) var(--ease-out);
 }
 
-.dock-card__toggle[aria-expanded="false"] .dock-card__toggle-icon {
+.card-head__toggle[aria-expanded="false"] .card-head__toggle-icon {
   rotate: -90deg;
 }
 
-/* Appended below the properties, the way Excalidraw tacks actions onto its island. */
-.dock-card__actions {
-  display: flex;
-  gap: var(--space-8);
-  margin-top: var(--space-4);
-  padding-top: var(--space-12);
-  border-top: 1px solid var(--line);
-}
-
-/* Collapsed, the card is just the head row: match its bottom padding to the top and
-   drop the row gap, rather than leaving room sized for the hidden pane. */
+/* Collapsed, the card is just its header. */
 .dock-card--notes {
   display: flex;
   min-height: 0;
   flex: 0 1 auto;
   flex-direction: column;
-  transition:
-    gap var(--duration-med) var(--ease-out),
-    padding-bottom var(--duration-med) var(--ease-out);
 }
 
-.dock-card.is-collapsed {
-  gap: 0;
-  padding-bottom: var(--space-14);
+.dock-card--notes.is-collapsed .card-head {
+  border-bottom-color: transparent;
 }
 
 /* Animated open/closed by JS setting an explicit max-height (see setNotesCollapsed
@@ -781,27 +1217,12 @@
   min-height: 0;
   flex-direction: column;
   gap: var(--space-6);
-}
-
-.prop-rows {
-  display: grid;
-  gap: var(--space-10);
-}
-
-.dock-count {
-  flex: none;
-  color: var(--ink-2);
-  font-size: var(--text-small);
-  font-variant-numeric: tabular-nums;
-}
-
-.dock-count strong {
-  color: var(--ink);
+  padding: var(--space-12) var(--space-14) var(--space-12);
 }
 
 .count {
   color: var(--ink-2);
-  font-size: var(--text-caption);
+  font: 500 var(--text-label) / 1.3 var(--font-mono);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -813,34 +1234,56 @@
   flex-direction: column;
 }
 
+/* Docked, the notes resize from their bottom edge like any text box. */
 .project-notes__input {
   flex: 0 1 auto;
   height: 224px;
   min-height: 96px;
-  padding-top: 18px;
-  resize: none;
 }
 
 .project-notes__resize {
-  position: absolute;
-  top: 1px;
-  left: 50%;
-  width: 48px;
-  height: 16px;
-  padding: 0;
-  border: 0;
-  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-  cursor: ns-resize;
-  touch-action: none;
-  translate: -50% 0;
-  /* Two short rules: the usual drag-handle mark, read as "pull this edge". */
-  background:
-    linear-gradient(var(--ink-3), var(--ink-3)) center calc(50% - 2px) / 20px 1.5px no-repeat,
-    linear-gradient(var(--ink-3), var(--ink-3)) center calc(50% + 2px) / 20px 1.5px no-repeat;
+  display: none;
 }
 
-.project-notes__resize:hover {
-  background-color: var(--brand-soft);
+/* Floating over the plan on a tablet, the cards stack up from the bottom, so the notes
+   grow upward from a handle on their top edge instead. */
+@media (max-width: 1000px) {
+  .project-notes__input {
+    padding-top: 18px;
+    resize: none;
+  }
+
+  .project-notes__resize {
+    position: absolute;
+    top: 1px;
+    left: 50%;
+    display: block;
+    width: 48px;
+    height: 16px;
+    padding: 0;
+    border: 0;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    cursor: ns-resize;
+    touch-action: none;
+    translate: -50% 0;
+    /* Two short rules: the usual drag-handle mark, read as "pull this edge". */
+    background:
+      linear-gradient(var(--ink-3), var(--ink-3)) center calc(50% - 2px) / 20px 1.5px no-repeat,
+      linear-gradient(var(--ink-3), var(--ink-3)) center calc(50% + 2px) / 20px 1.5px no-repeat;
+  }
+
+  .project-notes__resize:hover {
+    background-color: var(--brand-soft);
+  }
+
+  .inspector .field-line--compact {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  /* Floating cards need the stronger shadow to lift off the plan. */
+  .inspector .card {
+    box-shadow: var(--shadow);
+  }
 }
 
 /* Searchable dropdown. Native controls cannot carry the grey spec line under each
@@ -945,11 +1388,11 @@
 
 .plan-hint {
   margin: 0;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--surface);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-card);
   color: var(--ink-2);
   font-size: var(--text-small);
   /* It sits over the plan, so clicks and drags go straight through. */

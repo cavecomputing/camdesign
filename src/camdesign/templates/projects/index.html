@@ -3,42 +3,63 @@
 {% block title %}Projects · CamDesign{% endblock %}
 
 {% block content %}
-  <header class="page-head">
-    <h1>Site plans</h1>
-    <p class="lede">Pick up an onsite design where you left off or start a new one.</p>
-  </header>
-
-  {% if projects %}
-    <div class="project-grid">
-      {% for project in projects %}
-        <article class="project-card">
-          <a class="project-card__open" href="{{ url_for('editor.workspace', project_id=project.id) }}">
-            <div class="project-card__preview">
-              <img src="{{ url_for('projects.asset', project_id=project.id) }}" alt="">
-            </div>
-            <div class="project-card__body">
-              <h2 class="project-card__title">{{ project.name }}</h2>
-              <p class="project-card__client">{{ project.client_name or "No client yet" }}</p>
-              {% if project.site_address %}
-                <p class="project-card__address">{{ project.site_address }}</p>
-              {% endif %}
-            </div>
-          </a>
-          <footer class="project-card__footer">
-            <span class="project-card__date">Updated {{ project.updated_at | friendly_timestamp }}</span>
-            <a
-              class="small-button"
-              href="{{ url_for('projects.confirm_delete', project_id=project.id) }}"
-              aria-label="Delete {{ project.name }}"
-            >Delete</a>
-          </footer>
-        </article>
-      {% endfor %}
+  <section class="hero" aria-labelledby="home-title">
+    <h1 id="home-title">Site plans</h1>
+    <p>Pick up an onsite design where you left off or start a new one.</p>
+    <div class="stats">
+      <div class="stat"><strong>{{ cards | length }}</strong><span>{{ "Project" if cards | length == 1 else "Projects" }}</span></div>
+      <div class="stat"><strong>{{ cameras }}</strong><span>{{ "Camera" if cameras == 1 else "Cameras" }}</span></div>
+      <div class="stat{{ ' stat--flag' if without_model }}"><strong>{{ without_model }}</strong><span>{{ "Needs a model" if without_model == 1 else "Need a model" }}</span></div>
     </div>
-  {% else %}
-    <section class="empty">
-      <p class="empty__text">No site plans yet.</p>
-      <a class="button primary" href="{{ url_for('projects.new') }}">Create your first project</a>
-    </section>
-  {% endif %}
+  </section>
+
+  <div class="section-title">
+    <svg class="icon-16" viewBox="0 0 16 16" aria-hidden="true">
+      <rect x="2" y="2.5" width="5" height="5" rx="1" />
+      <rect x="9" y="2.5" width="5" height="5" rx="1" />
+      <rect x="2" y="9.5" width="5" height="5" rx="1" />
+      <rect x="9" y="9.5" width="5" height="5" rx="1" />
+    </svg>
+    <h2>Projects <small>Newest first</small></h2>
+  </div>
+
+  <div class="project-grid">
+    {% for project, count in cards %}
+      <article class="project-card">
+        <a class="project-card__open" href="{{ url_for('editor.workspace', project_id=project.id) }}">
+          <div class="project-card__preview">
+            <img src="{{ url_for('projects.asset', project_id=project.id) }}" alt="">
+            {% if count.without_model %}
+              <span class="badge badge--warn">{{ count.without_model }} {{ "needs" if count.without_model == 1 else "need" }} a model</span>
+            {% endif %}
+          </div>
+          <div class="project-card__body">
+            <h3 class="project-card__title">{{ project.name }}</h3>
+            <p class="project-card__client">{{ project.client_name or "No client yet" }}</p>
+            {% if project.site_address %}
+              <p class="project-card__address">{{ project.site_address }}</p>
+            {% endif %}
+            <div class="tags">
+              <span class="tag"><b>{{ count.cameras }}</b> {{ "camera" if count.cameras == 1 else "cameras" }}</span>
+            </div>
+          </div>
+        </a>
+        <footer class="project-card__footer">
+          <span class="project-card__date">Updated {{ project.updated_at | friendly_timestamp }}</span>
+          <a
+            class="small-button small-button--danger"
+            href="{{ url_for('projects.confirm_delete', project_id=project.id) }}"
+            aria-label="Delete {{ project.name }}"
+          >Delete</a>
+        </footer>
+      </article>
+    {% endfor %}
+    <a class="new-card" href="{{ url_for('projects.new') }}">
+      <span class="icon-tile icon-tile--lg">
+        <svg class="icon-16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg>
+      </span>
+      <strong>{{ "New project" if cards else "Create your first project" }}</strong>
+      <span>Name the job, drop in a site image</span>
+    </a>
+  </div>
 {% endblock %}

@@ -283,8 +283,8 @@ if (root) {
     elements.stage.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
   }
 
-  // Centred inside the panel's padding rather than on the panel itself: the floating
-  // docks sit in that margin, and a plan centred on the window slides under them.
+  // Centred inside the panel's padding rather than on the panel itself: the hint, and
+  // on a tablet the floating inspector cards, sit in that margin.
   function centreView() {
     const panel = elements.panel.getBoundingClientRect();
     const stage = elements.stage.getBoundingClientRect();

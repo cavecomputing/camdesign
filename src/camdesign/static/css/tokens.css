@@ -34,11 +34,15 @@
 
   --bg: #f4f7fb;
   --surface: #ffffff;
+  /* Layered surfaces: cards sit raised on the white shell, wells and tags sit inset. */
+  --raised: #f7f9fc;
+  --inset: #edf1f6;
   --ink: #0f172a;
   --ink-2: #475569;
   /* 2.6:1 on surface: only for text a reader can do without. */
   --ink-3: #94a3b8;
   --line: #e2e8f0;
+  --line-soft: #edf1f6;
 
   --on-bar: #ffffff;
   --bar-fill: rgb(255 255 255 / 10%);
@@ -86,18 +90,24 @@
   --space-24: 24px;
   --space-36: 36px;
   --gutter: 40px;
-  --topbar-h: 60px;
+  --topbar-h: 56px;
+  --inspector-w: 336px;
 
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius: 10px;
   --radius-lg: 14px;
+  --radius-xl: 16px;
   --radius-pill: 999px;
 
   /* One resting shadow; the float is only for things above the page. */
   --shadow: 0 1px 2px rgb(15 45 82 / 6%), 0 4px 16px rgb(15 45 82 / 6%);
   --shadow-float: 0 12px 32px rgb(11 31 58 / 25%);
+  /* Cards rest on shadow-card and rise to shadow-lift, 1px up, under the pointer. */
+  --shadow-card: 0 1px 2px rgb(15 45 82 / 6%), 0 3px 10px rgb(15 45 82 / 5%);
+  --shadow-lift: 0 2px 4px rgb(15 45 82 / 8%), 0 12px 26px rgb(15 45 82 / 13%);
+  --shadow-hero: 0 10px 30px rgb(15 45 82 / 25%);
   /* Always with a brand border: the border is what carries focus (8.4:1). */
   --focus-halo: 0 0 0 3px var(--brand-soft);
 
